@@ -132,7 +132,7 @@ public class Agent {
 					known = true;
 					howsimilar++;
 				}
-				
+				 
 				// WARNINGWARNING WARNING
 				// We are adding weight to ALL the re-encountered memory memes.
 				// Is this correct? Is this desirable?? 
@@ -174,11 +174,15 @@ public class Agent {
 		artimeme.addEdge(investingmeme, newArt, 1);
 		}
 		
-		link(newArt);
+		link(newArt, bookmarks);
 	}
 	
 	
-	public void link(Artifact artifact) {
+	public void link(Artifact newart, Collection mem) {
+		int maxsimilar = 0;
+		while (mem.iterator().hasNext()) {
+			
+		}
 		
 	}
 	

@@ -174,14 +174,28 @@ public class Agent {
 		artimeme.addEdge(investingmeme, newArt, 1);
 		}
 		
-		link(newArt, bookmarks);
+		link(newArt);
 	}
 	
 	
-	public void link(Artifact newart, Collection mem) {
-		int maxsimilar = 0;
-		while (mem.iterator().hasNext()) {
-			
+	public void link(Artifact newart) { // Need to work this out soon... RECHECK
+		ArrayList<Artifact> mostsimilar = null;
+		int oldbest = 0;
+		Iterator newmemes = newart.getMemes().iterator();
+		
+		while (bookmarks.iterator().hasNext()) {
+			Artifact oldart = bookmarks.iterator().next();
+			Iterator oldmemes = oldart.getMemes().iterator();
+			int memesimilar = 0;
+			while (oldmemes.hasNext()) {
+				if (artimeme.isAdjacent(oldmemes.next(),newart)) {
+					memesimilar++;
+				}
+			}
+			if (oldbest <= memesimilar) {
+				mostsimilar.add(oldart);
+				oldbest = memesimilar;
+			}
 		}
 		
 	}

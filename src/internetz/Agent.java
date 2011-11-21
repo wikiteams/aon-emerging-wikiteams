@@ -37,12 +37,14 @@ public class Agent {
 	Parameters param = RunEnvironment.getInstance().getParameters();
 	String algo = (String)param.getValue("filteralgo");
 	int maxbeliefs = (int) param.getValue("maxbelief");
+	ArrayList<Artifact> creatures = null;
 	
 	public Agent(int readingCapacity, boolean ispublisher) {
 
 		this.readingCapacity = readingCapacity;
 		this.ispublisher = ispublisher;
 		this.bookmarks = bookmarks;
+		this.creatures = creatures;
 		RandomHelper.createPoisson(maxbeliefs/2);
 		int howmany = RandomHelper.getPoisson().nextInt();
 		Iterable mymemes = context.getRandomObjects(Meme.class, howmany);
@@ -167,6 +169,7 @@ public class Agent {
 		newArt.birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 
 		context.add(newArt);
+		creatures.add(newArt);
 		
 		// WARNINGWARNING: magic number to be replaced here
 		for (int i=0; i<4; i++) {
@@ -174,30 +177,66 @@ public class Agent {
 		artimeme.addEdge(investingmeme, newArt, 1);
 		}
 		
-		link(newArt);
+		if (!creatures.isEmpty()) linkwithown(newArt); 
+		
+		if (bookmarks != null) link(newArt);
+		else linkonce(newArt);
 	}
 	
 	
-	public void link(Artifact newart) { // Need to work this out soon... RECHECK
-		ArrayList<Artifact> mostsimilar = null;
-		int oldbest = 0;
-		Iterator newmemes = newart.getMemes().iterator();
+	public void linkonce(Artifact newart) {  // We should have birthday as edge attribute
+		Iterator allarts = artifact.getNodes().iterator();
+		while (allarts.hasNext()) {
+			for (int i=0; i < artifact.size()/4; i++) {
+				Artifact arti = (Artifact) allarts.next();
+				if (newart != arti) {
+					artifact.addEdge(newart, arti);
+					read(arti);
+				}
+			}
+		}
+	}
+	
+	public void linkwithown(Artifact arti) {
+		Iterator<Artifact> towhom = (getMostSimilar(creatures, arti)).iterator();
+		for (int i=0; i<2; i++) {
+			Artifact oldart = towhom.next();
+			arti.buildLink(oldart);
+			oldart.buildLink(arti);
+		}
 		
-		while (bookmarks.iterator().hasNext()) {
-			Artifact oldart = bookmarks.iterator().next();
+	}
+	
+	// This function is meant to be a generic memetic similarity extractor and should replace
+	// the chunks of code where memetic comparations are performed: in link() and linkwithown() 
+	
+	public ArrayList<Artifact> getMostSimilar(ArrayList<Artifact> list, Artifact source) {
+		ArrayList<Artifact> mostsimilar = null;		
+		int oldbest = 0;
+		
+		while (list.iterator().hasNext()) {
+			Artifact oldart = (Artifact) list.iterator().next();
 			Iterator oldmemes = oldart.getMemes().iterator();
 			int memesimilar = 0;
 			while (oldmemes.hasNext()) {
-				if (artimeme.isAdjacent(oldmemes.next(),newart)) {
-					memesimilar++;
+				if (artimeme.isAdjacent(oldmemes.next(),source)) memesimilar++;
+			}
+			if (oldbest == memesimilar) mostsimilar.add(oldart);
+			else {
+				if (oldbest < memesimilar) {
+					mostsimilar.clear();
+					mostsimilar.add(oldart);
 				}
-			}
-			if (oldbest <= memesimilar) {
-				mostsimilar.add(oldart);
-				oldbest = memesimilar;
-			}
 		}
-		
+	}
+		return mostsimilar;
+	}
+	
+	public void link(Artifact newart) { // RECHECK THIS
+		ArrayList mostsimilar = getMostSimilar(bookmarks, newart);
+		while (mostsimilar.iterator().hasNext()) {
+		newart.buildLink((Artifact) mostsimilar.iterator().next());
+		}
 	}
 	
 	public void updatebeliefs() {

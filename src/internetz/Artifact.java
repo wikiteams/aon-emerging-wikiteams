@@ -55,6 +55,10 @@ public class Artifact {
 		return votes;
 	}
 	
+	public void buildLink(Artifact arti) {
+		artifact.addEdge(this, arti);
+	}
+	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void updatePageRnk() {   // Adapted from the netlogo code
 		int degr = artifact.getOutDegree(this);

@@ -37,6 +37,7 @@ public class Agent {
 	Parameters param = RunEnvironment.getInstance().getParameters();
 	String algo = (String)param.getValue("filteralgo");
 	int maxbeliefs = (int) param.getValue("maxbelief");
+	int ownlinks = (int) param.getValue("linkswithown");
 	ArrayList<Artifact> creatures = null;
 	
 	public Agent(int readingCapacity, boolean ispublisher) {
@@ -118,7 +119,6 @@ public class Agent {
 				read(arti);
 				bookmarks.add(arti);
 			}
-			
 		}	
 	}
 	
@@ -199,7 +199,7 @@ public class Agent {
 	
 	public void linkwithown(Artifact arti) {
 		Iterator<Artifact> towhom = (getMostSimilar(creatures, arti)).iterator();
-		for (int i=0; i<2; i++) {
+		for (int i=0; i<=ownlinks; i++) {
 			Artifact oldart = towhom.next();
 			arti.buildLink(oldart);
 			oldart.buildLink(arti);
@@ -213,7 +213,6 @@ public class Agent {
 	public ArrayList<Artifact> getMostSimilar(ArrayList<Artifact> list, Artifact source) {
 		ArrayList<Artifact> mostsimilar = null;		
 		int oldbest = 0;
-		
 		while (list.iterator().hasNext()) {
 			Artifact oldart = (Artifact) list.iterator().next();
 			Iterator oldmemes = oldart.getMemes().iterator();
@@ -227,8 +226,8 @@ public class Agent {
 					mostsimilar.clear();
 					mostsimilar.add(oldart);
 				}
+			}
 		}
-	}
 		return mostsimilar;
 	}
 	
@@ -253,9 +252,9 @@ public class Agent {
 			belief.addEdge(this, meme, 1);
 		}
 		
-		if (ispublisher) {
-			relink(meme);
-		}
+		// if (ispublisher) {  	// This is no longer necessary.
+		//	relink(meme);		// We now have memetic similarity in linktoself()
+		// }
 	}
 	
 	public void corrupt(Network net, int max) {
@@ -283,10 +282,6 @@ public class Agent {
 				list.remove(0);
 			}
 		}
-	}
-	
-	public void relink(Meme meme) {
-		// Qua sono cazzi amari.
 	}
 	
 	public void vote(Artifact arti, double probability) {

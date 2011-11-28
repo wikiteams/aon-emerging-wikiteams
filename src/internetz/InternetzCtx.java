@@ -17,7 +17,7 @@ public class InternetzCtx implements ContextBuilder<Object> {
 		// EdgeCreator mmedge = new memEdges(); 
 		// netBuilder.setEdgeCreator(mmedge);
 		netBuilder.buildNetwork();
-		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object> ("artimeme network", context, true);
+		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object> ("artimeme network", context, false);
 		netBuilderMM.buildNetwork();
 		NetworkBuilder<Object> netBuilderBlf = new NetworkBuilder<Object> ("belief network", context, false);
 		netBuilderBlf.buildNetwork();
@@ -36,7 +36,8 @@ public class InternetzCtx implements ContextBuilder<Object> {
 		
 		for (int i=0; i < agentCount; i++) {
 			readingCapacity = RandomHelper.getPoisson().nextInt();
-			if (RandomHelper.nextDoubleFromTo(0, 1)<= pctPublishers) {
+			System.out.println(readingCapacity);
+			if (RandomHelper.nextDoubleFromTo(0, 1) <= pctPublishers) {
 				ispublisher = true;
 			}
 			context.add(new Agent(readingCapacity, ispublisher));

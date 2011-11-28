@@ -62,7 +62,7 @@ public class Artifact {
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
-	public void updatePageRnk() {   // Adapted from the netlogo code
+	public void updatePageRnk() {   // Adapted from the netlogo 'diffusion' code (fingers crossed)
 		int degr = artifact.getOutDegree(this);
 		Iterator all = (Iterator) artifact.getEdges();
 		

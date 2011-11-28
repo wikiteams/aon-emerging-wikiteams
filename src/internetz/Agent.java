@@ -23,7 +23,6 @@ import repast.simphony.util.ContextUtils;
 public class Agent {
 	private boolean ispublisher;
 	private int readingCapacity;
-	ArrayList<Artifact> bookmarks = new ArrayList();
 	Context context = (Context)ContextUtils.getContext(this);
 	Network belief = (Network)context.getProjection("belief network");
 	Network memory = (Network)context.getProjection("memory network");
@@ -34,7 +33,8 @@ public class Agent {
 	String algo = (String)param.getValue("filteralgo");
 	int maxbeliefs = (int) param.getValue("maxbelief");
 	int ownlinks = (int) param.getValue("linkswithown");
-	ArrayList<Artifact> creatures = null;
+	ArrayList<Artifact> bookmarks = new ArrayList();
+	ArrayList<Artifact> creatures = new ArrayList();
 	
 	public Agent(int readingCapacity, boolean ispublisher) {
 

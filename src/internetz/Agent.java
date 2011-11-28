@@ -8,10 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Arrays;
-
-import javax.swing.DefaultListModel;
-import javax.swing.JList;
-
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.Schedule;
@@ -57,14 +53,18 @@ public class Agent {
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
+		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		if (ispublisher) {
 			publish();
 		}
 		explore();
-		updatebeliefs();
-		corrupt(belief, maxbeliefs);
-		corrupt(memory, maxbeliefs);
-		corrupt(bookmarks, maxbeliefs);
+		if (time % 5 == 0) {
+			updatebeliefs();
+			corrupt(belief, maxbeliefs);
+			corrupt(memory, maxbeliefs);
+			corrupt(bookmarks, maxbeliefs);
+			if (time > 100) killoldlinks();
+		}
 	}
 	
 	public void explore() {
@@ -167,6 +167,7 @@ public class Agent {
 		newArt.votes = 0;
 		newArt.author = this;
 		newArt.birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		newArt.id = artifact.size() + 1;
 
 		context.add(newArt);
 		creatures.add(newArt);
@@ -190,7 +191,8 @@ public class Agent {
 			for (int i=0; i < artifact.size()/4; i++) {
 				Artifact arti = (Artifact) allarts.next();
 				if (newart != arti) {
-					artifact.addEdge(newart, arti);
+					double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+					artifact.addEdge(newart, arti, birthday);
 					read(arti);
 				}
 			}
@@ -207,7 +209,7 @@ public class Agent {
 		
 	}
 	
-	// This function is meant to be a generic memetic similarity extractor and should replace
+	// The next function is meant to be a generic memetic similarity extractor and should replace
 	// the chunks of code where memetic comparations are performed: in link() and linkwithown() 
 	
 	public ArrayList<Artifact> getMostSimilar(ArrayList<Artifact> list, Artifact source) {
@@ -225,6 +227,7 @@ public class Agent {
 				if (oldbest < memesimilar) {
 					mostsimilar.clear();
 					mostsimilar.add(oldart);
+					oldbest = memesimilar;
 				}
 			}
 		}
@@ -253,7 +256,7 @@ public class Agent {
 		}
 		
 		// if (ispublisher) {  	// This is no longer necessary.
-		//	relink(meme);		// We now have memetic similarity in linktoself()
+		//	relink(meme);		// We now have memetic similarity in linkwithown()
 		// }
 	}
 	
@@ -290,7 +293,12 @@ public class Agent {
 			// Qua ci vorrebbe la *lista dei votati* dell'utente. 
 			// Che non abbiamo ancora.
 		}
-
 	}
-
+	
+	public void killoldlinks() {
+		List<RepastEdge> allinks = (List) artifact.getEdges();
+		Collections.sort(allinks, new InverseWeightComparator());
+		RepastEdge moriturus = allinks.iterator().next();
+		artifact.removeEdge(moriturus);
+	}
 }

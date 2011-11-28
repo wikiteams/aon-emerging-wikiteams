@@ -14,6 +14,8 @@ public class InternetzCtx implements ContextBuilder<Object> {
 	public Context<Object> build(Context<Object> context) {
 		context.setId("internetz");
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object> ("artifact network", context, true);
+		// EdgeCreator mmedge = new memEdges(); 
+		// netBuilder.setEdgeCreator(mmedge);
 		netBuilder.buildNetwork();
 		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object> ("artimeme network", context, true);
 		netBuilderMM.buildNetwork();
@@ -27,7 +29,7 @@ public class InternetzCtx implements ContextBuilder<Object> {
 		RandomHelper.createPoisson((Integer)param.getValue("avgcap"));
 		int agentCount = (Integer)param.getValue("agent_count");
 		int memeCount = (Integer)param.getValue("meme_count");
-		double pctPublishers = (Integer)param.getValue("pctpubli");
+		double pctPublishers = (double) param.getValue("pctpubli");
 		int readingCapacity;
 		boolean ispublisher = false;
 		

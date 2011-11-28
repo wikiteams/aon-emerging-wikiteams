@@ -5,24 +5,23 @@ import repast.simphony.space.graph.RepastEdge;
 
 
 public class MemEdge extends RepastEdge {
-	String edgeType = "";
-	double weight = 0.0;
+	double edgeAge = 0;
 
-	public MemEdge(Object source, Object target, boolean directed, double weight, String type) {
+	public MemEdge(Object source, Object target, boolean directed, double weight, double age) {
 		super(source, target, directed, weight);
-		this.edgeType = type;
+		this.edgeAge = age;
 	}
 
 	public MemEdge(Object source, Object target, boolean directed, double weight) {
 		super(source, target, directed, weight);
 	}
 	
-	public String getType() {
-		return edgeType;
+	public double getAge() {
+		return edgeAge;
 	}
 	
 	
-	public void setType(String type) {
-		this.edgeType = type;
+	public void setAge(int age) {
+		this.edgeAge = age;
 	}
 }

@@ -1,0 +1,297 @@
+<html xmlns:tomboy="http://beatniksoftware.com/tomboy" xmlns:link="http://beatniksoftware.com/tomboy/link" xmlns:size="http://beatniksoftware.com/tomboy/size"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><title>MtW Readme</title><style type="text/css">
+        
+	body {  }
+	h1 { font-size: xx-large;
+     	     font-weight: bold;
+     	     border-bottom: 1px solid black; }
+	div.note {
+		   position: relative;
+		   display: block;
+		   padding: 5pt;
+		   margin: 5pt; 
+		   white-space: -moz-pre-wrap; /* Mozilla */
+ 	      	   white-space: -pre-wrap;     /* Opera 4 - 6 */
+ 	      	   white-space: -o-pre-wrap;   /* Opera 7 */
+ 	      	   white-space: pre-wrap;      /* CSS3 */
+ 	      	   word-wrap: break-word;      /* IE 5.5+ */ }
+	</style></head><body><div class="note" id="MtW Readme"><a name="mtw readme"></a><h1>MtW Readme</h1>
+This is the Repast/Java version of the Meme-To-Web model. A NetLogo version is available ---&gt; Here.
+MtW is an agent based model developed by LABSS to explore the effects of internet filtering technologies on information diversity.
+
+<b>Rationale:</b>
+The internet is now the main repository of human knowledge, both past and contemporary, and the new cultural artifacts that humanity produces are nearly entirely 'stored' and circulated via the Net. In such new context the gatekeeping function, historically performed by 'expert' agencies, is now increasingly delegated to algorithms operating on the 'wisdom of crowds' principle. Google's <a style="color:#204A87" href="#pagerank">PageRank</a>, the voting mechanisms operating on websites such as Reddit, Digg, the "sharing" mechanisms operating on <a style="color:#204A87" href="#facebook">facebook</a>, twitter and similar social networks act as collective filters on knowledge, where the community of users decides in a participatory, implicit and emergent fashion on the quality and relevance of every single piece of content introduced in the net.
+What is the effect of such groundbreaking shift of paradigm on the diversity of information available to mankind through the Internet? Are the subsequent filtering mechanisms appeared in the history of the internet increasing or inhibiting diversity?
+
+<b>Implementation:</b>
+The model implements a society of agents endowed with a memetic patrimonio and engaged in the production and consumption of cultural artifacts. The cultural artifacts are no more than memetic aggregations, an abstraction of artwork, writing, poetry, music stemming from the memetic baggage of the creator.
+
+At each step: 
+<ul><li dir="ltr">a fraction of the population (the "publishers") has the chance of publishing an artifact and linking it with other artifacts 
+</li><li dir="ltr">all the agents "consume" some of the 'most relevant' artifacts as filtered by the content filtering mechanisms implemented [None; <a style="color:#204A87" href="#pagerank">PageRank</a>; Reddit-like; Pure popularity; and a mix of the above.] and retain a subset of the memes endowed in the artifacts.</li></ul>
+The retaining of the memes happens on a slightly cognitive fashion: some memes are memorized, the most reiterated memes of them are then retained in a belief base containing 'accepted' memes. Both the memorization and the <a style="color:#204A87" href="#acceptance">acceptance</a> take place under a homophily constraint: the more memes  the agent's mind and the artifact being read have in common, the more likely the agent will retain other memes in the artifact.
+ </div>
+<div class="note" id="pagerank"><a name="pagerank"></a><h1>pagerank</h1>
+breed [ pages page ]
+breed [ surfers surfer ]
+
+pages-own [
+  rank new-rank ; for the diffusion approach
+  visits ; for the random-surfer approach
+]
+
+surfers-own [ current-page ]
+
+globals [ total-rank max-rank ]
+
+;;
+;; Setup Procedures
+;;
+
+to setup
+  clear-all
+  set-default-shape pages "circle"
+
+  ifelse network-choice = "Example 1"
+  [ create-network-example-1 ][
+    ifelse network-choice = "Example 2"
+    [ create-network-example-2 ][
+      ifelse network-choice = "Preferential Attachment"
+      [ create-network-preferential 100 2 ]
+      [ user-message word "Error: unknown network-choice: " network-choice ] ] ]
+
+  ask patches [ set pcolor white ]
+  ask pages
+  [ set rank 1 / count pages ]
+  update-globals
+  ask pages
+  [
+    setxy random-xcor random-ycor
+    set label-color black
+    update-page-appearance
+  ]
+
+  repeat 300 [ do-layout ]
+
+  ask links [ set shape "curved" ]
+end
+
+to create-network-example-1
+  create-pages 11
+  ask page 0 [ set color blue create-link-from page 3 ]
+  ask page 1 [ set color red create-links-from (turtle-set page 2 page 3 page 4 page 5 page 6 page 7 page 8 ) ]
+  ask page 2 [ set color orange create-link-from page 1 ]
+  ask page 3 [ set color green create-link-from page 4 ]
+  ask page 4 [ set color yellow create-links-from (turtle-set page 5 page 6 page 7 page 8 page 9 page 10) ]
+  ask page 5 [ set color green create-link-from page 4 ]
+  ask pages with [who &gt; 5] [ set color violet ]
+end
+
+to create-network-example-2
+  create-pages 8
+  ask page 0 [ die ]
+  ask page 1 [ create-links-from (turtle-set page 2 page 3 page 5 page 6) ]
+  ask page 2 [ create-links-from (turtle-set page 1 page 3 page 4) ]
+  ask page 3 [ create-links-from (turtle-set page 1 page 4 page 5) ]
+  ask page 4 [ create-links-from (turtle-set page 1 page 5) ]
+  ask page 5 [ create-links-from (turtle-set page 1 page 4 page 6 page 7) ]
+  ask page 6 [ create-links-from (turtle-set page 5) ]
+  ask page 7 [ create-links-from (turtle-set page 1) ]
+end
+
+to create-network-preferential [ n k ]
+  create-pages n [ set color sky ]
+  link-preferentially pages k
+end
+
+; The parameter k (always an integer) gives the number of edges to add at
+; each step (e.g. k=1 builds a tree)
+to link-preferentially [nodeset k]
+  ;; get the nodes in sorted order
+  let node-list sort nodeset
+
+  ;; get a sublist of the nodes from 0 to k
+  let neighbor-choice-list sublist node-list 0 k
+
+  ;; ask the kth node...
+  ask item k node-list
+  [
+    ;; to make a link either to or from each preceding
+    ;; node in the sorted list.
+    foreach neighbor-choice-list
+    [
+      ifelse random 2 = 0
+      [ create-link-to ? ]
+      [ create-link-from ? ]
+    ]
+    ;; add k copies of this node to the beginning of the sublist
+    set neighbor-choice-list sentence (n-values k [self]) neighbor-choice-list
+  ]
+
+  ;; ask each node after the kth node in order...
+  foreach sublist node-list (k + 1) (length node-list)
+  [
+    ask ?
+    [
+      ;; ...to make k links
+      let temp-neighbor-list neighbor-choice-list
+      repeat k
+      [
+        ;; link to one of the nodes in the neighbor list
+        ;; we remove that node from the list once it's been <a style="color:#204A87" href="#linked">linked</a> to
+        ;; however, there may be more than one copy of some nodes
+        ;; since those nodes have a higher probability of being <a style="color:#204A87" href="#linked">linked</a> to
+        let neighbor one-of temp-neighbor-list
+        set temp-neighbor-list remove neighbor temp-neighbor-list
+        ;; when we've <a style="color:#204A87" href="#linked">linked</a> to a node put another copy of it on the
+        ;; master neighbor choice list as it's now more likely to be
+        ;; <a style="color:#204A87" href="#linked">linked</a> to again
+        set neighbor-choice-list fput neighbor neighbor-choice-list
+        ifelse random 2 = 0
+        [ create-link-to neighbor ]
+        [ create-link-from neighbor ]
+      ]
+      set neighbor-choice-list sentence (n-values k [self]) neighbor-choice-list
+    ]
+  ]
+end
+
+to do-layout
+  layout-spring pages links 0.2 20 / (sqrt count pages) 0.5
+end
+
+;;
+;; Runtime Procedures
+;;
+
+to go
+  ifelse calculation-method = "diffusion"
+  [
+    if any? surfers [ ask surfers [ die ] ] ;; remove surfers if the calculation-method is changed
+
+    ;; return links and pages to initial state
+    ask links [ set color gray set thickness 0 ]
+    ask pages [ set new-rank 0 ]
+
+    ask pages
+    [
+      ifelse any? out-link-neighbors
+      [
+        ;; if a node has any out-links divide current rank
+        ;; equally among them.
+        let rank-increment rank / count out-link-neighbors
+        ask out-link-neighbors [
+          set new-rank new-rank + rank-increment
+        ]
+      ]
+      [
+        ;; if a node has no out-links divide current
+        ;; rank equally among all the nodes
+        let rank-increment rank / count pages
+        ask pages [
+          set new-rank new-rank + rank-increment
+        ]
+      ]
+    ]
+
+    ask pages
+    [
+      ;; set current rank to the new-rank and take the damping-factor into account
+      set rank (1 - damping-factor) / count pages + damping-factor * new-rank
+    ]
+  ]
+  [ ;;; "random-surfer" calculation-method
+    ; surfers are created or destroyed on the fly if users move the
+    ; NUMBER-OF-SURFERS slider while the <a style="color:#204A87" href="#misc">misc</a> is running.
+    if count surfers &lt; number-of-surfers
+    [
+      create-surfers number-of-surfers - count surfers
+      [
+        set current-page one-of pages
+        ifelse watch-surfers?
+        [ move-surfer ]
+        [ hide-turtle ]
+      ]
+    ]
+    if count surfers &gt; number-of-surfers
+    [
+      ask n-of (count surfers - number-of-surfers) surfers
+        [ die ]
+    ]
+    ;; return links to their initial state
+    ask links [ set color gray set thickness 0 ]
+
+    ask surfers [
+      let old-page current-page
+      ;; increment the visits on the page we're on
+      ask current-page [ set visits visits + 1 ]
+      ;; with a probability depending on the damping-factor either go to a
+      ;; random page or a random one of the pages that this page is <a style="color:#204A87" href="#linked">linked</a> to
+      ifelse random-float 1.0 &lt;= damping-factor and any? [my-out-links] of current-page
+      [ set current-page one-of [out-link-neighbors] of current-page ]
+      [ set current-page one-of pages ]
+
+      ;; update the visualization
+      ifelse watch-surfers?
+      [
+        show-turtle
+        move-surfer
+        let surfer-color color
+        ask old-page [
+          let traveled-link out-link-to [current-page] of myself
+          if traveled-link != nobody [
+            ask traveled-link [ set color surfer-color set thickness 0.08 ]
+          ]
+        ]
+      ]
+      [ hide-turtle ]
+    ]
+    ;; update the rank of each page
+    let total-visits sum [visits] of pages
+    ask pages [
+      set rank visits / total-visits
+    ]
+  ]
+
+  update-globals
+  ask pages [ update-page-appearance ]
+  tick
+end
+
+to move-surfer ;; surfer procedure
+  face current-page
+  move-to current-page
+end
+
+to update-globals
+  set total-rank sum [rank] of pages
+  set max-rank max [rank] of pages
+end
+
+to update-page-appearance ;; page procedure
+  ; keep size between 0.1 and 5.0
+  set size 0.2 + 4 * sqrt (rank / total-rank)
+  ifelse show-page-ranks?
+  [ set label word (precision rank 3) "     " ]
+  [ set label "" ]
+end</div>
+<div class="note" id="facebook"><a name="facebook"></a><h1>facebook</h1>
+<b>the return of social control</b>
+
+questa storia di internet che ci liberava delle pressioni sociali e' finita.
+il controllo sociale e' vivo e lotta insieme a noi. Quando pubblico una cosa online ci penso quaranta volte, possono vederlo i miei amici, i miei genitori, i miei parenti, i miei compagni di scuola fra dieci anni.
+
+I socialnetwork creati dagli hacker risolvono questa faccenda con gli aspects. E si ritorna implacabilmente al dilemma dell'inizio: MA COSI' TI CREI UNA VITA VIRTUALE. Si. Anche due o tre, se serve.
+
+
++ cerchi concentrici
+
+
+</div>
+<div class="note" id="Acceptance"><a name="acceptance"></a><h1>Acceptance</h1>
+We model the belief base as a "meme store" plus a coherence constraint. When a new artefact is encountered it is either coherent (=links to a meme already believed by the agent) or it is in conflict with other beliefs, or completely new. In the first case there is great probability of acceptance of one or more of the other memes contained in the artifact. In the latter case the new meme is either rejected or, to a smaller probability the old belief base is revised to store one meme from the artifact. Memory has a role. One remembers some of the memes contained in the artifact read:
+<ul><li dir="ltr">one can remember something she does not believe
+</li><li dir="ltr">one can forget something she believes</li></ul>
+In this model the decision to believe is a function of source reliability and belief credibility. Source reliability us, by hypothesis, provided by its rank in the society-organized knowledge base; belief credibility depends from its coherence, calculated as above
+
+
+</div></body></html>

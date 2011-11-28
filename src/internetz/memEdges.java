@@ -9,8 +9,8 @@ import repast.simphony.random.RandomHelper;
 public class memEdges implements EdgeCreator { 	
 	
 	public MemEdge createEdge(Object source, Object target,
-			boolean isDirected, double weight, String type) {
-		return new MemEdge(source, target, isDirected, weight, type); 
+			boolean isDirected, double weight, double age) {
+		return new MemEdge(source, target, isDirected, weight, age); 
 	}
 	
 

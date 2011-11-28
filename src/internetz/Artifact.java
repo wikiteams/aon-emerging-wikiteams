@@ -19,6 +19,7 @@ public class Artifact {
 	public Agent author;
 	public double newrank;
 	private double pagerank;
+	public int id;
 
 
 	public Artifact(Agent author, double pagerank) {
@@ -28,6 +29,7 @@ public class Artifact {
 		this.newrank = 0;
 		this.birthday = 0;
 		this.author = author;
+		this.id = id;
 	}
 	
 	

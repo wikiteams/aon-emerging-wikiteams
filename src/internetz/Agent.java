@@ -1,40 +1,35 @@
 package internetz;
 
-import java.awt.Component;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-import java.util.Arrays;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
-import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
-import repast.simphony.query.space.graph.NetPathWithin;
 import repast.simphony.random.RandomHelper;
-import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.util.ContextUtils;
 
 public class Agent {
-	private boolean ispublisher;
-	private int readingCapacity;
 	Context context = (Context)ContextUtils.getContext(this);
-	Network belief = (Network)context.getProjection("belief network");
+	Parameters param = RunEnvironment.getInstance().getParameters();
+	String algo = (String)param.getValue("filteringalgo");
+	private int maxbeliefs = (int) param.getValue("maxbelief");
+	private int ownlinks = (int) param.getValue("linkswithown");
+	
 	Network memory = (Network)context.getProjection("memory network");
 	Network artimeme = (Network)context.getProjection("artimeme network");
-	Network artifact = (Network)context.getProjection("artifact network");
+	Network<Artifact> artifact = (Network<Artifact>)context.getProjection("artifact network");
+	Network belief = (Network)context.getProjection("belief network");
 	
-	Parameters param = RunEnvironment.getInstance().getParameters();
-	String algo = (String)param.getValue("filteralgo");
-	int maxbeliefs = (int) param.getValue("maxbelief");
-	int ownlinks = (int) param.getValue("linkswithown");
-	ArrayList<Artifact> bookmarks = new ArrayList();
-	ArrayList<Artifact> creatures = new ArrayList();
+	private boolean ispublisher;
+	private int readingCapacity;
+	private ArrayList<Artifact> bookmarks = new ArrayList();
+	private ArrayList<Artifact> creatures = new ArrayList();
+	private ArrayList<Artifact> voted = new ArrayList();
 	
 	public Agent(int readingCapacity, boolean ispublisher) {
 
@@ -165,9 +160,8 @@ public class Agent {
 		Artifact newArt = new Artifact(this, 0);
 		newArt.views = 0;
 		newArt.votes = 0;
-		newArt.author = this;
 		newArt.birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		newArt.id = artifact.size() + 1;
+		newArt.id = context.getObjects(Artifact.class).size() + 1;
 
 		context.add(newArt);
 		creatures.add(newArt);
@@ -206,7 +200,6 @@ public class Agent {
 			arti.buildLink(oldart);
 			oldart.buildLink(arti);
 		}
-		
 	}
 	
 	// The next function is meant to be a generic memetic similarity extractor and should replace
@@ -288,10 +281,9 @@ public class Agent {
 	}
 	
 	public void vote(Artifact arti, double probability) {
-		if (RandomHelper.nextDoubleFromTo(0, 1) < probability) {
+		if ((RandomHelper.nextDoubleFromTo(0, 1) < probability) && (!voted.contains(arti))) {
 			arti.votes++;
-			// Qua ci vorrebbe la *lista dei votati* dell'utente. 
-			// Che non abbiamo ancora.
+			voted.add(arti);
 		}
 	}
 	

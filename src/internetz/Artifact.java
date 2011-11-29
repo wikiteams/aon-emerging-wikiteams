@@ -9,8 +9,6 @@ import repast.simphony.util.ContextUtils;
 
 public class Artifact {
 	Context context = (Context)ContextUtils.getContext(this);
-	// Network belief = (Network)context.getProjection("belief network");
-	// Network memory = (Network)context.getProjection("memory network");
 	Network artimeme = (Network)context.getProjection("artimeme network");
 	Network artifact = (Network)context.getProjection("artifact network");
 	public int views;
@@ -79,7 +77,9 @@ public class Artifact {
 				sequent.newrank =+ increment;   
 			}
 		} else {
-			double increment = pagerank / artifact.size();
+			double increment = pagerank / context.getObjects(Artifact.class).size();    
+			// We don't use artifact.size() in the above computation because (probably) network projections
+			// contain all the agents in the context!!!
 			while (all.hasNext()) {
 				Artifact sequent = (Artifact) all.next();
 				sequent.newrank =+ increment;
@@ -88,7 +88,8 @@ public class Artifact {
 		
 		while (all.hasNext()) {
 			Artifact arti = (Artifact) all.next();
-			arti.pagerank = (1 - 0.85) / artifact.size() + 0.85 * arti.newrank;
+			// Same as above			
+			arti.pagerank = (1 - 0.85) / context.getObjects(Artifact.class).size() + 0.85 * arti.newrank;
 		}
 			 
 	}

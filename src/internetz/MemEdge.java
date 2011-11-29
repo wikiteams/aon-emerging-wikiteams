@@ -1,6 +1,5 @@
 package internetz;
 
-import repast.simphony.space.graph.EdgeCreator;
 import repast.simphony.space.graph.RepastEdge;
 
 

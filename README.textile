@@ -5,12 +5,12 @@ MtW is an agent based model developed by LABSS to explore the effects of interne
 
 h2. Rationale
 
-The internet is now the main repository of human knowledge, both past and contemporary, and the new cultural artifacts that humanity produces are nearly entirely 'stored' and circulated via the Net. In such new context the gatekeeping function, historically performed by 'expert' agencies, is now increasingly delegated to to automated algorithms operating on the 'wisdom of crowds' principle. Google's PageRank, the voting mechanisms operating on websites such as Reddit, Digg, the "sharing" mechanisms operating on facebook, twitter and similar social networks act as collective filters on knowledge, where the community of users decides in a participatory, implicit and emergent fashion on the quality and relevance of every single piece of content introduced in the net.
-What is the effect of such world-changing shift of paradigm on the diversity of information available to mankind through the Internet? Are the filtering mechanisms that progressively appeared in the history of the Internet increasing or inhibiting diversity?
+The internet is today the main repository of past and contemporary human knowledge: all the cultural artifacts that humanity produces are nearly entirely 'stored' and circulated via the Net. In such context the gatekeeping function, historically performed by 'expert' agencies, is now increasingly delegated to to automated algorithms operating on the 'wisdom of crowds' principle. Google's PageRank, the voting mechanisms operating on websites such as Reddit and Digg, the "sharing" mechanisms operating on facebook, twitter and similar applications - all these systems act as collective filters on knowledge where the community of users decides in a participatory, implicit and emergent fashion on the quality and relevance of every single piece of content introduced in the system.
+What is the effect of such shift of paradigm on the diversity of information available to mankind through the Internet? Are the filtering mechanisms that progressively appeared in the history of the Internet increasing or inhibiting diversity?
 
 h2. Implementation
 
-The model implements a society of agents endowed with a memetic patrimonio and engaged in the production and consumption of cultural artifacts. The cultural artifacts are no more than memetic aggregations, an abstraction of artwork, writing, poetry, music stemming from the memetic baggage of the creator.
+The model implements a society of agents, each endowed with a particular meme pool, engaged in the production and consumption of cultural artifacts. The cultural artifacts are no more than memetic aggregations - an abstraction of artwork, writing, poetry, music... - stemming from the memetic configuration of the creator.
 
 At each step: 
 
@@ -19,6 +19,6 @@ At each step:
 
 The retaining of the memes happens on a slightly cognitive fashion: some memes are memorized, the most reiterated memes of them are then retained in a belief base containing 'accepted' memes. Both the memorization and the acceptance take place under a homophily constraint: the more memes  the agent's mind and the artifact being read have in common, the more likely the agent will retain other memes in the artifact.
 
-!http://i.imgur.com/IyRHT.png!
+!http://i.imgur.com/NJI0i.png!
 
 The figure above shows the basic feedback loop of production and consumption of cultural artifacts implemented in the model: the agent produces artifacts containing a fraction of his memes; the artifact is pushed in the network from which artifacts are extracted after being selected by filtering algorithms (Google in this case). Some of the knowledge embedded is then acquired by the reading agent.

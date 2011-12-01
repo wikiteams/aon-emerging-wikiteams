@@ -1,12 +1,9 @@
 <context id="internetz"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="http://repast.org/scenario/context"
 	class="internetz.InternetzCtx">
-	<projection type="network" id="artifact network"></projection>
-	<projection type="network" id="belief network"></projection>
-	<projection type="network" id="memory network"></projection>
-	<projection type="network" id="artimeme network"></projection>
-	<projection type="network" id="bookmark network"></projection>
+	<projection type="network" id="artifacts"></projection>
+	<projection type="network" id="beliefs"></projection>
+	<projection type="network" id="memorys"></projection>
+	<projection type="network" id="artimemes"></projection>
 	
 
 </context>

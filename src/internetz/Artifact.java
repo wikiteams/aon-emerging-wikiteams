@@ -8,9 +8,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.util.ContextUtils;
 
 public class Artifact {
-	Context context = (Context)ContextUtils.getContext(this);
-	Network artimeme = (Network)context.getProjection("artimeme network");
-	Network artifact = (Network)context.getProjection("artifact network");
+	
 	public int views;
 	public int votes;
 	public double birthday;
@@ -32,14 +30,20 @@ public class Artifact {
 	
 	
 	public Iterable getMemes() {
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artimeme = (Network)context.getProjection("artimemes");
 		return artimeme.getAdjacent(this);
 	}
 	
 	public Iterable getOutLinks() {
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artifact = (Network)context.getProjection("artifacts");
 		return artifact.getSuccessors(this);
 	}
 	
 	public Iterable getInLinks() {
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artifact = (Network)context.getProjection("artifacts");
 		return artifact.getPredecessors(this);
 	}
 	
@@ -56,13 +60,17 @@ public class Artifact {
 	}
 	
 	public void buildLink(Artifact arti) {
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artifact = (Network)context.getProjection("artifacts");
 		artifact.addEdge(this, arti);
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void updatePageRnk() {   // Adapted from the netlogo 'diffusion' code (fingers crossed)
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artifact = (Network)context.getProjection("artifacts");
 		int degr = artifact.getOutDegree(this);
-		Iterator all = (Iterator) artifact.getEdges();
+		Iterator all = (Iterator) artifact.getEdges().iterator();
 		
 		while (all.hasNext()) {
 			Artifact arti = (Artifact) all.next();

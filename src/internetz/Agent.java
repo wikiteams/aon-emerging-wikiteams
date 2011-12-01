@@ -14,55 +14,72 @@ import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.util.ContextUtils;
 
 public class Agent {
-	Context context = (Context)ContextUtils.getContext(this);
+
 	Parameters param = RunEnvironment.getInstance().getParameters();
 	String algo = (String)param.getValue("filteringalgo");
-	private int maxbeliefs = (int) param.getValue("maxbelief");
-	private int ownlinks = (int) param.getValue("linkswithown");
+	int ownlinks = (int) param.getValue("linkswithown");
+	int maxBeliefs;
+	Network memory;
+	Network artimeme;
+	Network<Artifact> artifact;
+	Network belief;
 	
-	Network memory = (Network)context.getProjection("memory network");
-	Network artimeme = (Network)context.getProjection("artimeme network");
-	Network<Artifact> artifact = (Network<Artifact>)context.getProjection("artifact network");
-	Network belief = (Network)context.getProjection("belief network");
 	
-	private boolean ispublisher;
+	private boolean isPublisher;
 	private int readingCapacity;
 	private ArrayList<Artifact> bookmarks = new ArrayList();
 	private ArrayList<Artifact> creatures = new ArrayList();
 	private ArrayList<Artifact> voted = new ArrayList();
 	
-	public Agent(int readingCapacity, boolean ispublisher) {
+	public Agent() {
 
-		this.readingCapacity = readingCapacity;
-		this.ispublisher = ispublisher;
+		// this.readingCapacity = readingCapacity;
+		// this.isPublisher = isPublisher;
 		this.bookmarks = bookmarks;
 		this.creatures = creatures;
-		RandomHelper.createPoisson(maxbeliefs/2);
-		int howmany = RandomHelper.getPoisson().nextInt();
-		Iterable mymemes = context.getRandomObjects(Meme.class, howmany);
-		while (mymemes.iterator().hasNext()) {
-			Meme target = (Meme)mymemes.iterator().next();
-			belief.addEdge(this,target,1);  // 1?? Non dovremmo darli a caso?
-		}
+		this.maxBeliefs = maxBeliefs;
+		
+		// This is now moved in the context:
+		// RandomHelper.createPoisson(maxbeliefs/2);
+		// int howmany = RandomHelper.getPoisson().nextInt();
+	
+	}
+	
+	
+	
+	public void setReadingCapacity(int readingCapacity) {
+		this.readingCapacity = readingCapacity;
+		
+	}
+	
+	public void setPublisher(boolean isPublisher) {
+		this.isPublisher = isPublisher;
+		
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
+		Context context = (Context)ContextUtils.getContext(this);		
+		memory = (Network)context.getProjection("memorys");
+		artimeme = (Network)context.getProjection("artimemes");
+		artifact = (Network<Artifact>)context.getProjection("artifacts");
+		belief = (Network)context.getProjection("beliefs");
 		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		if (ispublisher) {
+		if (isPublisher) {
 			publish();
 		}
 		explore();
 		if (time % 5 == 0) {
 			updatebeliefs();
-			corrupt(belief, maxbeliefs);
-			corrupt(memory, maxbeliefs);
-			corrupt(bookmarks, maxbeliefs);
+			corrupt(belief, maxBeliefs);
+			corrupt(memory, maxBeliefs);
+			corrupt(bookmarks, maxBeliefs);
 			if (time > 100) killoldlinks();
 		}
 	}
 	
 	public void explore() {
+		Context<Object> context = (Context)ContextUtils.getContext(this);		
 		if (algo == "random") {
 			Iterable localarts = context.getRandomObjects(Artifact.class, this.readingCapacity);
 			while (localarts.iterator().hasNext()) {
@@ -157,6 +174,7 @@ public class Agent {
 	}
 	
 	public void publish() {
+		Context<Object> context = (Context)ContextUtils.getContext(this);		
 		Artifact newArt = new Artifact(this, 0);
 		newArt.views = 0;
 		newArt.votes = 0;
@@ -206,7 +224,7 @@ public class Agent {
 	// the chunks of code where memetic comparations are performed: in link() and linkwithown() 
 	
 	public ArrayList<Artifact> getMostSimilar(ArrayList<Artifact> list, Artifact source) {
-		ArrayList<Artifact> mostsimilar = null;		
+		ArrayList<Artifact> mostsimilar = new ArrayList();		
 		int oldbest = 0;
 		while (list.iterator().hasNext()) {
 			Artifact oldart = (Artifact) list.iterator().next();

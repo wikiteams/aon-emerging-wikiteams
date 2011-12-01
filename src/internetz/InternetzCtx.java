@@ -18,11 +18,6 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		context.setId("internetz");
 		
 		Parameters param = RunEnvironment.getInstance().getParameters();
-//		if (param == null) {
-//			System.out.println("Neanche i parametri");
-//		} else {
-//			System.out.println("i parametri sì");
-//		}
 		RandomHelper.createPoisson((Integer)param.getValue("avgcap"));
 		int agentCount = (Integer)param.getValue("agent_count");
 		int memeCount = (Integer)param.getValue("meme_count");
@@ -40,7 +35,6 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		netBuilderMem.buildNetwork();
 		
 		for (int i=0; i < memeCount; i++) {
-			// System.out.println("I am adding a Memememememe");
 			context.add(new Meme());
 		}
 		
@@ -51,12 +45,8 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		
 		for (int i=0; i < agentCount; i++) {
 			readingCapacity = RandomHelper.getPoisson().nextInt();
-			// System.out.println(readingCapacity);
 			if (RandomHelper.nextDoubleFromTo(0, 1) <= pctPublishers) ispublisher = true;
-			// System.out.println("I am adding an agent");
-			// if (context == null) System.out.println("Context is NULLL"); else System.out.println("Context is THERE");
 			Agent agent = new Agent();
-			// if (agent == null) System.out.println("This agent does not exist. I never created it and you eat shit");
 			context.add(agent);
 			agent.setReadingCapacity(readingCapacity) ; 
 			agent.setPublisher(ispublisher);
@@ -67,7 +57,16 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 				belief.addEdge(agent,target,1);  // 1?? Non dovremmo darli a caso?
 			}
 		}
+		
+		if ((Network)context.getProjection("memorys") == null || 
+		(Network)context.getProjection("memorys") == null ||
+		(Network)context.getProjection("memorys") == null ||
+		(Network)context.getProjection("memorys") == null ){
+			System.out.println("One of the projections is null");
+			
+		}
 
+		System.out.println("All the stuff amounts to: " + context.size());
 		return context;
 		
 	}

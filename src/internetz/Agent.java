@@ -3,7 +3,6 @@ package internetz;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -59,7 +58,8 @@ public class Agent {
 	
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
-		Context context = (Context)ContextUtils.getContext(this);		
+		Context context = (Context)ContextUtils.getContext(this);	
+		// if (context == null) System.out.println("Ctx NULL!!");
 		memory = (Network)context.getProjection("memorys");
 		artimeme = (Network)context.getProjection("artimemes");
 		artifact = (Network<Artifact>)context.getProjection("artifacts");
@@ -114,18 +114,21 @@ public class Agent {
 	public void explorebymemes() {
 		Meme currentmeme = (Meme) belief.getRandomAdjacent(this);
 		int howmany = RandomHelper.nextIntFromTo(0, readingCapacity);
-		List<Artifact> all = (List<Artifact>) artimeme.getAdjacent(currentmeme);
 		
+		
+		ArrayList all = getTransformedIteratorToArrayList(artimeme.getAdjacent(currentmeme).iterator());
 		switch (algo) {
 		case "pagerank": Collections.sort(all, new PageRankComparator());
 		case "popularity": Collections.sort(all, new PopularityComparator());
 		case "reddit": Collections.sort(all, new VoteComparator());
 		}
 		int i = 0;
+		int size = all.size();
+		if (size < howmany) howmany = size;
 		while (i < howmany) {
 			// Here we need a constraint. It need not be a creature of the reader
 			// nor recently bookmarked
-			Artifact arti = (Artifact) ((Iterator) all).next();
+			Artifact arti = (Artifact) all.get(i);
 			if (arti.author != this) {
 				i++;
 				read(arti);
@@ -180,34 +183,35 @@ public class Agent {
 		newArt.votes = 0;
 		newArt.birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		newArt.id = context.getObjects(Artifact.class).size() + 1;
-
+		System.out.println("Just created the artifact #: " + newArt.id);
 		context.add(newArt);
 		creatures.add(newArt);
+		System.out.println("We have " + creatures.size() + " creatures");
 		
 		// WARNINGWARNING: magic number to be replaced here
 		for (int i=0; i<4; i++) {
 		Meme investingmeme = (Meme) belief.getRandomAdjacent(this);
 		artimeme.addEdge(investingmeme, newArt, 1);
 		}
+		System.out.println("Our meems: " + artimeme.getDegree());
 		
-		if (!creatures.isEmpty()) linkwithown(newArt); 
+		// MAGIC NUMBER HERE!
+		if (creatures.size() > 10) linkwithown(newArt); 
 		
 		if (bookmarks != null) link(newArt);
 		else linkonce(newArt);
 	}
 	
 	
-	public void linkonce(Artifact newart) {  // We should have birthday as edge attribute
-		Iterator allarts = artifact.getNodes().iterator();
-		while (allarts.hasNext()) {
-			for (int i=0; i < artifact.size()/4; i++) {
-				Artifact arti = (Artifact) allarts.next();
-				if (newart != arti) {
-					double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-					artifact.addEdge(newart, arti, birthday);
-					read(arti);
-				}
-			}
+	public void linkonce(Artifact newart) {  
+		Context<Object> context = (Context)ContextUtils.getContext(this);
+		ArrayList allarts = (ArrayList) context.getObjects(Artifact.class);
+		if (allarts.size() > 0) {
+			int whichArt = RandomHelper.nextIntFromTo(0, allarts.size());
+			Artifact arti = (Artifact) allarts.get(whichArt);
+			double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+			artifact.addEdge(newart, arti, birthday);
+			read(arti);	
 		}
 	}
 	
@@ -245,17 +249,31 @@ public class Agent {
 		return mostsimilar;
 	}
 	
+	// This is a brilliant Iterator --> ArrayList converter made by Ali' in 27 seconds while I was
+	// asking myself how to do it.
+	public ArrayList getTransformedIteratorToArrayList(Iterator itr){
+		ArrayList arr = new ArrayList();
+		while(itr.hasNext()){
+			arr.add(itr.next());
+		}
+		return arr;
+	}
+	
 	public void link(Artifact newart) { // RECHECK THIS
 		ArrayList mostsimilar = getMostSimilar(bookmarks, newart);
-		while (mostsimilar.iterator().hasNext()) {
-		newart.buildLink((Artifact) mostsimilar.iterator().next());
+		int index = 0;
+		while (index < mostsimilar.size()) {
+			newart.buildLink((Artifact) mostsimilar.get(index));
+			index++;
 		}
 	}
 	
 	public void updatebeliefs() {
-		List<RepastEdge> memz = (List<RepastEdge>) memory.getEdges(this);
+		
+		ArrayList memz = getTransformedIteratorToArrayList(memory.getEdges(this).iterator());
+				
 		Collections.sort(memz, new WeightComparator());
-		RepastEdge link = memz.iterator().next();
+		RepastEdge link = (RepastEdge) memz.iterator().next();
 		Meme meme = (Meme) link.getTarget(); // WARNING: Using 'target' on unoriented network
 		if (belief.isAdjacent(this, meme)) {
 			RepastEdge thisbelief = belief.getEdge(this, meme);
@@ -272,16 +290,16 @@ public class Agent {
 	}
 	
 	public void corrupt(Network net, int max) {
-		List<RepastEdge> alledges = (List<RepastEdge>) net.getEdges(this);
+		ArrayList alledges = getTransformedIteratorToArrayList(net.getEdges(this).iterator());
 		Collections.sort(alledges, new InverseWeightComparator());
 		if (net.numEdges() > max) {
 			while (net.numEdges() > max) {
-				RepastEdge link = alledges.iterator().next();
+				RepastEdge link = (RepastEdge) alledges.iterator().next();
 			//	System.out.println(link.getWeight()); // This is to TEST that it does what it does.
 				net.removeEdge(link);
 			}
 		} else {
-			RepastEdge link = alledges.iterator().next(); // Hopefully this kills only one edge. CHECK!!
+			RepastEdge link = (RepastEdge) alledges.iterator().next(); // Hopefully this kills only one edge. CHECK!!
 			net.removeEdge(link);
 		}
 	}
@@ -306,9 +324,9 @@ public class Agent {
 	}
 	
 	public void killoldlinks() {
-		List<RepastEdge> allinks = (List) artifact.getEdges();
+		ArrayList allinks = getTransformedIteratorToArrayList(artifact.getEdges().iterator());
 		Collections.sort(allinks, new InverseWeightComparator());
-		RepastEdge moriturus = allinks.iterator().next();
+		RepastEdge moriturus = (RepastEdge) allinks.iterator().next();
 		artifact.removeEdge(moriturus);
 	}
 }

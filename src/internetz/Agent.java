@@ -18,13 +18,14 @@ public class Agent {
 	String algo = (String)param.getValue("filteringalgo");
 	int ownlinks = (int) param.getValue("linkswithown");
 	int maxBeliefs;
+	int status = 0;
 	Network memory;
 	Network artimeme;
 	Network<Artifact> artifact;
 	Network belief;
 	
 	
-	private boolean isPublisher;
+	boolean isPublisher;
 	private int readingCapacity;
 	private ArrayList<Artifact> bookmarks = new ArrayList();
 	private ArrayList<Artifact> creatures = new ArrayList();
@@ -37,6 +38,7 @@ public class Agent {
 		this.bookmarks = bookmarks;
 		this.creatures = creatures;
 		this.maxBeliefs = maxBeliefs;
+		this.status = status;
 		
 		// This is now moved in the context:
 		// RandomHelper.createPoisson(maxbeliefs/2);
@@ -59,16 +61,25 @@ public class Agent {
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 		Context context = (Context)ContextUtils.getContext(this);	
-		// if (context == null) System.out.println("Ctx NULL!!");
 		memory = (Network)context.getProjection("memorys");
 		artimeme = (Network)context.getProjection("artimemes");
 		artifact = (Network<Artifact>)context.getProjection("artifacts");
 		belief = (Network)context.getProjection("beliefs");
 		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		
+		// Publishers have their chance to publish
 		if (isPublisher) {
-			publish();
+			if (status == 0){
+				publish();
+				status = status + changeStatus();
+				System.out.println("Status is now " + status);
+			}
 		}
+		
+		// Everybody explores
 		explore();
+		
+		// Every now and then we update stuff
 		if (time % 5 == 0) {
 			updatebeliefs();
 			corrupt(belief, maxBeliefs);
@@ -80,15 +91,17 @@ public class Agent {
 	
 	public void explore() {
 		Context<Object> context = (Context)ContextUtils.getContext(this);		
+		System.out.println(algo);
 		if (algo == "random") {
 			Iterable localarts = context.getRandomObjects(Artifact.class, this.readingCapacity);
 			while (localarts.iterator().hasNext()) {
 				Artifact localart = (Artifact)localarts.iterator().next();
 				if (localart.author != this) read(localart);
+				System.out.println("I am now about to read an artifact");
 			}
 		} else {
 			if (algo == "none") {
-				if (bookmarks != null) {  // we need to make sure that null means "empty array"
+				if (!bookmarks.isEmpty()) {
 					explorebylinks(readingCapacity, bookmarks);
 				}
 			} else {
@@ -107,6 +120,8 @@ public class Agent {
 				reads++;
 				bookmarks.add(nowreading);
 				nowreading = (Artifact) nowreading.getOutLinks().iterator().next();
+			} else {
+				nowreading = (Artifact) nowreading.getOutLinks().iterator().next();
 			}
 		}
 	}
@@ -114,8 +129,6 @@ public class Agent {
 	public void explorebymemes() {
 		Meme currentmeme = (Meme) belief.getRandomAdjacent(this);
 		int howmany = RandomHelper.nextIntFromTo(0, readingCapacity);
-		
-		
 		ArrayList all = getTransformedIteratorToArrayList(artimeme.getAdjacent(currentmeme).iterator());
 		switch (algo) {
 		case "pagerank": Collections.sort(all, new PageRankComparator());
@@ -148,6 +161,7 @@ public class Agent {
 				if (belief.isAdjacent(thismeme, this)) {
 					known = true;
 					howsimilar++;
+					System.out.println("I know this stuff: " + howsimilar);
 				}
 				 
 				// WARNINGWARNING WARNING
@@ -170,6 +184,7 @@ public class Agent {
 			// We build a memory with a couple of memes contained
 			// WARNING. Another magic number
 			for (int i=0; i<=2; i++) {
+				System.out.println("Never known");
 				Meme meme = (Meme) artimeme.getRandomAdjacent(arti);
 				memory.addEdge(this, meme, 1);			
 			}
@@ -190,32 +205,32 @@ public class Agent {
 		
 		// WARNINGWARNING: magic number to be replaced here
 		for (int i=0; i<4; i++) {
-		Meme investingmeme = (Meme) belief.getRandomAdjacent(this);
-		artimeme.addEdge(investingmeme, newArt, 1);
+			Meme investingmeme = (Meme) belief.getRandomAdjacent(this);
+			artimeme.addEdge(investingmeme, newArt, 1);
 		}
-		System.out.println("Our meems: " + artimeme.getDegree());
 		
 		// MAGIC NUMBER HERE!
-		if (creatures.size() > 10) linkwithown(newArt); 
-		
-		if (bookmarks != null) link(newArt);
-		else linkonce(newArt);
+		if (creatures.size() > 5) linkWithOwn(newArt); 
+		if (!bookmarks.isEmpty()) link(newArt);
+		else linkOnce(newArt);
 	}
 	
-	
-	public void linkonce(Artifact newart) {  
+	// The first time we link with a random artifact (if there is one)
+	public void linkOnce(Artifact newart) {
 		Context<Object> context = (Context)ContextUtils.getContext(this);
-		ArrayList allarts = (ArrayList) context.getObjects(Artifact.class);
-		if (allarts.size() > 0) {
-			int whichArt = RandomHelper.nextIntFromTo(0, allarts.size());
-			Artifact arti = (Artifact) allarts.get(whichArt);
+		int howmany = context.getObjects(Artifact.class).size();
+		System.out.println("We have " + howmany + " artifacts");
+		if (howmany > 0) {
+			Iterator allarts  = context.getObjects(Artifact.class).iterator();
+			Artifact arti = (Artifact) allarts.next();
 			double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 			artifact.addEdge(newart, arti, birthday);
-			read(arti);	
+			System.out.println("i have successfully linked the artifact");
+			read(arti);
 		}
 	}
 	
-	public void linkwithown(Artifact arti) {
+	public void linkWithOwn(Artifact arti) {
 		Iterator<Artifact> towhom = (getMostSimilar(creatures, arti)).iterator();
 		for (int i=0; i<=ownlinks; i++) {
 			Artifact oldart = towhom.next();
@@ -228,7 +243,7 @@ public class Agent {
 	// the chunks of code where memetic comparations are performed: in link() and linkwithown() 
 	
 	public ArrayList<Artifact> getMostSimilar(ArrayList<Artifact> list, Artifact source) {
-		ArrayList<Artifact> mostsimilar = new ArrayList();		
+		ArrayList<Artifact> mostsimilar = new ArrayList();
 		int oldbest = 0;
 		while (list.iterator().hasNext()) {
 			Artifact oldart = (Artifact) list.iterator().next();
@@ -246,6 +261,8 @@ public class Agent {
 				}
 			}
 		}
+		if (mostsimilar.isEmpty()) System.out.println("Something went wrong");
+		else System.out.println("I have just selected an artifact");
 		return mostsimilar;
 	}
 	
@@ -273,15 +290,17 @@ public class Agent {
 		ArrayList memz = getTransformedIteratorToArrayList(memory.getEdges(this).iterator());
 				
 		Collections.sort(memz, new WeightComparator());
-		RepastEdge link = (RepastEdge) memz.iterator().next();
-		Meme meme = (Meme) link.getTarget(); // WARNING: Using 'target' on unoriented network
-		if (belief.isAdjacent(this, meme)) {
-			RepastEdge thisbelief = belief.getEdge(this, meme);
-			thisbelief.setWeight(thisbelief.getWeight() + 1);
-			
-		} else {
-			link.setWeight(1);
-			belief.addEdge(this, meme, 1);
+		
+		while (memz.iterator().hasNext()) {
+			RepastEdge link = (RepastEdge) memz.iterator().next();
+			Meme meme = (Meme) link.getTarget(); // WARNING: Using 'target' on unoriented network
+			if (belief.isAdjacent(this, meme)) {
+				RepastEdge thisbelief = belief.getEdge(this, meme);
+				thisbelief.setWeight(thisbelief.getWeight() + 1);
+			} else {
+				link.setWeight(1);
+				belief.addEdge(this, meme, 1);
+			}
 		}
 		
 		// if (ispublisher) {  	// This is no longer necessary.
@@ -326,7 +345,14 @@ public class Agent {
 	public void killoldlinks() {
 		ArrayList allinks = getTransformedIteratorToArrayList(artifact.getEdges().iterator());
 		Collections.sort(allinks, new InverseWeightComparator());
-		RepastEdge moriturus = (RepastEdge) allinks.iterator().next();
-		artifact.removeEdge(moriturus);
+		while (allinks.iterator().hasNext()) {
+			RepastEdge moriturus = (RepastEdge) allinks.iterator().next();
+			artifact.removeEdge(moriturus);
+		}
+	}
+	
+	public int changeStatus() {
+		if (RandomHelper.nextDoubleFromTo(0, 1) > 0.5) return 1;
+		else return -1;
 	}
 }

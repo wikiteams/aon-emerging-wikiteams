@@ -28,7 +28,7 @@
 						defaultValue="none" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="none pagerank popularity reddit "
+									values="none pagerank popularity reddit random "
 						
 		/>
 				<parameter name="meme_count" displayName="Number of memes" type="int" 

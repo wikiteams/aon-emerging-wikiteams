@@ -23,7 +23,6 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		int memeCount = (Integer)param.getValue("meme_count");
 		double pctPublishers = (Double)param.getValue("pctpubli");
 		int readingCapacity;
-		boolean ispublisher = false;
 		
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("artifacts", context, true);
 		netBuilder.buildNetwork();
@@ -44,13 +43,13 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		Network belief = (Network)context.getProjection("beliefs");
 		
 		for (int i=0; i < agentCount; i++) {
+			boolean ispublisher = false;
 			readingCapacity = RandomHelper.getPoisson().nextInt();
-			if (RandomHelper.nextDoubleFromTo(0, 1) <= pctPublishers) ispublisher = true;
+			if (RandomHelper.nextDoubleFromTo(0, 1) < pctPublishers) ispublisher = true;
 			Agent agent = new Agent();
 			context.add(agent);
 			agent.setReadingCapacity(readingCapacity) ; 
-			agent.setPublisher(ispublisher);
-			
+			agent.setPublisher(ispublisher);			
 			Iterable mymemes = context.getRandomObjects(Meme.class, howmany);
 			while (mymemes.iterator().hasNext()) {
 				Meme target = (Meme)mymemes.iterator().next();
@@ -58,15 +57,9 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 			}
 		}
 		
-		if ((Network)context.getProjection("memorys") == null || 
-		(Network)context.getProjection("memorys") == null ||
-		(Network)context.getProjection("memorys") == null ||
-		(Network)context.getProjection("memorys") == null ){
-			System.out.println("One of the projections is null");
-			
-		}
+		
 
-		System.out.println("All the stuff amounts to: " + context.size());
+		// System.out.println("Agents are: " + context.getObjects(Agent.class).size() + " of which " + publishers + " publishers");
 		return context;
 		
 	}

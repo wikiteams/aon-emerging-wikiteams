@@ -29,22 +29,22 @@ public class Artifact {
 	}
 	
 	
-	public Iterable getMemes() {
+	public Iterator getMemes() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artimeme = (Network)context.getProjection("artimemes");
-		return artimeme.getAdjacent(this);
+		return artimeme.getSuccessors(this).iterator();
 	}
 	
-	public Iterable getOutLinks() {
+	public Iterator getOutLinks() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
-		return artifact.getSuccessors(this);
+		return artifact.getSuccessors(this).iterator();
 	}
 	
-	public Iterable getInLinks() {
+	public Iterator getInLinks() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
-		return artifact.getPredecessors(this);
+		return artifact.getPredecessors(this).iterator();
 	}
 	
 	public double getRank() {
@@ -70,7 +70,7 @@ public class Artifact {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
 		int degr = artifact.getOutDegree(this);
-		Iterator all = (Iterator) artifact.getEdges().iterator();
+		Iterator all = (Iterator) artifact.getSuccessors(this).iterator();
 		
 		while (all.hasNext()) {
 			Artifact arti = (Artifact) all.next();
@@ -79,7 +79,7 @@ public class Artifact {
 		
 		if (degr > 0) {
 			double increment = pagerank / degr;
-			Iterator outl = (Iterator) getOutLinks();
+			Iterator outl = (Iterator) this.getOutLinks();
 			while (outl.hasNext()) {
 				Artifact sequent = (Artifact) outl.next();
 				sequent.newrank =+ increment;   

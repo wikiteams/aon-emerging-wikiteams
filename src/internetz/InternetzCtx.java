@@ -41,6 +41,8 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		RandomHelper.createPoisson(maxbeliefs/2);
 		int howmany = RandomHelper.getPoisson().nextInt();
 		Network belief = (Network)context.getProjection("beliefs");
+		Network memory = (Network)context.getProjection("memorys");
+		Network artifct = (Network)context.getProjection("artifacts");
 		
 		for (int i=0; i < agentCount; i++) {
 			boolean ispublisher = false;
@@ -57,9 +59,16 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 			}
 		}
 		
+		System.out.println("belief network size " + belief.getDegree());
+		System.out.println("memory network size " + memory.getDegree());
+		System.out.println("Artifact network size " + artifct.getDegree());
 		
 
-		// System.out.println("Agents are: " + context.getObjects(Agent.class).size() + " of which " + publishers + " publishers");
+		
+		
+
+		System.out.println("Agents are: " + context.getObjects(Agent.class).size());
+		System.out.println("Memes are: " + context.getObjects(Meme.class).size());
 		return context;
 		
 	}

@@ -65,7 +65,7 @@ public class Agent {
 		artimeme = (Network)context.getProjection("artimemes");
 		artifact = (Network<Artifact>)context.getProjection("artifacts");
 		belief = (Network)context.getProjection("beliefs");
-		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		int time = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		
 		// Publishers have their chance to publish
 		if (isPublisher) {
@@ -81,28 +81,32 @@ public class Agent {
 		
 		// Every now and then we update stuff
 		if (time % 5 == 0) {
+			System.out.println("Hooray, I made it to the fifth step");
 			updatebeliefs();
 			corrupt(belief, maxBeliefs);
 			corrupt(memory, maxBeliefs);
 			corrupt(bookmarks, maxBeliefs);
-			if (time > 100) killoldlinks();
+			if (time > 100) killOldLinks();
 		}
 	}
 	
 	public void explore() {
-		Context<Object> context = (Context)ContextUtils.getContext(this);		
-		System.out.println(algo);
-		if (algo == "random") {
+		Context<Object> context = (Context)ContextUtils.getContext(this);	
+		if (algo.equals("random")) {
+			// System.out.println("hello, i'm here");
 			Iterable localarts = context.getRandomObjects(Artifact.class, this.readingCapacity);
 			while (localarts.iterator().hasNext()) {
 				Artifact localart = (Artifact)localarts.iterator().next();
 				if (localart.author != this) read(localart);
-				System.out.println("I am now about to read an artifact");
+				// System.out.println("I am now about to read an artifact");
 			}
 		} else {
-			if (algo == "none") {
+			if (algo.equals("none")) {
 				if (!bookmarks.isEmpty()) {
-					explorebylinks(readingCapacity, bookmarks);
+					exploreByLinks(readingCapacity, bookmarks);
+				} else {
+					ArrayList allarts = getTransformedIteratorToArrayList((context.getObjects(Artifact.class)).iterator());
+					if (allarts.size() > 0) exploreByLinks(readingCapacity, allarts);
 				}
 			} else {
 				explorebymemes();
@@ -110,18 +114,25 @@ public class Agent {
 		}
 	}
 	
-	public void explorebylinks(int howmany, ArrayList startingset) {
+	public void exploreByLinks(int howmany, ArrayList startingset) {
 		int reads = 0;
-		Artifact nowreading = null;
+		int whichone = RandomHelper.nextIntFromTo(0, startingset.size()-1);
+		Artifact nowreading = (Artifact) startingset.get(whichone);
+		if (startingset.size() < howmany) howmany = startingset.size()-1;
+		System.out.println("E' uscito il numero " + whichone + " su " + startingset.size());
+		// INFINITE LOOP HERE IN THE FIRST RUNS READS IS ALWAYS < HOWMANY
 		while (reads < howmany) {
-			nowreading = (Artifact) startingset.get(RandomHelper.nextIntFromTo(0, startingset.size()));
 			if (nowreading.author != this) {
 				read(nowreading);
 				reads++;
 				bookmarks.add(nowreading);
-				nowreading = (Artifact) nowreading.getOutLinks().iterator().next();
+				if (nowreading.getOutLinks().hasNext()) nowreading = (Artifact) nowreading.getOutLinks().next();
+				else {
+					whichone = RandomHelper.nextIntFromTo(0, startingset.size()-1);
+					nowreading = (Artifact) startingset.get(whichone);
+				}
 			} else {
-				nowreading = (Artifact) nowreading.getOutLinks().iterator().next();
+				nowreading = (Artifact) nowreading.getOutLinks().next();
 			}
 		}
 	}
@@ -153,7 +164,7 @@ public class Agent {
 	
 	public void read (Artifact arti) {
 		arti.views++;  // the artifact gets a page view
-		Iterator memez = arti.getMemes().iterator();
+		Iterator memez = arti.getMemes();
 		boolean known = false;
 		int howsimilar = 0;
 		while (memez.hasNext()) {
@@ -247,7 +258,7 @@ public class Agent {
 		int oldbest = 0;
 		while (list.iterator().hasNext()) {
 			Artifact oldart = (Artifact) list.iterator().next();
-			Iterator oldmemes = oldart.getMemes().iterator();
+			Iterator oldmemes = oldart.getMemes();
 			int memesimilar = 0;
 			while (oldmemes.hasNext()) {
 				if (artimeme.isAdjacent(oldmemes.next(),source)) memesimilar++;
@@ -286,21 +297,30 @@ public class Agent {
 	}
 	
 	public void updatebeliefs() {
-		
 		ArrayList memz = getTransformedIteratorToArrayList(memory.getEdges(this).iterator());
 				
 		Collections.sort(memz, new WeightComparator());
+		RepastEdge max = (RepastEdge) memz.get(0);
+		double maxweight = max.getWeight();
 		
-		while (memz.iterator().hasNext()) {
-			RepastEdge link = (RepastEdge) memz.iterator().next();
-			Meme meme = (Meme) link.getTarget(); // WARNING: Using 'target' on unoriented network
-			if (belief.isAdjacent(this, meme)) {
-				RepastEdge thisbelief = belief.getEdge(this, meme);
-				thisbelief.setWeight(thisbelief.getWeight() + 1);
-			} else {
-				link.setWeight(1);
-				belief.addEdge(this, meme, 1);
-			}
+		System.out.println("Maximum weight = " + maxweight);
+
+		for (int i=0; i<memz.size(); i++) {
+			System.out.println(" index " + i);
+			RepastEdge link = (RepastEdge) memz.get(i);
+			double wght = link.getWeight(); 
+			if (wght >= maxweight) {
+				System.out.println("This link's weight is " + wght);
+				Meme meme = (Meme) link.getTarget(); // WARNING: Using 'target' on unoriented network
+				// if (meme == null) System.out.println("HELL NO");
+				if (belief.isAdjacent(this, meme)) {
+					RepastEdge thisbelief = belief.getEdge(this, meme);
+					thisbelief.setWeight(thisbelief.getWeight() + 1);
+				} else {
+					link.setWeight(1);
+					belief.addEdge(this, meme, 1);
+				}
+			} else break;
 		}
 		
 		// if (ispublisher) {  	// This is no longer necessary.
@@ -310,23 +330,27 @@ public class Agent {
 	
 	public void corrupt(Network net, int max) {
 		ArrayList alledges = getTransformedIteratorToArrayList(net.getEdges(this).iterator());
+		int alledgesNo = alledges.size();
 		Collections.sort(alledges, new InverseWeightComparator());
-		if (net.numEdges() > max) {
-			while (net.numEdges() > max) {
-				RepastEdge link = (RepastEdge) alledges.iterator().next();
+		if (alledgesNo > max) {
+			int howmanydeaths = alledgesNo - max; 
+			for (int i=0; i<howmanydeaths; i++) {
+				RepastEdge link = (RepastEdge) alledges.get(i);
 			//	System.out.println(link.getWeight()); // This is to TEST that it does what it does.
 				net.removeEdge(link);
 			}
 		} else {
-			RepastEdge link = (RepastEdge) alledges.iterator().next(); // Hopefully this kills only one edge. CHECK!!
-			net.removeEdge(link);
+			// RepastEdge link = (RepastEdge) alledges.iterator().next(); // Hopefully this kills only one edge. CHECK!!
+			net.removeEdge((RepastEdge) alledges.get(alledgesNo-1));
 		}
+		System.out.println("I am CORRUPTING!!");
 	}
 	
 	public void corrupt(ArrayList list, int max) {
 		if (list.size() > max) {
-			while (list.size()>max) {
-				list.remove(list.iterator().next());
+			int howmanydeaths = list.size() - max;
+			for (int i=0; i<howmanydeaths; i++) {
+				list.remove(list.get(i));
 			}
 		} else {
 			if (list.size() > 2) {
@@ -342,7 +366,7 @@ public class Agent {
 		}
 	}
 	
-	public void killoldlinks() {
+	public void killOldLinks() {
 		ArrayList allinks = getTransformedIteratorToArrayList(artifact.getEdges().iterator());
 		Collections.sort(allinks, new InverseWeightComparator());
 		while (allinks.iterator().hasNext()) {

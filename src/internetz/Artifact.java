@@ -3,6 +3,7 @@ package internetz;
 import java.util.Iterator;
 
 import repast.simphony.context.Context;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.graph.Network;
 import repast.simphony.util.ContextUtils;
@@ -62,7 +63,8 @@ public class Artifact {
 	public void buildLink(Artifact arti) {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
-		artifact.addEdge(this, arti);
+		double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		artifact.addEdge(this, arti, birthday);
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)

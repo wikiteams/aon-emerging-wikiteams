@@ -18,7 +18,6 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		context.setId("internetz");
 		
 		Parameters param = RunEnvironment.getInstance().getParameters();
-		RandomHelper.createPoisson((Integer)param.getValue("avgcap"));
 		int agentCount = (Integer)param.getValue("agent_count");
 		int memeCount = (Integer)param.getValue("meme_count");
 		double pctPublishers = (Double)param.getValue("pctpubli");
@@ -38,21 +37,23 @@ public class InternetzCtx extends DefaultContext<Object>  implements ContextBuil
 		}
 		
 		int maxbeliefs = (int) param.getValue("maxbelief");
-		RandomHelper.createPoisson(maxbeliefs/2);
-		int howmany = RandomHelper.getPoisson().nextInt();
+		
 		Network belief = (Network)context.getProjection("beliefs");
 		Network memory = (Network)context.getProjection("memorys");
 		Network artifct = (Network)context.getProjection("artifacts");
 		
 		for (int i=0; i < agentCount; i++) {
 			boolean ispublisher = false;
+			RandomHelper.createPoisson((Integer)param.getValue("avgcap"));
 			readingCapacity = RandomHelper.getPoisson().nextInt();
 			if (RandomHelper.nextDoubleFromTo(0, 1) < pctPublishers) ispublisher = true;
 			Agent agent = new Agent();
 			context.add(agent);
 			agent.setReadingCapacity(readingCapacity) ; 
-			agent.setPublisher(ispublisher);			
-			Iterable mymemes = context.getRandomObjects(Meme.class, howmany);
+			System.out.println("I can read " + readingCapacity + " artifacts per turn");
+			agent.setPublisher(ispublisher);
+			RandomHelper.createPoisson(maxbeliefs/2);
+			Iterable mymemes = context.getRandomObjects(Meme.class, RandomHelper.getPoisson().nextInt());
 			while (mymemes.iterator().hasNext()) {
 				Meme target = (Meme)mymemes.iterator().next();
 				belief.addEdge(agent,target,1);  // 1?? Non dovremmo darli a caso?

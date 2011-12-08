@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <Scenario>
 <repast.simphony.dataLoader.engine.ClassNameDataLoaderAction context="internetz" file="repast.simphony.dataLoader.engine.ClassNameDataLoaderAction_0.xml" />
+<repast.simphony.data.engine.DefaultDataGathererDescriptorAction context="internetz" file="repast.simphony.data.engine.DefaultDataGathererDescriptorAction_1.xml" />
+<repast.simphony.chart.engine.DefaultXYChartOutputterDescriptorAction context="internetz" file="repast.simphony.chart.engine.DefaultXYChartOutputterDescriptorAction_2.xml" />
 </Scenario>

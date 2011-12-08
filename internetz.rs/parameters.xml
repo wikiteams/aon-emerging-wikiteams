@@ -37,6 +37,12 @@
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
 		/>
+				<parameter name="sticksInMem" displayName="Probability a new Meme is remembered" type="double" 
+						defaultValue="0.5" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
+									
+		/>
 				<parameter name="linkswithown" displayName="Links with own artifacts" type="int" 
 						defaultValue="2" 
 						isReadOnly="false" 

@@ -63,7 +63,7 @@ public class Artifact {
 	public void buildLink(Artifact arti) {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
-		double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		int birthday = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		artifact.addEdge(this, arti, birthday);
 	}
 	
@@ -100,9 +100,6 @@ public class Artifact {
 			Artifact arti = (Artifact) all.next();
 			// Same as above			
 			arti.pagerank = (1 - 0.85) / context.getObjects(Artifact.class).size() + 0.85 * arti.newrank;
-		}
-			 
+		}		 
 	}
-	
-
 }

@@ -46,8 +46,6 @@ public class Agent {
 
 	}
 
-
-
 	public void setReadingCapacity(int readingCapacity) {
 		this.readingCapacity = readingCapacity;
 
@@ -78,7 +76,7 @@ public class Agent {
 		explore();
 
 		// Every now and then we update stuff
-		if (time % 5 == 0) {
+		if (time%5==0) {
 			//// System.out.println("Hooray, I made it to the fifth step");
 			updatebeliefs();
 			corrupt(belief, maxBeliefs);
@@ -101,13 +99,18 @@ public class Agent {
 			Iterable localarts = context.getRandomObjects(Artifact.class, this.readingCapacity);
 			while (localarts.iterator().hasNext()) {
 				Artifact localart = (Artifact)localarts.iterator().next();
-				if (!localart.author.equals(this)&&!bookmarks.contains(localart)) read(localart);
+				localart.addView();
+				if (!localart.author.equals(this)&&!bookmarks.contains(localart)) {
+					read(localart);
+					bookmarks.add(localart);
+				}
 				// // System.out.println("I am now about to read an artifact");
 			}
 		} else {
 			if (algo.equals("none")) {
 				if (!bookmarks.isEmpty()) {
-					exploreByLinks(readingCapacity, bookmarks);
+					int howmany = RandomHelper.nextIntFromTo(0, readingCapacity);
+					exploreByLinks(howmany, bookmarks);
 				} else {
 					ArrayList allarts = getTransformedIteratorToArrayList((context.getObjects(Artifact.class)).iterator());
 					if (allarts.size() > 0) exploreByLinks(readingCapacity, allarts);
@@ -120,64 +123,96 @@ public class Agent {
 
 	public void exploreByLinks(int capacity, ArrayList startingset) {
 		int reads = 0;
-		int howmany = RandomHelper.nextIntFromTo(0, capacity);
-		int whichone = RandomHelper.nextIntFromTo(0, startingset.size()-1);
-		Artifact nowreading = (Artifact) startingset.get(whichone);
-		if (startingset.size() < howmany) howmany = startingset.size()-1;
-		// // System.out.println("E' uscito il numero " + whichone + " su " + startingset.size());
-		// INFINITE LOOP HERE IN THE FIRST RUNS READS IS ALWAYS < HOWMANY
-		while (reads < howmany) {
-			if (!nowreading.author.equals(this)) {
-				// // System.out.println("not me. now i read");
-				read(nowreading);
-				reads++;
-				bookmarks.add(nowreading);
-				if (nowreading.getOutLinks().hasNext()) nowreading = (Artifact) nowreading.getOutLinks().next();
-				else {
-					whichone = RandomHelper.nextIntFromTo(0, startingset.size()-1);
-					nowreading = (Artifact) startingset.get(whichone);
+		int frustration = 0;
+		int whichone = 0;
+		Artifact nowreading = null;
+		int size = startingset.size();
+		// System.out.println(size);
+		if (size>0) { 
+			whichone = RandomHelper.nextIntFromTo(0, size-1);
+			nowreading = (Artifact) startingset.get(whichone);
+			if (size < capacity) capacity=size;
+			// // System.out.println("E' uscito il numero " + whichone + " su " + startingset.size());
+			// INFINITE LOOP HERE IN THE FIRST RUNS READS IS ALWAYS < HOWMANY
+			while (reads < capacity) {
+				if (!nowreading.author.equals(this)&&!bookmarks.contains(nowreading)) {
+					//System.out.println(nowreading.author);
+					read(nowreading);
+					reads++;
+					bookmarks.add(nowreading);
+					nowreading.addView();  // the artifact gets a page view
+					if (nowreading.getOutLinks().hasNext()) nowreading = (Artifact) nowreading.getOutLinks().next();
+					else {
+						//System.out.println("No links. I select another");
+						whichone = RandomHelper.nextIntFromTo(0, size-1);
+						nowreading = (Artifact) startingset.get(whichone);
+						nowreading.addView();  // the artifact gets a page view
+					}
+
+				} else {
+					//System.out.println("This is my artifact. i read something else");
+					if (nowreading.getOutLinks().hasNext()) {
+						nowreading = (Artifact) nowreading.getOutLinks().next();
+						// System.out.println("There are links. I follow....");
+						nowreading.addView();  // the artifact gets a page view
+						frustration++;
+					}
+
+					else {
+						// System.out.println("No links. I select another");
+						whichone = RandomHelper.nextIntFromTo(0, size-1);
+						nowreading = (Artifact) startingset.get(whichone);
+						nowreading.addView();  // the artifact gets a page view
+						// System.out.println(nowreading);
+						frustration++;
+					}
 				}
-			} else {
-				// // System.out.println("This is my artifact. i read something else");
-				if (nowreading.getOutLinks().hasNext()) {
-					nowreading = (Artifact) nowreading.getOutLinks().next();
-					//// System.out.println("There are links. I follow....");
-				}
-				else {
-					//// System.out.println("No links. I select another");
-					whichone = RandomHelper.nextIntFromTo(0, startingset.size()-1);
-					nowreading = (Artifact) startingset.get(whichone);
-				}
+				if (frustration>15) break;
 			}
 		}
 	}
 
 	public void explorebymemes() {
+		Context<Object> context = (Context)ContextUtils.getContext(this);	
 		Meme currentmeme = (Meme) belief.getRandomAdjacent(this);
 		int howmany = RandomHelper.nextIntFromTo(0, readingCapacity);
+		if (algo.equals("mix")) howmany/=2 ;
+		if (algo.equals("redditmix")) howmany/=3;
 		ArrayList all = getTransformedIteratorToArrayList(artimeme.getAdjacent(currentmeme).iterator());
-		if (algo == "pagerank") Collections.sort(all, new PageRankComparator());
-		if (algo == "popularity") Collections.sort(all, new PopularityComparator());
-		if (algo == "reddit") Collections.sort(all, new VoteComparator());
-		int i = 0;
-		int size = all.size();
-		if (size < howmany) howmany = size;
-		while (i < howmany) {
-			// Here we need a constraint. It need not be a creature of the reader
-			// nor recently bookmarked
-			Artifact arti = (Artifact) all.get(i);
-			if (!arti.author.equals(this)&&!bookmarks.contains(arti)) {
-				i++;
-				read(arti);
-				bookmarks.add(arti);
-			}
+		if (algo.equals("pagerank")||algo.equals("mix")||algo.equals("redditmix")) Collections.sort(all, new PageRankComparator());
+		// if (algo.equals("popularity")) Collections.sort(all, new PopularityComparator());
+		suck(howmany,all);
+		if (algo.equals("mix")||algo.equals("redditmix")) exploreByLinks(howmany+1,all);
+		if (algo.equals("redditmix")) {
+			// Uncomment the following if you want reddit to feed the most voted artifacts in (i.e. reddit frontpage)
+			// Otherwise the agent will read most voted artifacts only relative to his meme of interest (i.e. a subreddit)
+			all = getTransformedIteratorToArrayList(context.getObjects(Artifact.class).iterator());
+			Collections.sort(all, new VoteComparator());
+			suck(howmany+1,all);
 		}
 	}
 
+	public void suck(int capacity, ArrayList startingset) {
+		int i=0; // read artifacts
+		int a=0; // artifacts not read because unsuitable
+		int size = startingset.size();
+		if (size < capacity) capacity = size;
+		while (i < capacity) {
+			// Here we need a constraint. It need not be a creature of the reader
+			// nor recently bookmarked
+			Artifact arti = (Artifact) startingset.get(i);
+			if (!arti.author.equals(this)&&!bookmarks.contains(arti)) {
+				read(arti);
+				arti.addView();  // the artifact gets a page view
+				bookmarks.add(arti);
+				i++;
+			} else a++;
+			if (a+i==size) break;
+		}
+	}
 
 	public void read (Artifact arti) {
 		double sticksInMem = (Double) param.getValue("sticksInMem");
-		arti.views++;  // the artifact gets a page view
 		Iterator memez = arti.getMemes();
 		boolean known = false;
 		int howsimilar = 0;
@@ -204,8 +239,8 @@ public class Agent {
 			}
 			else {
 				if (RandomHelper.nextDoubleFromTo(0, 1)<=sticksInMem) {
-				// // System.out.println("We have " + memory.size() + " memories overall");
-				memory.addEdge(this, thismeme, 1);
+					// // System.out.println("We have " + memory.size() + " memories overall");
+					memory.addEdge(this, thismeme, 1);
 				}
 			}
 		}
@@ -332,13 +367,13 @@ public class Agent {
 		int howmanydeaths = 0;
 		Collections.sort(alledges, new InverseWeightComparator());
 		if (alledgesNo > max) {
-			howmanydeaths = alledgesNo-max-1;
+			howmanydeaths = (alledgesNo-max)-1;
 			if (alledges.size() >= howmanydeaths) {
 				for (int i=0; i<howmanydeaths; i++) {
 					// RepastEdge link = (RepastEdge) alledges.get(i);
 					// // System.out.println(link.getWeight()); // This is to TEST that it does what it does.
 					net.removeEdge((RepastEdge) alledges.get(i));
-					// System.out.println("Removing...");
+					//System.out.println("Removing...");
 				}
 			}
 		} 
@@ -358,17 +393,15 @@ public class Agent {
 		// // System.out.println("This list is " + size + " long. Should be " + max);
 		if (size>max) {
 			howmanydeaths = size-max;	
-			if (list.size() >= howmanydeaths) for (int i=0; i<howmanydeaths-1; i++) list.remove(i);
-		}
-		else {
-			if (size>2) list.remove(0);
-		}
+			if (list.size() >= howmanydeaths) for (int i=0; i<howmanydeaths-2; i++) list.remove(i);
+		} else if (size>2) list.remove(0);
 	}
 
 	public void vote(Artifact arti, double probability) {
 		if ((RandomHelper.nextDoubleFromTo(0, 1) < probability) && (!voted.contains(arti))) {
-			arti.votes++;
+			arti.addVote();
 			voted.add(arti);
+			//System.out.println("I voted");
 		}
 	}
 

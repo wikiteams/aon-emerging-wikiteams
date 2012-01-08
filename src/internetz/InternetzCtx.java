@@ -12,7 +12,7 @@ import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 
 
-public class InternetzCtx extends DefaultContext<Object>  implements ContextBuilder<Object> {
+public class InternetzCtx extends DefaultContext<Object> implements ContextBuilder<Object> {
 	
 
 	public Context build(Context<Object> context) {

@@ -5,6 +5,8 @@ import java.util.Iterator;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.parameter.Parameters;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.util.ContextUtils;
 
@@ -48,9 +50,31 @@ public class Artifact {
 		return artifact.getPredecessors(this).iterator();
 	}
 	
+	
+	public void addView() {
+		views++;
+	}
+	
+	public void addVote() {
+		votes++;
+	}
+	
 	public double getRank() {
 		return pagerank;
 	}
+	
+	public void setRank(double PageRank) {
+		pagerank = PageRank;
+	}
+	
+	public double getNewRank() {
+		return newrank;
+	}
+	
+	public void setNewRank(double NewRank) {
+		newrank = NewRank;
+	}
+	
 	
 	public int getViews() {
 		return views;
@@ -61,10 +85,13 @@ public class Artifact {
 	}
 	
 	public void buildLink(Artifact arti) {
+		Parameters param = RunEnvironment.getInstance().getParameters();
+		double recipro = (Double) param.getValue("avgReciprocating");
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
 		int birthday = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		artifact.addEdge(this, arti, birthday);
+		if (RandomHelper.nextDoubleFromTo(0, 1)<=recipro) artifact.addEdge(arti, this, birthday+2);
 	}
 	
 	@ScheduledMethod(start = 1, interval = 1)
@@ -76,30 +103,29 @@ public class Artifact {
 		
 		while (all.hasNext()) {
 			Artifact arti = (Artifact) all.next();
-			arti.newrank = 0;
+			arti.setNewRank(0);
 		}
 		
 		if (degr > 0) {
-			double increment = pagerank / degr;
+			double increment = this.getRank() / degr;
 			Iterator outl = (Iterator) this.getOutLinks();
 			while (outl.hasNext()) {
 				Artifact sequent = (Artifact) outl.next();
-				sequent.newrank =+ increment;   
+				sequent.setNewRank(sequent.getNewRank()+increment);   
 			}
 		} else {
-			double increment = pagerank / context.getObjects(Artifact.class).size();    
+			double increment = this.getRank()/context.getObjects(Artifact.class).size();    
 			// We don't use artifact.size() in the above computation because (probably) network projections
 			// contain all the agents in the context!!!
 			while (all.hasNext()) {
 				Artifact sequent = (Artifact) all.next();
-				sequent.newrank =+ increment;
+				sequent.setNewRank(sequent.getNewRank()+increment);
 		}
 	}
-		
 		while (all.hasNext()) {
 			Artifact arti = (Artifact) all.next();
-			// Same as above			
-			arti.pagerank = (1 - 0.85) / context.getObjects(Artifact.class).size() + 0.85 * arti.newrank;
-		}		 
+			// Same as above
+			arti.setRank((1-0.85)/(context.getObjects(Artifact.class).size()+(0.85*arti.getNewRank())));
+		}
 	}
 }

@@ -28,7 +28,7 @@
 						defaultValue="none" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="none pagerank popularity reddit random "
+									values="none pagerank popularity reddit random mix redditmix"
 						
 		/>
 				<parameter name="meme_count" displayName="Number of memes" type="int" 
@@ -53,6 +53,12 @@
 						defaultValue="50" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
+				<parameter name="avgReciprocating" displayName="Probability that a link is reciprocated" type="double" 
+						defaultValue="0.05" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									
 		/>
 		</parameters>

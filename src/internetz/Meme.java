@@ -20,7 +20,7 @@ public class Meme {
 	public int EightyPct() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network belief = (Network)context.getProjection("beliefs");
-		if (belief.getDegree(this)>=(context.getObjects(Agent.class).size()*0.8)) return 1;
+		if (belief.getDegree(this)>=(context.getObjects(Agent.class).size()*0.75)) return 1;
 		else return 0;
 	}
 	

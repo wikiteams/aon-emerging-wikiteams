@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
 					<parameter name="agent_count" displayName="Number of agents" type="int" 
-						defaultValue="200" 
+						defaultValue="500" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -25,14 +25,14 @@
 									
 		/>
 				<parameter name="filteringalgo" displayName="Filtering Algorithm" type="java.lang.String" 
-						defaultValue="none" 
+						defaultValue="redditmix" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="none pagerank popularity reddit random mix redditmix"
+									values="none pagerank popularity reddit random mix redditmix "
 						
 		/>
 				<parameter name="meme_count" displayName="Number of memes" type="int" 
-						defaultValue="1000" 
+						defaultValue="5000" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									

@@ -128,12 +128,11 @@ public class Agent {
 		Artifact nowreading = null;
 		int size = startingset.size();
 		// System.out.println(size);
-		if (size>0) { 
+		if (size>0) {
 			whichone = RandomHelper.nextIntFromTo(0, size-1);
 			nowreading = (Artifact) startingset.get(whichone);
 			if (size < capacity) capacity=size;
-			// // System.out.println("E' uscito il numero " + whichone + " su " + startingset.size());
-			// INFINITE LOOP HERE IN THE FIRST RUNS READS IS ALWAYS < HOWMANY
+			
 			while (reads < capacity) {
 				if (!nowreading.author.equals(this)&&!bookmarks.contains(nowreading)) {
 					//System.out.println(nowreading.author);
@@ -259,9 +258,13 @@ public class Agent {
 		// System.out.println("We have " + creatures.size() + " creatures");
 
 		// WARNINGWARNING: magic number to be replaced here
-		for (int i=0; i<6; i++) {
+		int mymemes = (int) ((getTransformedIteratorToArrayList(belief.getEdges(this).iterator()).size()*0.20)+1);
+		int howmanymemes = RandomHelper.nextIntFromTo(0, mymemes); 
+		for (int i=0; i<howmanymemes; i++) {
 			Meme investingmeme = (Meme) belief.getRandomAdjacent(this);
-			artimeme.addEdge(investingmeme, newArt, 1);
+			Meme investingmeme2 = (Meme) belief.getRandomAdjacent(this);
+			if (belief.getEdge(this, investingmeme2).getWeight() > belief.getEdge(this, investingmeme).getWeight()) investingmeme=investingmeme2; 
+			artimeme.addEdge(investingmeme, newArt);
 			// System.out.println("I have just put some memes in the artifact");
 		}
 

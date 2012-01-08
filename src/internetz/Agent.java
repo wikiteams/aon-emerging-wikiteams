@@ -258,7 +258,7 @@ public class Agent {
 		// System.out.println("We have " + creatures.size() + " creatures");
 
 		// WARNINGWARNING: magic number to be replaced here
-		int mymemes = (int) ((getTransformedIteratorToArrayList(belief.getEdges(this).iterator()).size()*0.20)+1);
+		int mymemes = (int) ((belief.getDegree(this)*0.20)+1);
 		int howmanymemes = RandomHelper.nextIntFromTo(0, mymemes); 
 		for (int i=0; i<howmanymemes; i++) {
 			Meme investingmeme = (Meme) belief.getRandomAdjacent(this);

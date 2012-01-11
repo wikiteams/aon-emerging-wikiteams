@@ -16,8 +16,8 @@ public class Agent {
 
 	Parameters param = RunEnvironment.getInstance().getParameters();
 	String algo = (String)param.getValue("filteringalgo");
-	int ownlinks = (Integer) param.getValue("linkswithown");
-	int maxBeliefs = (Integer) param.getValue("maxbelief");
+	int ownlinks = (Integer)param.getValue("linkswithown");
+	int maxBeliefs = (Integer)param.getValue("maxbelief");
 	int status = 0;
 	Network memory;
 	Network artimeme;
@@ -69,7 +69,6 @@ public class Agent {
 		if (isPublisher) {
 			if (status == 0) publish();
 			status+=changeStatus();
-			// System.out.println("Status now: " + status);
 		}
 
 		// Everybody explores
@@ -79,9 +78,9 @@ public class Agent {
 		if (time%5==0) {
 			//// System.out.println("Hooray, I made it to the fifth step");
 			updatebeliefs();
-			corrupt(belief, maxBeliefs);
-			corrupt(memory, maxBeliefs);
-			corrupt(bookmarks, maxBeliefs);
+			corrupt(belief, this.maxBeliefs);
+			corrupt(memory, this.maxBeliefs);
+			corrupt(bookmarks, this.maxBeliefs);
 			if (time > 100) killOldLinks();
 		}
 		// if ((time == 1)||(time % 100 == 0)) {
@@ -94,9 +93,10 @@ public class Agent {
 
 	public void explore() {
 		Context<Object> context = (Context)ContextUtils.getContext(this);	
+		int howmany = RandomHelper.nextIntFromTo(0, this.readingCapacity);
 		if (algo.equals("random")) {
 			// // System.out.println("hello, i'm here");
-			Iterable localarts = context.getRandomObjects(Artifact.class, this.readingCapacity);
+			Iterable localarts = context.getRandomObjects(Artifact.class, howmany);
 			while (localarts.iterator().hasNext()) {
 				Artifact localart = (Artifact)localarts.iterator().next();
 				localart.addView();
@@ -109,15 +109,12 @@ public class Agent {
 		} else {
 			if (algo.equals("none")) {
 				if (!bookmarks.isEmpty()) {
-					int howmany = RandomHelper.nextIntFromTo(0, readingCapacity);
 					exploreByLinks(howmany, bookmarks);
 				} else {
 					ArrayList allarts = getTransformedIteratorToArrayList((context.getObjects(Artifact.class)).iterator());
-					if (allarts.size() > 0) exploreByLinks(readingCapacity, allarts);
+					if (allarts.size() > 0) exploreByLinks(howmany, allarts);
 				}
-			} else {
-				explorebymemes();
-			}
+			} else explorebymemes();
 		}
 	}
 
@@ -166,7 +163,7 @@ public class Agent {
 						frustration++;
 					}
 				}
-				if (frustration>15) break;
+				if (frustration>5) break;
 			}
 		}
 	}
@@ -342,8 +339,7 @@ public class Agent {
 		return mostSimilarArtifacts;
 	}
 
-	// This is a brilliant Iterator --> ArrayList converter made by Ali' in 27 seconds while I was
-	// asking myself how to do it.
+
 	public ArrayList getTransformedIteratorToArrayList(Iterator itr){
 		ArrayList arr = new ArrayList();
 		while(itr.hasNext()){
@@ -356,11 +352,11 @@ public class Agent {
 		ArrayList mostsimilar = getMostSimilar(bookmarks, newart);
 		int size = mostsimilar.size();
 		// System.out.println("I have to link the artifact with " + size + " others");
-		for (int i=0; i<size;i++) {
+		for (int i=0;i<size;i++) {
 			Artifact arti = (Artifact) mostsimilar.get(i);
 			newart.buildLink(arti);
+			// System.out.println("I have linked the artifact with a bookmark");
 		}
-		// // System.out.println("I have linked the artifact with a bookmark");
 	}
 
 
@@ -379,7 +375,7 @@ public class Agent {
 					//System.out.println("Removing...");
 				}
 			}
-		} 
+		}
 		else {
 			// RepastEdge link = (RepastEdge) alledges.iterator().next(); // Hopefully this kills only one edge. CHECK!!
 			if (alledges.size()>2) {
@@ -395,8 +391,10 @@ public class Agent {
 		int howmanydeaths = 0;
 		// // System.out.println("This list is " + size + " long. Should be " + max);
 		if (size>max) {
-			howmanydeaths = size-max;	
-			if (list.size() >= howmanydeaths) for (int i=0; i<howmanydeaths-2; i++) list.remove(i);
+			howmanydeaths = size-max-1;	
+			for (int i=0; i<howmanydeaths; i++) {
+				list.remove(i);
+				}
 		} else if (size>2) list.remove(0);
 	}
 

@@ -98,16 +98,17 @@ public class Artifact {
 	public void updatePageRnk() {   // Adapted from the netlogo 'diffusion' code (fingers crossed)
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
-		int degr = artifact.getOutDegree(this);
-		Iterator all = (Iterator) artifact.getSuccessors(this).iterator();
-		
-		while (all.hasNext()) {
-			Artifact arti = (Artifact) all.next();
+		int outDegree = artifact.getOutDegree(this);
+		// Iterator all = (Iterator) artifact.getSuccessors(this).iterator();
+		Iterator allarts = (Iterator) context.getObjects(Artifact.class).iterator();
+
+		while (allarts.hasNext()) {
+			Artifact arti = (Artifact) allarts.next();
 			arti.setNewRank(0);
 		}
 		
-		if (degr > 0) {
-			double increment = this.getRank() / degr;
+		if (outDegree > 0) {
+			double increment = this.getRank() / outDegree;
 			Iterator outl = (Iterator) this.getOutLinks();
 			while (outl.hasNext()) {
 				Artifact sequent = (Artifact) outl.next();
@@ -117,13 +118,13 @@ public class Artifact {
 			double increment = this.getRank()/context.getObjects(Artifact.class).size();    
 			// We don't use artifact.size() in the above computation because (probably) network projections
 			// contain all the agents in the context!!!
-			while (all.hasNext()) {
-				Artifact sequent = (Artifact) all.next();
+			while (allarts.hasNext()) {
+				Artifact sequent = (Artifact) allarts.next();
 				sequent.setNewRank(sequent.getNewRank()+increment);
 		}
 	}
-		while (all.hasNext()) {
-			Artifact arti = (Artifact) all.next();
+		while (allarts.hasNext()) {
+			Artifact arti = (Artifact) allarts.next();
 			// Same as above
 			arti.setRank((1-0.85)/(context.getObjects(Artifact.class).size()+(0.85*arti.getNewRank())));
 		}

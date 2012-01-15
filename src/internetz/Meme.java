@@ -5,9 +5,29 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.util.ContextUtils;
 
 public class Meme {
+	int id;
+	int group;
 	
 	public Meme() {
-		
+		this.id = id;
+		this.group = group;
+	}
+	
+	public void setID(int ID){
+		this.id = ID;
+	}
+	
+	public void setGrp(int group) {
+		this.group = group;
+	}
+	
+	public int getGrp() {
+		return this.group;
+	}
+	
+	
+	public int getID() {
+		return this.id;
 	}
 	
 	public int IsAlive() {

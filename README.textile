@@ -11,7 +11,7 @@ What is the effect of such shift of paradigm on the diversity of information ava
 
 h2. Implementation
 
-The model implements a society of agents, each endowed with a particular meme pool, engaged in the production and consumption of cultural artifacts. The cultural artifacts are no more than memetic aggregations - an abstraction of artwork, writing, poetry, music... - stemming from the memetic configuration of the creator.
+The model implements a society of agents, each endowed with a particular meme pool, engaged in the production and consumption of cultural artifacts. The cultural artifacts are no more than aggregations of memes - an abstraction of artwork, writing, poetry, music... - stemming from the memetic configuration of the creator.
 
 At each step: 
 
@@ -22,4 +22,4 @@ The retaining of the memes happens on a slightly cognitive fashion: some memes a
 
 !http://i.imgur.com/NJI0i.png!
 
-The figure above shows the basic feedback loop of production and consumption of cultural artifacts implemented in the model: the agent produces artifacts containing a fraction of his memes; the artifact is pushed in the network from which artifacts are extracted after being selected by filtering algorithms (Google in this case). Some of the knowledge embedded is then acquired by the reading agent.
+The figure above shows the basic feedback loop of production and consumption of cultural artifacts implemented in the model: the agent produces artifacts containing a fraction of his memes; the artifact is pushed in the network from which artifacts are extracted after being selected by filtering algorithms. Some of the knowledge embedded is then acquired by the reading agent.

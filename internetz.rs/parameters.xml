@@ -31,6 +31,12 @@
 									values="none pagerank popularity reddit random mix redditmix "
 						
 		/>
+				<parameter name="cultGroups" displayName="Cultural Groups" type="int" 
+						defaultValue="1" 
+						isReadOnly="false" 
+						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
+									
+		/>
 				<parameter name="meme_count" displayName="Number of memes" type="int" 
 						defaultValue="5000" 
 						isReadOnly="false" 

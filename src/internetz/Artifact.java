@@ -100,7 +100,7 @@ public class Artifact {
 		Network artifact = (Network)context.getProjection("artifacts");
 		int outDegree = artifact.getOutDegree(this);
 		// Iterator all = (Iterator) artifact.getSuccessors(this).iterator();
-		Iterator allarts = (Iterator) context.getObjects(Artifact.class).iterator();
+		Iterator allarts = context.getObjects(Artifact.class).iterator();
 
 		while (allarts.hasNext()) {
 			Artifact arti = (Artifact) allarts.next();
@@ -109,18 +109,18 @@ public class Artifact {
 		
 		if (outDegree > 0) {
 			double increment = this.getRank() / outDegree;
-			Iterator outl = (Iterator) this.getOutLinks();
+			Iterator outl = this.getOutLinks();
 			while (outl.hasNext()) {
 				Artifact sequent = (Artifact) outl.next();
-				sequent.setNewRank(sequent.getNewRank()+increment);   
+				double oldrnk = sequent.getNewRank();
+				sequent.setNewRank(oldrnk+increment);   
 			}
 		} else {
 			double increment = this.getRank()/context.getObjects(Artifact.class).size();    
-			// We don't use artifact.size() in the above computation because (probably) network projections
-			// contain all the agents in the context!!!
 			while (allarts.hasNext()) {
 				Artifact sequent = (Artifact) allarts.next();
-				sequent.setNewRank(sequent.getNewRank()+increment);
+				double oldrnk = sequent.getNewRank();
+				sequent.setNewRank(oldrnk+increment);
 		}
 	}
 		while (allarts.hasNext()) {

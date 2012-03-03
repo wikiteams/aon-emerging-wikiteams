@@ -1,4 +1,4 @@
-<context id="internetz"
+<context id="InternetzCtx"
 	class="internetz.InternetzCtx">
 	<projection type="network" id="artifacts"></projection>
 	<projection type="network" id="beliefs"></projection>

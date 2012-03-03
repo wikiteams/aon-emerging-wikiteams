@@ -1,5 +1,7 @@
 package internetz;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import repast.simphony.context.Context;
@@ -8,12 +10,14 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
+import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.util.ContextUtils;
 
 public class Artifact {
 	
 	public int views;
 	public int votes;
+	public int shares;
 	public double birthday;
 	public Agent author;
 	public double newrank;
@@ -24,6 +28,7 @@ public class Artifact {
 	public Artifact(Agent author, double pagerank) {
 		this.views = views;
 		this.votes = votes;
+		this.shares = shares;
 		this.pagerank = pagerank;
 		this.newrank = 0;
 		this.birthday = 0;
@@ -31,11 +36,21 @@ public class Artifact {
 		this.id = id;
 	}
 	
+	public Agent getAuthor() {
+		return this.author;
+	}
+	
 	
 	public Iterator getMemes() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artimeme = (Network)context.getProjection("artimemes");
-		return artimeme.getSuccessors(this).iterator();
+		return artimeme.getAdjacent(this).iterator();
+	}
+	
+	public int totalMemesInvested() {
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artimeme = (Network)context.getProjection("artimemes");
+		return artimeme.getDegree(this);
 	}
 	
 	public Iterator getOutLinks() {
@@ -51,12 +66,17 @@ public class Artifact {
 	}
 	
 	
+	
 	public void addView() {
 		views++;
 	}
 	
 	public void addVote() {
 		votes++;
+	}
+	
+	public void addShare() {
+		shares++;
 	}
 	
 	public double getRank() {
@@ -84,6 +104,32 @@ public class Artifact {
 		return votes;
 	}
 	
+	@ScheduledMethod(start = 100, interval = 1)
+	public void killOldLinks() {
+		// ArrayList allinks = getTransformedIteratorToArrayList(artifact.getEdges().iterator());
+		// Collections.sort(allinks, new InverseWeightComparator());
+		Context context = (Context)ContextUtils.getContext(this);
+		Network artifact = (Network)context.getProjection("artifacts");
+		Iterator myedges = artifact.getEdges(this).iterator();
+		while (myedges.hasNext()) {
+			RepastEdge myedge = (RepastEdge) myedges.next();
+			if (myedge.getWeight()>100){
+				if (RandomHelper.nextDoubleFromTo(0, 1)<=0.50) artifact.removeEdge(myedge);
+			}
+		}
+	}
+		
+	//	double maxweight = ((RepastEdge) allinks.get(0)).getWeight();
+	//	for (int i=0; i<allinks.size(); i++) {
+	//		RepastEdge link = (RepastEdge) allinks.get(i);
+	//		double wght = link.getWeight(); 
+	//		if (wght <= maxweight) {
+	//			if (RandomHelper.nextDoubleFromTo(0, 1)<=0.65) allinks.remove(i);
+	//		} 
+	//		else break;
+	//	}
+	//}
+	
 	public void buildLink(Artifact arti) {
 		Parameters param = RunEnvironment.getInstance().getParameters();
 		double recipro = (Double) param.getValue("avgReciprocating");
@@ -108,7 +154,7 @@ public class Artifact {
 		}
 		
 		if (outDegree > 0) {
-			double increment = this.getRank() / outDegree;
+			double increment = this.getRank()/outDegree;
 			Iterator outl = this.getOutLinks();
 			while (outl.hasNext()) {
 				Artifact sequent = (Artifact) outl.next();

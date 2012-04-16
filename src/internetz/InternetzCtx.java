@@ -31,10 +31,11 @@ public class InternetzCtx extends DefaultContext {
 	int memeBrk = 0;
 	int agntBrk = 0;
 	int maxbeliefs = 0;
-	// this this;
+	private static double dampingFactor = 0.85;
 	Vector totCommunities = new Vector();
-	
-	public InternetzCtx (){//this build(this<Object> myContext) {
+	private static int agentsToAdd = 4;
+
+	public InternetzCtx (){
 		super("InternetzCtx");
 		Parameters param = RunEnvironment.getInstance().getParameters();
 		agentCount = (Integer)param.getValue("agent_count");
@@ -42,7 +43,8 @@ public class InternetzCtx extends DefaultContext {
 		pctPublishers = (Double)param.getValue("pctpubli");
 		groups = (Integer) param.getValue("cultGroups");
 		maxbeliefs = (Integer) param.getValue("maxbelief");
-		
+
+
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("artifacts", (Context<Object>) this, true);
 		netBuilder.buildNetwork();
 		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object>("artimemes", (Context<Object>) this, false);
@@ -60,7 +62,7 @@ public class InternetzCtx extends DefaultContext {
 			// System.out.println(memeBrk+"  "+agntBrk);
 		}
 
-		for (int group=0; group<groups; group++) {
+		for (int grp=0; grp<groups; grp++) {
 			ArrayList community = new ArrayList();
 			totCommunities.add(community);
 		}
@@ -75,9 +77,10 @@ public class InternetzCtx extends DefaultContext {
 				ArrayList community = (ArrayList) totCommunities.get(whichgrp);
 				community.add(meme);
 				meme.setGrp(whichgrp);
-				// System.out.println("I am a meme in group "+ whichgrp);
+				//System.out.println("I am a meme in group "+ whichgrp);
 			}
 		}
+
 		Network belief = (Network) this.getProjection("beliefs");
 		Network memory = (Network) this.getProjection("memorys");
 		Network artifct = (Network) this.getProjection("artifacts");
@@ -92,7 +95,7 @@ public class InternetzCtx extends DefaultContext {
 		Network belief = (Network)getProjection("beliefs");
 		Network artimeme = (Network)getProjection("artimemes");
 		Network artifact = (Network<Artifact>)getProjection("artifacts");		
-		Network sns = (Network)getProjection("twitter");	
+		Network sns = (Network)getProjection("twitter");
 		for (int i=0; i<agentCount; i++) {
 			boolean ispublisher = false;
 			RandomHelper.createPoisson((Integer)param.getValue("avgcap"));
@@ -102,49 +105,122 @@ public class InternetzCtx extends DefaultContext {
 			this.add(agent);
 			agent.setReadingCapacity(readingCapacity);
 			agent.setPublisher(ispublisher);
+			agent.setID(i);
 			RandomHelper.createPoisson(maxbeliefs);
 			int howmany = RandomHelper.getPoisson().nextInt();
-			ArrayList mymemes = new ArrayList();
+			ArrayList<Meme> mymemes = new ArrayList();
 			if (groups>1) {
 				int whichgrp=2;
 				// if (concentrate == false) whichgrp = (int)i/agntBrk;
 				if (concentrate == false) whichgrp = RandomHelper.nextIntFromTo(0, groups-1);
 				agent.setGroup(whichgrp);
-				ArrayList mycommunity = (ArrayList) totCommunities.get(whichgrp); 
-				int j=0;
-				while (j<howmany) {
+				ArrayList mycommunity = (ArrayList) totCommunities.get(whichgrp);
+				double ninetyPct = 0.9*howmany;
+				int j = 0;						
+				while(j < ninetyPct) {
 					Meme thismeme = (Meme) mycommunity.get(RandomHelper.nextIntFromTo(0, mycommunity.size()-1));
 					if (!belief.isAdjacent(thismeme, agent)) {
 						mymemes.add(thismeme);
 						j++;
 					}
 				}
-			} else {
-				Iterator allmemes = this.getRandomObjects(Meme.class, howmany).iterator();	
-				while (allmemes.hasNext()) {
-					mymemes.add(allmemes.next());
+				int k = 0;
+				double tenPct = (howmany-ninetyPct);
+				while (k < tenPct) {
+					Iterator<Meme> allmemes = this.getRandomObjects(Meme.class, howmany).iterator();
+					while (allmemes.hasNext()) {
+						Meme thismeme = (Meme) allmemes.next();
+						if (!mycommunity.contains(thismeme)&&!belief.isAdjacent(thismeme, agent) && k < tenPct) {
+							mymemes.add(thismeme);
+							k++;
+						}
+					}
 				}
+			} else {
+				Iterator allmemes = this.getRandomObjects(Meme.class, howmany).iterator();
+				while (allmemes.hasNext()) mymemes.add((Meme) allmemes.next());
 			}
+
+
 			int allmms = mymemes.size();
-			for (int k=0; k<allmms;k++ ) {
-				Meme target = (Meme)mymemes.get(k);
+			for (int h=0; h<allmms;h++ ) {
+				Meme target = (Meme)mymemes.get(h);
 				//System.out.println("I am now adding meme: "+target);
-				double wght = RandomHelper.nextDoubleFromTo(0.5, 1);
+				double wght = RandomHelper.nextDoubleFromTo(0.1, 1);
 				belief.addEdge(agent,target,wght);
 				// darli a caso. si.
-				// System.out.println("i am now adding a meme");
 			}
 		}
 	}
 	
+	/* public void getInitialSilo(){
+		for (Object obj : this.getObjects(Agent.class)){
+			System.out.println("The initial SIlo idx for this agent is: " + ((Agent) obj).getSilo());
+		}
+	}
+	*/
+
+
+	// UNCOMMENT THE FOLLOWING IN 'SOCIAL' CONDITION
+	
+	@ScheduledMethod(start=1, interval=1)
+	public void dropFriends() {
+		Parameters param = RunEnvironment.getInstance().getParameters();
+		Network sns = (Network) this.getProjection("twitter");
+		Iterator alledg = sns.getEdges().iterator();
+		while (alledg.hasNext()) {
+			RepastEdge edg = (RepastEdge) alledg.next();
+			if (edg.getWeight()<=0) {
+				sns.removeEdge(edg);
+				System.out.println("A friend is no more");
+			}
+		}
+	}
+
+
+	@ScheduledMethod(start = 1, interval = 1)
+	public void updatePageRnk() {   // Adapted from the netlogo 'diffusion' code (fingers crossed)
+		Network artifact = (Network)this.getProjection("artifacts");
+		double increment = 0;
+		for (Object arti : this.getObjects(Artifact.class)) ((Artifact) arti).setNewRank(0);
+		for (Object artifct : this.getObjects(Artifact.class)) {
+			if (artifact.getOutDegree(artifct) > 0) {
+				increment = ((Artifact) artifct).getRank()/artifact.getOutDegree(artifct);
+				for (Object outNeighbor : artifact.getSuccessors(artifct)) 
+				{
+					Artifact sequent = (Artifact) outNeighbor;
+					sequent.setNewRank(sequent.getNewRank()+increment);
+				}
+			} else {
+				increment = ((Artifact) artifct).getRank()/this.getObjects(Artifact.class).size();
+				for (Object allOtherArts : this.getObjects(Artifact.class)) {
+					Artifact sequent = (Artifact) allOtherArts;
+					double oldrnk = sequent.getNewRank();
+					sequent.setNewRank(oldrnk+increment);
+				}
+			}
+		}
+
+		for (Object everySingleArtifact : this.getObjects(Artifact.class)) {
+			Artifact artfc = (Artifact) everySingleArtifact;
+			double rnk = (1-dampingFactor) / (this.getObjects(Artifact.class).size() + (dampingFactor*artfc.getNewRank())) ;
+			artfc.setRank(rnk);
+		}
+	}
+
+	//THIS IMPLEMENTS "NEVERENDING SEPTEMBER"
 	//@ScheduledMethod(start = 550)
 	//public void september() {
 	//	addAgent(50,true);
 	//}
-	
 
+	//UNCOMMENT THE FOLLOWING TO GET A DECREASING INFLOW OF USERS IN THE SYSTEM
+	
 	@ScheduledMethod(start=10, interval=2)
 	public void inflow() {
-		addAgent(4,false);
+		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		if (time > 500) agentsToAdd/=2;
+		if (time > 1000) agentsToAdd=0;
+		if (agentsToAdd>0) addAgent(agentsToAdd,false);
 	}
 }

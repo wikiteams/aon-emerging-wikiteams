@@ -1,9 +1,6 @@
-<context id="InternetzCtx"
-	class="internetz.InternetzCtx">
+<context id="InternetzCtx" class="internetz.InternetzCtx">
 	<projection type="network" id="artifacts"></projection>
 	<projection type="network" id="beliefs"></projection>
 	<projection type="network" id="memorys"></projection>
 	<projection type="network" id="artimemes"></projection>
-	
-
 </context>

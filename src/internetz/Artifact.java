@@ -40,7 +40,6 @@ public class Artifact {
 		return this.author;
 	}
 	
-	
 	public Iterator getMemes() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artimeme = (Network)context.getProjection("artimemes");
@@ -66,6 +65,11 @@ public class Artifact {
 	}
 	
 	
+	public double getAge(){
+		double now = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		double age = now-this.birthday;
+		return age;
+	}
 	
 	public void addView() {
 		views++;
@@ -104,6 +108,10 @@ public class Artifact {
 		return votes;
 	}
 	
+	public void setVotes(int voti) {
+		this.votes = voti;
+	}
+	
 	@ScheduledMethod(start = 100, interval = 1)
 	public void killOldLinks() {
 		// ArrayList allinks = getTransformedIteratorToArrayList(artifact.getEdges().iterator());
@@ -135,44 +143,18 @@ public class Artifact {
 		double recipro = (Double) param.getValue("avgReciprocating");
 		Context context = (Context)ContextUtils.getContext(this);
 		Network artifact = (Network)context.getProjection("artifacts");
-		int birthday = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		double birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		artifact.addEdge(this, arti, birthday);
 		if (RandomHelper.nextDoubleFromTo(0, 1)<=recipro) artifact.addEdge(arti, this, birthday+2);
 	}
-	
-	@ScheduledMethod(start = 1, interval = 1)
-	public void updatePageRnk() {   // Adapted from the netlogo 'diffusion' code (fingers crossed)
-		Context context = (Context)ContextUtils.getContext(this);
-		Network artifact = (Network)context.getProjection("artifacts");
-		int outDegree = artifact.getOutDegree(this);
-		// Iterator all = (Iterator) artifact.getSuccessors(this).iterator();
-		Iterator allarts = context.getObjects(Artifact.class).iterator();
 
-		while (allarts.hasNext()) {
-			Artifact arti = (Artifact) allarts.next();
-			arti.setNewRank(0);
-		}
-		
-		if (outDegree > 0) {
-			double increment = this.getRank()/outDegree;
-			Iterator outl = this.getOutLinks();
-			while (outl.hasNext()) {
-				Artifact sequent = (Artifact) outl.next();
-				double oldrnk = sequent.getNewRank();
-				sequent.setNewRank(oldrnk+increment);   
-			}
-		} else {
-			double increment = this.getRank()/context.getObjects(Artifact.class).size();    
-			while (allarts.hasNext()) {
-				Artifact sequent = (Artifact) allarts.next();
-				double oldrnk = sequent.getNewRank();
-				sequent.setNewRank(oldrnk+increment);
-		}
-	}
-		while (allarts.hasNext()) {
-			Artifact arti = (Artifact) allarts.next();
-			// Same as above
-			arti.setRank((1-0.85)/(context.getObjects(Artifact.class).size()+(0.85*arti.getNewRank())));
+	
+	
+	@ScheduledMethod(start = 50, interval = 50)
+	public void halveVotes() {
+		if (this.getAge()>50) {
+			int newVotes = this.getVotes()/2;
+			this.setVotes(newVotes);
 		}
 	}
 }

@@ -25,10 +25,10 @@
 									
 		/>
 				<parameter name="filteringalgo" displayName="Filtering Algorithm" type="java.lang.String" 
-						defaultValue="redditmix" 
+						defaultValue="social" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="none pagerank popularity reddit random mix redditmix "
+									values="none pagerank popularity reddit random mix redditmix social "
 						
 		/>
 				<parameter name="cultGroups" displayName="Cultural Groups" type="int" 
@@ -44,7 +44,7 @@
 									
 		/>
 				<parameter name="sticksInMem" displayName="Probability a new Meme is remembered" type="double" 
-						defaultValue="0.5" 
+						defaultValue="0.35" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
 									

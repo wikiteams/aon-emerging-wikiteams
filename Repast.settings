@@ -7,11 +7,11 @@
     </default>
     <int>3</int>
     <int>3</int>
-    <string>SettingsRegistryId</string>
-    <string>Repast.registry</string>
-    <string>LastLoadedScenario</string>
-    <string>/home/stefano/workspace-37/internetz/internetz.rs</string>
     <string>SettingsFileName</string>
     <string>Repast.settings</string>
+    <string>LastLoadedScenario</string>
+    <string>/home/stefano/workspace/internetz/internetz.rs</string>
+    <string>SettingsRegistryId</string>
+    <string>Repast.registry</string>
   </hashtable>
 </simphony.settings.SettingsRegistry>

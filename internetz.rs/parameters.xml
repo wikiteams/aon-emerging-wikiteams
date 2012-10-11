@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
 					<parameter name="agent_count" displayName="Number of agents" type="int" 
-						defaultValue="500" 
+						defaultValue="300" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
 									
@@ -28,7 +28,7 @@
 						defaultValue="social" 
 						isReadOnly="false" 
 						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="none pagerank popularity reddit random mix redditmix social "
+									values="random flaneur searcher web2 social "
 						
 		/>
 				<parameter name="cultGroups" displayName="Cultural Groups" type="int" 

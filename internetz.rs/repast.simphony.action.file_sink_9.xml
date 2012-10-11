@@ -1,0 +1,14 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>reads</name>
+  <dataSet>Reads</dataSet>
+  <delimiter>;</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>Mean reads</string>
+    <string>StdvReads</string>
+    <string>TotalAgents</string>
+    <string>TotalArtifacts</string>
+  </sourceIds>
+  <fileName>reads.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

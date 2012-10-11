@@ -2,6 +2,7 @@ package internetz;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
@@ -9,6 +10,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 //import repast.simphony.engine.watcher.Watch;
 //import repast.simphony.engine.watcher.WatcherTriggerSchedule;
 import repast.simphony.parameter.Parameters;
+import repast.simphony.query.PropertyEquals;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
@@ -28,10 +30,10 @@ public class Agent {
 	final static double memeWeightInitial = 0.5;
 	final static double learnIncreaseIfKnown = 0.25;
 	final static int maxArtifactsToLinkTo = 15;
-	final static int maxFollowing = 3000;
-	
+	final static int maxFollowing = 500;
+	final static int endTick = 2000;
 	int grp;
-	int id = 0;
+	static int totalAgents = 0;
 	Network<Object> memory;
 	Network<Object> artimeme;
 	Network<Artifact> artifact;
@@ -47,10 +49,11 @@ public class Agent {
 	private ArrayList<Artifact> creatures = new ArrayList();
 	private ArrayList<Artifact> voted = new ArrayList();
 	private ArrayList<Artifact> shared = new ArrayList();
+	private int name;
 
 
 	public Agent() {
-		this.id = id;
+		this.name = ++totalAgents;
 		// this.readingCapacity = readingCapacity;
 		// this.isPublisher = isPublisher;
 		this.bookmarks = bookmarks;
@@ -82,16 +85,17 @@ public class Agent {
 	}
 	
 	public void setID(int i) {
-		this.id = i;
+		this.name = i;
 	}
 	
 	public int getID() {
-		return this.id;
+		return this.name;
 	}
 		
 
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
+		
 		
 		Context context = (Context)ContextUtils.getContext(this);
 		belief = (Network)context.getProjection("beliefs");
@@ -99,8 +103,14 @@ public class Agent {
 		artimeme = (Network)context.getProjection("artimemes");
 		artifact = (Network<Artifact>)context.getProjection("artifacts");
 		sns = (Network)context.getProjection("twitter");
+		
+		//if (RunEnvironment.getInstance().getCurrentSchedule().getTickCount() == 15) {
+		//	System.out.println("Ending. Total number of links is: " + sns.getDegree());
+		//	RunEnvironment.getInstance().endRun();
+		//}
+		RunEnvironment.getInstance().endAt(endTick);
+
 	
-		//int time = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		if (isPublisher) {
 			if (status == 0) publish();
 			status+=changeStatus();
@@ -126,7 +136,7 @@ public class Agent {
 				}
 			}
 		} else {
-			if (algo.equals("none")) {
+			if (algo.equals("flaneur")) {
 				if (!bookmarks.isEmpty()) exploreByLinks(howmany+1, bookmarks);
 				else {
 					ArrayList allarts = getTransformedIteratorToArrayList((context.getObjects(Artifact.class)).iterator());
@@ -143,6 +153,7 @@ public class Agent {
 		}
 		return newShares;
 	}
+
 
 	public void exploreByLinks(int capacity, ArrayList startingset) {
 		int reads = 0;
@@ -170,7 +181,7 @@ public class Agent {
 						nowreading = (Artifact) startingset.get(whichone);
 					}
 				} else {
-					if (artifact.getOutDegree(nowreading)>1) {
+				 	if (artifact.getOutDegree(nowreading)>1) {
 						nowreading = nowreading = (Artifact) artifact.getRandomSuccessor(nowreading);
 						// System.out.println("There are links. I follow....");
 						//System.out.println("Follow a link");
@@ -202,50 +213,58 @@ public class Agent {
 	public void explorebymemes() {
 		Context<Object> context = (Context)ContextUtils.getContext(this);	
 		Meme currentmeme = (Meme) belief.getRandomAdjacent(this);
+		int oppo = 4999 - currentmeme.getID();
+		//System.out.println("Opposite  meme id: " + oppo);
+		Hashtable allMemes = ((InternetzCtx)context).getMemez();
+		Meme oppositememe = (Meme) allMemes.get(oppo);
 		// Iterator mybeliefs = belief.getAdjacent(this).iterator(); 
 		// double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 		ArrayList<Artifact> all = new ArrayList<Artifact>();
 		ArrayList<Artifact> all2 = new ArrayList<Artifact>();
-		all = getTransformedIteratorToArrayList(artimeme.getAdjacent(currentmeme).iterator());
 		int howmany = RandomHelper.nextIntFromTo(1, readingCapacity);
-		if (algo.equals("mix")||algo.equals("redditmix")||algo.equals("social")) howmany/=4;
-		//if (algo.equals("pagerank")||algo.equals("mix")||algo.equals("social")||algo.equals("redditmix")) 
-		if (all.size()<howmany) {
-			currentmeme = (Meme) belief.getRandomAdjacent(this);
-			all2 = getTransformedIteratorToArrayList(artimeme.getAdjacent(currentmeme).iterator());
-		}
+		all = getTransformedIteratorToArrayList(artimeme.getAdjacent(currentmeme).iterator());
+		all2 = getTransformedIteratorToArrayList(artimeme.getAdjacent(oppositememe).iterator());
 		Collections.sort(all, new PageRankComparator());
-		if (!all2.isEmpty()) Collections.sort(all2, new PageRankComparator());
-		// if (algo.equals("popularity")) Collections.sort(all, new PopularityComparator());
-
-		/* This monitors pagerank:
-		if (all.size()>3) System.out.println("The first and last artis have pagerank: "+all.get(0).getRank()+" 2: "+all.get(1).getRank()+ " last: "+all.get(all.size()-1).getRank());
-		else System.out.println("not yet");
-		 */
-
-		suck(howmany,all);
-		if (!all2.isEmpty()) suck(howmany/2,all2);
-		if (algo.equals("mix")) {
+		Collections.sort(all2, new PageRankComparator());
+		if (algo.equals("searcher")) {
+		
+			if (!all2.isEmpty()) {
+				suck(howmany/2,all);
+				suck(howmany/2,all2);
+			} else suck(howmany,all);
+		}		
+		/*if (algo.equals("flaneur")) {
 			ArrayList fava = new ArrayList();
-			fava.addAll(all);
-			fava.addAll(all2);
-			exploreByLinks(howmany*3,fava);
-		}
-		if (algo.equals("redditmix")) {
+			if (this.bookmarks.size()>1) {
+				fava.addAll(this.bookmarks);
+			} else {
+				fava.addAll(all);
+				fava.addAll(all2);
+			}
+			exploreByLinks(howmany,fava);
+		}*/
+
+		if (algo.equals("web2")) {
 			// Uncomment the following if you want reddit to feed the most voted artifacts in (i.e. reddit frontpage)
 			// Otherwise the agent will read most voted artifacts only relative to his meme of interest (i.e. a subreddit)
 			all = new ArrayList();
 			all = getTransformedIteratorToArrayList(context.getObjects(Artifact.class).iterator());
 			Collections.sort(all, new VoteComparator());
-			suck(howmany*3,all);
+			suck(howmany,all);
 		}
 		
-		if (algo.equals("social")) exploreSocial(howmany*3); 	
+		if (algo.equals("social")) {
+			if (sns.getOutDegree(this)>0) exploreSocial(howmany);
+			else {
+				suck(howmany/2,all);
+				suck(howmany/2,all2);
+			}
+		}
 	}
 	
 	
+	
 	public void exploreSocial(int howmany) {
-		if (sns.getOutDegree(this)>0) {
 			int reads = 0;
 			//ArrayList<Artifact> toRead = new ArrayList<Artifact>();
 			Iterator<Agent> following = sns.getSuccessors(this).iterator();
@@ -260,7 +279,6 @@ public class Agent {
 				}
 				if (reads>=howmany) break;
 			}
-		}
 	}
 
 	public void suck(int capacity, ArrayList startingset) {
@@ -283,29 +301,45 @@ public class Agent {
 	}
 
 	public void read (Artifact arti, Agent sharer) {
+		Context<Object> context = (Context)ContextUtils.getContext(this);	
+		Hashtable allMemes = ((InternetzCtx)context).getMemez();
 		this.reads++;
 		double sticksInMem = (Double) param.getValue("sticksInMem");
-		Iterator memez = arti.getMemes();
+		Iterator<Meme> memez = arti.getMemes();
 		int artiTotalMemes = arti.totalMemesInvested();
 		boolean known = false;
 		int howsimilar = 0;
+		int hate = 0;
 		while (memez.hasNext()) {
 			Meme thismeme = (Meme) memez.next();
+			Meme oppositememe = (Meme) allMemes.get(4999-thismeme.getID());
 			if (belief.isAdjacent(this, thismeme)) {
 				known = true;
 				howsimilar++;
 			}
+			if (belief.isAdjacent(this, oppositememe)) {
+				known = true;
+				hate++;
+			}
 		}
 		if (known) {
+			Boolean positive = true;
+			double prob;
 			sticksInMem+=learnIncreaseIfKnown;
-			double prob = (howsimilar/artiTotalMemes); //+0.05 which was here ;
-			voteAndLink(arti,prob,sharer);
+			if (hate>=howsimilar) {
+				positive=false;
+				prob = ((hate/artiTotalMemes)+0.05);
+				if (sharer!=null) decreaseSocial(sharer);
+			} else {
+				prob = (howsimilar/artiTotalMemes); 
+			}
+			voteAndLink(arti,prob,sharer,positive);
 		} else {
 			if (sharer!=null) decreaseSocial(sharer); 
 		}
 		memez = arti.getMemes();
 		while (memez.hasNext()) {
-			Meme thismeme = (Meme) memez.next();	
+			Meme thismeme = (Meme) memez.next();
 			if (belief.isAdjacent(this, thismeme)) {
 				RepastEdge lnk = belief.getEdge(this, thismeme);
 				double wght = lnk.getWeight();
@@ -318,15 +352,18 @@ public class Agent {
 				lnk.setWeight(wght+weightIncrease);
 				//System.out.println("I'm adding to existing memory");
 				if (lnk.getWeight()>=1) {
-					lnk.setWeight(memeWeightInitial);
-					if (!belief.isAdjacent(this,thismeme )) {
+					if (!belief.isAdjacent(this,thismeme )&&thismeme.isSuitable(this)) {
+						lnk.setWeight(memeWeightInitial);
 						belief.addEdge(this,thismeme,memeWeightInitial);
-						
+
 						//System.out.println("I'm adding a new belief");
 					} else {
 						//System.out.println("I'm adding to an existing belief + memory");
-						double wght2 = belief.getEdge(this, thismeme).getWeight();
-						belief.getEdge(this, thismeme).setWeight(wght2+0.2);
+						if (thismeme.isSuitable(this)) {
+							lnk.setWeight(memeWeightInitial);
+							double wght2 = belief.getEdge(this, thismeme).getWeight();
+							belief.getEdge(this, thismeme).setWeight(wght2+0.2);
+						}
 					}
 				}
 			}
@@ -336,6 +373,7 @@ public class Agent {
 			}
 		}
 	}
+	
 
 	public void publish() {
 		Context<Object> context = (Context)ContextUtils.getContext(this);	
@@ -348,7 +386,7 @@ public class Agent {
 		newArt.votes = 0;
 		newArt.shares = 0;
 		newArt.birthday = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		newArt.id = context.getObjects(Artifact.class).size() + 1;
+		newArt.name = context.getObjects(Artifact.class).size() + 1;
 		// // System.out.println("Just created the artifact #: " + newArt.id);
 		context.add(newArt);
 		creatures.add(newArt);
@@ -358,12 +396,15 @@ public class Agent {
 
 		// WARNINGWARNING: magic number to be replaced here
 		int mymemes = (int) ((belief.getDegree(this)*RandomHelper.nextDoubleFromTo(0, 0.20))+1);
-		int howmanymemes = RandomHelper.nextIntFromTo(0, mymemes); 
-		for (int i=0; i<howmanymemes; i++) {
+		int howmanymemes = RandomHelper.nextIntFromTo(1, mymemes);
+		int i = 0;
+		while (i<howmanymemes) {
 			Meme investingmeme = (Meme) belief.getRandomAdjacent(this);
-			Meme investingmeme2 = (Meme) belief.getRandomAdjacent(this);
-			if (belief.getEdge(this, investingmeme2).getWeight() > belief.getEdge(this, investingmeme).getWeight()) investingmeme=investingmeme2; 
-			artimeme.addEdge(investingmeme, newArt);
+			//Meme investingmeme2 = (Meme) belief.getRandomAdjacent(this);
+			if (belief.getEdge(this, investingmeme).getWeight() > 0) {
+				artimeme.addEdge(investingmeme, newArt);
+				i++;
+			}
 			// System.out.println("I have just put " + howmanymemes +" memes in the artifact");
 		}
 
@@ -462,40 +503,49 @@ public class Agent {
 	}
 	
 
-	public void voteAndLink(Artifact arti, double probability, Agent sharer) {
+	public void voteAndLink(Artifact arti, double probability, Agent sharer, Boolean positive) {
 		double recipro = (Double) param.getValue("avgReciprocating");
 		Agent whomToLink = sharer;
+		Context context = (Context)ContextUtils.getContext(this);
+		sns = (Network) context.getProjection("twitter");
 		if (sharer == null) whomToLink = arti.getAuthor();
 		if ((RandomHelper.nextDoubleFromTo(0, 1) < probability)) {
 			if (!algo.equals("social")){
-				if (!voted.contains(arti)) {
-					arti.addVote();
-					voted.add(arti);
-					//System.out.println("Voted!"+ "Votes are "+ arti.getVotes());
+				if (!this.voted.contains(arti)) {
+					this.voted.add(arti);
+					if (positive) arti.addVote();
+					else arti.subtractVote();
 				}
 			} else {  /// ERROR HERE!!
 				if (!sns.isPredecessor(this, whomToLink)) {
 					if (sns.getOutDegree(this)<maxFollowing) {
-					//	System.out.println("I Added a friend!!");
 						sns.addEdge(this, whomToLink, weightIncrease);
+						//System.out.println("Got a new friend");
 						this.shared.add(arti);
 						arti.addShare();
-					//this.artifactsShared++;
-						if (RandomHelper.nextDoubleFromTo(0, 1)<=(recipro)) sns.addEdge(whomToLink, this, weightIncrease);
+						//this.artifactsShared++;
+						if (RandomHelper.nextDoubleFromTo(0, 1)<=(recipro)) {
+							sns.addEdge(whomToLink, this, weightIncrease);
+							//System.out.println("Got a new friend");
+
+						}
+
 					}
 				} else {
-					sns.getEdge(this, whomToLink).setWeight(sns.getEdge(this, whomToLink).getWeight()+weightIncrease);
+					double wght = sns.getEdge(this, whomToLink).getWeight();
+					sns.getEdge(this, whomToLink).setWeight(wght+weightIncrease);
+					//System.out.println("i'm INcreasing my friendship");
 					this.shared.add(arti);
 					arti.addShare();
 					//this.artifactsShared++;
 
 				}
 			}
-		} else {
+		} /* else {
 			if (algo.equals("social")) {
 				decreaseSocial(whomToLink);
 			}
-		}
+		}*/
 	}
 
 	public void decreaseSocial(Agent friend) {
@@ -504,7 +554,14 @@ public class Agent {
 		if (sns.isPredecessor(this, friend)) {
 			RepastEdge link = sns.getEdge(this, friend);
 			double weight = link.getWeight();
-			if (weight > 0.1) link.setWeight(weight-0.1);
+			if (weight > weightIncrease) {
+				link.setWeight(weight-weightIncrease);
+				
+				//System.out.println("i'm decreasing my friendship. It is now "+link.getWeight());
+			} else {
+				sns.removeEdge(link);
+				//System.out.println("A friend is no more");
+			}
 		}
 	}
 	
@@ -517,7 +574,9 @@ public class Agent {
 			RepastEdge blf = (RepastEdge) blfs.get(i);
 			double wght = blf.getWeight();
 			if (wght<=0) {
-				if (RandomHelper.nextDoubleFromTo(0, 1)>0.50) belief.removeEdge(blf);
+				//if (RandomHelper.nextDoubleFromTo(0, 1)>0.50) belief.removeEdge(blf);
+				// We don't remove a meme anymore.
+				 blf.setWeight(0);
 			} else blf.setWeight(wght-memeWeightDecrease);
 		}
 	}
@@ -558,29 +617,11 @@ public class Agent {
 		return (E-I)/total; 
 	}
 	
-	/* // We put this on hold for now...
-	 * 
-	public void exploreFriends(ArrayList friends) {
-		int exploreHowMany = 3;
-		ArrayList<Artifact> toRead = new ArrayList();
-		int q = 0;
-		for (Object obj : friends){
-			Agent friend = (Agent) obj;
-			toRead.addAll(friend.shared);
-		}
-		
-		if (toRead.size()<=exploreHowMany) exploreHowMany=toRead.size();
-			//Iterator<Artifact> sharedFriend = friend.shared.iterator();
-		for (Artifact sharedArti : toRead) {
-			if (!this.bookmarks.contains(sharedArti)&&!(sharedArti.getAuthor()==this)) {
-				read(sharedArti,friend);
-				q++;
-			}
-				if (q >= exploreHowMany) break;
-		}
-	}
-	*/
 	
+	/*
+	 * This Should be turned on only in the social case. 
+	 * We explore the people we follow and read something shared by their friends.
+	 */
 	@ScheduledMethod(start = 4, interval = 5)
 	public void trackFriends() {
 		Context context = (Context)ContextUtils.getContext(this);
@@ -600,26 +641,8 @@ public class Agent {
 			}
 		}
 	}
+	
 	public double getReads() {
-		return this.reads/1500;
+		return this.reads/endTick;
 	}
-
-  // THIS WOULD HAVE IMPLEMENTED THE SOCIAL CONDITION IN A NEAT WAY, BUT DIDN'T WORK
-	/*
-	@Watch(watcheeClassName = "internetz.Agent", 
-			watcheeFieldNames = "artifactsShared", 
-			query = "linked_to 'twitter'", 
-			whenToTrigger = WatcherTriggerSchedule.LATER,
-			scheduleTriggerDelta = 1, 
-			scheduleTriggerPriority = 1
-			)
-	public void newShare(Agent friend) {
-		int which = friend.artifactsShared;
-		double prob = 0.50;
-		Artifact arti = friend.shared.get(which-1);
-		//System.out.println("Hello, I'm here!");
-		if (RandomHelper.nextDoubleFromTo(0, 1)<=prob) {
-			read(arti,friend);
-		}
-	} */
 }

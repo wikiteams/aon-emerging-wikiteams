@@ -1,0 +1,52 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Reads</name>
+  <type>AGGREGATE</type>
+  <inclTick>false</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>2000.0</start>
+    <interval>0.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>ONE_TIME</frequency>
+  </scheduleParams>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>Mean reads</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Mean reads</id>
+        <className>internetz.Agent</className>
+        <methodName>getReads</methodName>
+        <aggType>MEAN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>StdvReads</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>StdvReads</id>
+        <className>internetz.Agent</className>
+        <methodName>getReads</methodName>
+        <aggType>STD_DEV</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map">
+    <entry>
+      <string>TotalAgents</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>internetz.Agent</typeName>
+        <id>TotalAgents</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+    <entry>
+      <string>TotalArtifacts</string>
+      <repast.simphony.data2.engine.CountSourceDefinition>
+        <typeName>internetz.Artifact</typeName>
+        <id>TotalArtifacts</id>
+      </repast.simphony.data2.engine.CountSourceDefinition>
+    </entry>
+  </countSources>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

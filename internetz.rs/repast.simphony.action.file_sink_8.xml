@@ -1,0 +1,13 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>Silo</name>
+  <dataSet>Silo</dataSet>
+  <delimiter>;</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>tick</string>
+    <string>MeanSilo</string>
+    <string>StdvSilo</string>
+  </sourceIds>
+  <fileName>Silo.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

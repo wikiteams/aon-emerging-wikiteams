@@ -1,5 +1,6 @@
 package internetz;
 
+import java.util.Hashtable;
 import java.util.Iterator;
 
 import repast.simphony.context.Context;
@@ -13,10 +14,9 @@ import repast.simphony.util.ContextUtils;
 public class Meme {
 	int id;
 	int group;
-	//static int totalTenCent = 0;
-	static int totalAgents = 500; 
 	
 	public Meme() {
+		// We set the id in the context, not here.
 		this.id = id;
 		this.group = group;
 	}
@@ -26,6 +26,19 @@ public class Meme {
 		Network belief = (Network)context.getProjection("beliefs");
 		if (belief.getDegree(this)>2) return true;
 		return false;
+	}
+	
+	public boolean isSuitable(Agent agent) {
+		Context context = (Context)ContextUtils.getContext(this);
+		Network belief = (Network)context.getProjection("beliefs");
+		Hashtable allMemes = ((InternetzCtx)context).getMemez();
+		Boolean suitable = true;
+		int opp = 4999 - this.getID();
+		Meme oppositememe = (Meme) allMemes.get(opp);
+		// Iterator opposite = new PropertyEquals(context, "id", opp).query().iterator();
+		if (belief.isAdjacent(agent, oppositememe)&&belief.getEdge(agent, oppositememe).getWeight()>0)
+			suitable = false; 
+		return suitable;
 	}
 	
 	public int getDegree() {
@@ -81,16 +94,10 @@ public class Meme {
 	}
 	
 	
-	// public int IsReallyAlive() {
-	//	Context context = (Context)ContextUtils.getContext(this);
-	//	Network belief = (Network)context.getProjection("beliefs");
-	//	if (belief.getDegree(this)>0) return 1;
-	//	else return 0;
-	//}
-	
 	public int EightyPct() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network belief = (Network)context.getProjection("beliefs");
+		int totalAgents = context.getObjects(Agent.class).size();
 		if (belief.getDegree(this)>=(totalAgents*0.8)) return 1;
 		return 0;
 	}
@@ -98,6 +105,7 @@ public class Meme {
 	public int FiftyPct() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network belief = (Network)context.getProjection("beliefs");
+		int totalAgents = context.getObjects(Agent.class).size();
 		if (belief.getDegree(this)>=(totalAgents*0.5))  return 1;
 		return 0;
 	}
@@ -105,6 +113,7 @@ public class Meme {
 		public int TenPct() {
 		Context context = (Context)ContextUtils.getContext(this);
 		Network belief = (Network)context.getProjection("beliefs");
+		int totalAgents = context.getObjects(Agent.class).size();
 		if (belief.getDegree(this)>=(totalAgents*0.1)) return 1;
 		return 0;
 	}

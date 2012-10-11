@@ -1,7 +1,12 @@
 package internetz;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -34,6 +39,9 @@ public class InternetzCtx extends DefaultContext {
 	private static double dampingFactor = 0.85;
 	Vector totCommunities = new Vector();
 	private static int agentsToAdd = 4;
+
+	Hashtable allMemes = new Hashtable(); 
+
 
 	public InternetzCtx (){
 		super("InternetzCtx");
@@ -72,6 +80,7 @@ public class InternetzCtx extends DefaultContext {
 			Meme meme = new Meme();
 			this.add(meme);
 			meme.setID(i);
+			allMemes.put(i, meme);
 			if (groups>1) {
 				int whichgrp = (int)i/memeBrk;
 				ArrayList community = (ArrayList) totCommunities.get(whichgrp);
@@ -85,18 +94,32 @@ public class InternetzCtx extends DefaultContext {
 		Network memory = (Network) this.getProjection("memorys");
 		Network artifct = (Network) this.getProjection("artifacts");
 
-		addAgent(agentCount,false);
+		addAgent(agentCount,true);
+
+		String algo = (String)param.getValue("filteringalgo");
+
+		System.out.println("Number of memes created "+ this.getObjects(Meme.class).size());
+		System.out.println("Number of agents created "+ this.getObjects(Agent.class).size());
+		System.out.println("Algorithm tested: "+ algo);
+
+		/*	ISchedule schedule = RunEnvironment.getInstance().getCurrentSchedule();
+		ScheduleParameters schedParams;
+		schedParams = ScheduleParameters.createAtEnd(ScheduleParameters.FIRST_PRIORITY);//.createOneTime(103);
+		// OutputRecorder recorder = new OutputRecorder(this, simulation_mode);
+		schedule.schedule(schedParams,this,  "outputSNSData", "record");
+		 */
 	}
 
-	public void addAgent(int agentCount, boolean concentrate) {
+
+	public void addAgent(int agentCnt, boolean concentrate) {
 		Parameters param = RunEnvironment.getInstance().getParameters();
 		//this this = (this)ContextUtils.getContext(this);	
-		Network memory = (Network)getProjection("memorys");
 		Network belief = (Network)getProjection("beliefs");
+		Network memory = (Network)getProjection("memorys");
 		Network artimeme = (Network)getProjection("artimemes");
 		Network artifact = (Network<Artifact>)getProjection("artifacts");		
 		Network sns = (Network)getProjection("twitter");
-		for (int i=0; i<agentCount; i++) {
+		for (int i=0; i<agentCnt; i++) {
 			boolean ispublisher = false;
 			RandomHelper.createPoisson((Integer)param.getValue("avgcap"));
 			readingCapacity = RandomHelper.getPoisson().nextInt();
@@ -105,21 +128,25 @@ public class InternetzCtx extends DefaultContext {
 			this.add(agent);
 			agent.setReadingCapacity(readingCapacity);
 			agent.setPublisher(ispublisher);
-			agent.setID(i);
+			// agent.setID(i);
 			RandomHelper.createPoisson(maxbeliefs);
 			int howmany = RandomHelper.getPoisson().nextInt();
 			ArrayList<Meme> mymemes = new ArrayList();
+			// double tick = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 			if (groups>1) {
-				int whichgrp=2;
+				int whichgrp=3;
 				// if (concentrate == false) whichgrp = (int)i/agntBrk;
-				if (concentrate == false) whichgrp = RandomHelper.nextIntFromTo(0, groups-1);
+				if (concentrate==false) {
+					if (this.getObjects(Agent.class).size()>=agentCount) whichgrp = RandomHelper.nextIntFromTo(0, groups-2);
+					else whichgrp = RandomHelper.nextIntFromTo(0, groups-1);
+				}
 				agent.setGroup(whichgrp);
 				ArrayList mycommunity = (ArrayList) totCommunities.get(whichgrp);
 				double ninetyPct = 0.9*howmany;
 				int j = 0;						
 				while(j < ninetyPct) {
 					Meme thismeme = (Meme) mycommunity.get(RandomHelper.nextIntFromTo(0, mycommunity.size()-1));
-					if (!belief.isAdjacent(thismeme, agent)) {
+					if (!belief.isAdjacent(thismeme, agent)&&isItSuitable(thismeme,agent)) {
 						mymemes.add(thismeme);
 						j++;
 					}
@@ -141,40 +168,45 @@ public class InternetzCtx extends DefaultContext {
 				while (allmemes.hasNext()) mymemes.add((Meme) allmemes.next());
 			}
 
-
-			int allmms = mymemes.size();
-			for (int h=0; h<allmms;h++ ) {
-				Meme target = (Meme)mymemes.get(h);
-				//System.out.println("I am now adding meme: "+target);
-				double wght = RandomHelper.nextDoubleFromTo(0.1, 1);
-				belief.addEdge(agent,target,wght);
-				// darli a caso. si.
-			}
+			attributeMemes(agent,mymemes);
 		}
 	}
-	
-	/* public void getInitialSilo(){
-		for (Object obj : this.getObjects(Agent.class)){
-			System.out.println("The initial SIlo idx for this agent is: " + ((Agent) obj).getSilo());
+
+	public void attributeMemes(Agent agent, ArrayList memes) {
+		Network belief = (Network)getProjection("beliefs");
+		int allmms = memes.size();
+		for (int h=0; h<allmms;h++ ) {
+			Meme target = (Meme)memes.get(h);
+			//System.out.println("I am now adding meme: "+target);
+			double wght = RandomHelper.nextDoubleFromTo(0.1, 1);
+			belief.addEdge(agent,target,wght);
+			// darli a caso. si.
 		}
 	}
-	*/
 
-
-	// UNCOMMENT THE FOLLOWING IN 'SOCIAL' CONDITION
-	
-	@ScheduledMethod(start=1, interval=1)
-	public void dropFriends() {
-		Parameters param = RunEnvironment.getInstance().getParameters();
-		Network sns = (Network) this.getProjection("twitter");
-		Iterator alledg = sns.getEdges().iterator();
-		while (alledg.hasNext()) {
-			RepastEdge edg = (RepastEdge) alledg.next();
-			if (edg.getWeight()<=0) {
-				sns.removeEdge(edg);
-				System.out.println("A friend is no more");
-			}
+	public boolean isItSuitable(Meme meme, Agent agent) {
+		Network belief = (Network)getProjection("beliefs");
+		Boolean suitable = true;
+		int opp = 5000 - meme.getID();
+		// Iterator opposite = new PropertyEquals(context, "id", opp).query().iterator();
+		Iterator agentBlfs = belief.getAdjacent(agent).iterator();
+		while (agentBlfs.hasNext()) {
+			Meme thisblf = (Meme) agentBlfs.next();
+			if (thisblf.getID()==opp) suitable = false; 
 		}
+		return suitable;
+	}
+
+	public Hashtable getMemez() {
+		return allMemes;
+	}
+
+	public int getAgents() {
+		return this.getObjects(Agent.class).size();
+	}
+
+	public int getArtifacts() {
+		return this.getObjects(Artifact.class).size();
 	}
 
 
@@ -208,19 +240,47 @@ public class InternetzCtx extends DefaultContext {
 		}
 	}
 
+
+
 	//THIS IMPLEMENTS "NEVERENDING SEPTEMBER"
 	//@ScheduledMethod(start = 550)
 	//public void september() {
-	//	addAgent(50,true);
+	//	addAgent(100,true);
 	//}
 
+
+	@ScheduledMethod(start = 2000, priority=0)
+	public void outputSNSData() throws IOException {
+		Network sns = (Network)this.getProjection("twitter");
+		StringBuilder dataToWrite = new StringBuilder(); 
+		dataToWrite.append("Source; Destination\n"); // This is the header for the csv file
+		Iterator allEdges = sns.getEdges().iterator();
+
+		for (Object obj : sns.getEdges()) {
+			if (obj instanceof RepastEdge) {
+				RepastEdge edge = (RepastEdge) obj;
+				Object src = edge.getSource();
+				Object tar = edge.getTarget();
+				//String srcName = idMap.get(src);
+				//String tarName = idMap.get(tar);
+				//double weight = edge.getWeight();
+				dataToWrite.append(((Agent) src).getID() +";"+((Agent) tar).getID()+"\n");
+				System.out.println(((Agent) src).getID() +";"+((Agent) tar).getID()+"\n");
+			}
+		}
+		// Now write this data to a file
+		BufferedWriter bw = new BufferedWriter(new FileWriter(new File("socialnetwork.edgelist")));
+		bw.write(dataToWrite.toString());
+		bw.close();
+	}
+
+
 	//UNCOMMENT THE FOLLOWING TO GET A DECREASING INFLOW OF USERS IN THE SYSTEM
-	
 	@ScheduledMethod(start=10, interval=2)
 	public void inflow() {
 		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		if (time > 500) agentsToAdd/=2;
-		if (time > 1000) agentsToAdd=0;
+		if (time > 400) agentsToAdd/=2;
+		if (time > 800) agentsToAdd=0;
 		if (agentsToAdd>0) addAgent(agentsToAdd,false);
 	}
 }

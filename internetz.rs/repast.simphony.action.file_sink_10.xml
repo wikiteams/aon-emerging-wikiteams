@@ -1,0 +1,12 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>MemeDgr</name>
+  <dataSet>MemeDegree</dataSet>
+  <delimiter>;</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>ID</string>
+    <string>Degree</string>
+  </sourceIds>
+  <fileName>Degrees.csv</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

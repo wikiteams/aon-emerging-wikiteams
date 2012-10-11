@@ -22,7 +22,7 @@ public class Artifact {
 	public Agent author;
 	public double newrank;
 	private double pagerank;
-	public int id;
+	public int name;
 
 
 	public Artifact(Agent author, double pagerank) {
@@ -33,7 +33,7 @@ public class Artifact {
 		this.newrank = 0;
 		this.birthday = 0;
 		this.author = author;
-		this.id = id;
+		this.name = name++;
 	}
 	
 	public Agent getAuthor() {
@@ -77,6 +77,10 @@ public class Artifact {
 	
 	public void addVote() {
 		votes++;
+	}
+	
+	public void subtractVote() {
+		votes--;
 	}
 	
 	public void addShare() {
@@ -126,17 +130,6 @@ public class Artifact {
 			}
 		}
 	}
-		
-	//	double maxweight = ((RepastEdge) allinks.get(0)).getWeight();
-	//	for (int i=0; i<allinks.size(); i++) {
-	//		RepastEdge link = (RepastEdge) allinks.get(i);
-	//		double wght = link.getWeight(); 
-	//		if (wght <= maxweight) {
-	//			if (RandomHelper.nextDoubleFromTo(0, 1)<=0.65) allinks.remove(i);
-	//		} 
-	//		else break;
-	//	}
-	//}
 	
 	public void buildLink(Artifact arti) {
 		Parameters param = RunEnvironment.getInstance().getParameters();

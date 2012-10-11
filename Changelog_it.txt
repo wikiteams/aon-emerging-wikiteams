@@ -1,0 +1,77 @@
+
+In breve:
+Ho cambiato il meccanismo di degradazione dei belief; ho introdotto la
+condizione SOCIALNETWORK; ho modificato un po' le condizioni
+sperimentali; ho introdotto i gruppi culturali. 
+
+In lungo:
+
+Degradazione dei belief. 
+Ora ad ogni step la confidence in ogni belief diminuisce di 0.0001,
+mentre ogni incontro con il meme la aumenta di 0.1. L'ho fatto perche'
+cosi' si isolano meglio gli effetti del filtraggio. In questo modo
+dovrebbero essere piu' evidenti.
+
+==========
+
+Nuove condizioni sperimentali.
+Adesso ad ogni step l'utente fa una ricerca su pagerank per 1/4 della
+readingCapacity, qualunque sia la condizione sperimentale, i restanti
+3/4 sono individuati secondo il metodo specifico della condizione
+sperimentale, ovvero:
+* flaneur, corrispondente a randomwalk; 
+* web2, corrispondente a reddit; 
+* searcher, corrispondente a pagerank
+* SOCIAL, nuova condizione corrispondente a twitter :-)
+
+==========
+
+La nuova condizione SOCIAL (aka TWITTER): 
+l'utente puo' CONDIVIDERE un artefatto che gli e' particolarmente
+piaciuto (ovvero con molti memi in comune, secondo lo stesso principio
+di OMOFILIA MEMETICA usato per il voto di reddit) e SEGUIRE l'autore.
+Viene cosi' creata una rete sociale diretta tra gli agenti sul modello
+di twitter (le caratteristiche della rete che viene fuori non le ho
+ancora esplorate). Gli agenti periodicamente vi si avventurano e possono
+ad esempio seguire qualcuno che ha condiviso degli artefatti
+interessanti. La rete quindi include sia i publisher che i semplici
+reader, che pero' adesso sono CONDIVISORI di informazione. I link sono
+diretti e pesati. Ogni volta che qualcuno condivide un artefatto poco
+interessante il peso del link diminuisce. Quando arriva a zero lo
+de-follow :-)
+
+========
+
+I CULTURAL GROUPS:
+Memi e utenti vengono divisi in 4 gruppi (di uguali dimensioni)
+all'inizio della simulazione. A ogni utente viene assegnato un
+patrimonio memetico per il 90% interno al proprio gruppo e per il 10% di
+un gruppo differente. Gli individui quindi fanno parte di un'"area
+culturale" specifica. Questa cosa, combinata con il costraint
+dell'omofilia, realizza una preferenza di ogni agente per le
+informazioni che vengono dal proprio gruppo culturale. 
+Questa cosa dei gruppi ci permette di valutare la diversita' individuale
+(intra-agente) come effetto del meccanismo di filtro: alla fine della
+simulazione contiamo quanti memi di gruppi diversi ci sono nelle teste
+di ogni agente. Per misurarlo usiamo l'indice E-I/E+I: ovvero dei memi
+esterni-interni/totale dentro la testa di ogni agente. E' un numero che
+va da -1 a 1, dove -1 e' la completa uniformita' (tutti i memi fanno
+parte del gruppo dell'agente), 0 e' l'esatta parita' tra memi interni e
+esterni e 1 e' totalita' di memi esterni.
+
+=========
+
+RISULTATI:
+Ho fatto alcuni esperimenti, i risultati sono un po' erratici, ma con
+alcune costanti. Il grafici che ti allego riguardano una situazione di
+afflusso afflusso decrescente di utenti (entrano 2 nuovi agenti ogni
+tick per i primi 500 tick, uno da 500 a 1000 e nessuno dopo i
+mille :-). 
+La condizione social e' l'unica che sistematicamente riesce a non far
+sparire neanche un meme, anche se temo che cio' sia dovuto semplicemente
+al fatto che in questa condizione gli utenti leggono mediamente di piu'
+rispetto alle altre condizioni. E' anche l'unica condizione in cui
+alcuni memi riescono a raggiungere sistematicamente l'intera
+popolazione. La condizione che garantisce maggiore diversita' invece e'
+quella di web2.0
+

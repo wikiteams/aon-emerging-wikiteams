@@ -1,3 +1,15 @@
-<?xml version="1.0"?>
-<sweep runs="1">
+<?xml version="1.0"?><sweep runs="1"> 
+<parameter name="avgcap" type="constant" constant_type="int" value="5" />
+<parameter name="cultGroups" type="constant" constant_type="int" value="4" />
+<parameter name="randomSeed" type="constant" constant_type="int" value="985924735" />
+<parameter name="linkswithown" type="constant" constant_type="int" value="2" />
+<parameter name="maxbelief" type="constant" constant_type="int" value="50" />
+<parameter name="agent_count" type="constant" constant_type="int" value="500" />
+<parameter name="meme_count" type="constant" constant_type="int" value="5000" />
+<parameter name="pctpubli" type="constant" constant_type="double" value="0.25" />
+<parameter name="sticksInMem" type="constant" constant_type="double" value="0.35" />
+<parameter name="avgReciprocating" type="constant" constant_type="double" value="0.05" />
+<parameter name="unBalance" type="constant" constant_type="boolean" value="false" />
+<parameter name="filteringalgo" type="list" value_type="java.lang.String" values="redditmix mix social pagerank" >
+</parameter>
 </sweep>

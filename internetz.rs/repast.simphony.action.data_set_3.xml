@@ -1,0 +1,37 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>Silo</name>
+  <type>AGGREGATE</type>
+  <inclTick>true</inclTick>
+  <inclBatchRun>false</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>10.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+  </scheduleParams>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>MeanSilo</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>MeanSilo</id>
+        <className>internetz.Agent</className>
+        <methodName>getSilo</methodName>
+        <aggType>MEAN</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>StdvSilo</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>StdvSilo</id>
+        <className>internetz.Agent</className>
+        <methodName>getSilo</methodName>
+        <aggType>STD_DEV</aggType>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

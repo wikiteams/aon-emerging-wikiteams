@@ -4,8 +4,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -27,70 +29,105 @@ import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.util.ContextUtils;
 
 public class InternetzCtx extends DefaultContext {
-	
-	SimulationParameters Sims = new SimulationParameters();
-	
-	private static double dampingFactor = 0.85;
-	Vector totCommunities = new Vector();
-	private static int agentsToAdd = 4;
 
-	Hashtable allTeams = new Hashtable();
-	int agentClique;
-	int teamClique;
-	
+	private SimulationParameters simulationParameters = new SimulationParameters();
+	private ModelFactory modelFactory = new ModelFactory();
+
+	/*********************************************************
+	 * -------------- Model BASIC ------------------------
+	 * 
+	 * for deadline 20.07.2013 SocInfo conference
+	 * 
+	 ********************************************************/
+
+	private static int agentsToAdd = 4;
+	private Hashtable allTeams = new Hashtable();
+
+	/*********************************************************
+	 * --------------- Model EXTENDED ----------------------
+	 * 
+	 * for deadline XX.09.2013 JASSS magazine submission
+	 * 
+	 ********************************************************/
+
+	private int agentClique;
+	private int teamClique;
+	private static double dampingFactor = 0.85;
+	private Vector totCommunities = new Vector();
+
 	private void say(String s) {
-		System.out.println(s);
+		System.out.println(getDateLogs() + ": " + s);
+	}
+
+	private String getDateLogs() {
+		return new SimpleDateFormat("DD/MM/YYYY HH:mm").format(new Date());
+	}
+
+	private boolean moreThanBasic() {
+		return modelFactory.getComplexity() > 1;
 	}
 
 	public InternetzCtx() {
 		super("InternetzCtx");
 		say("super object loaded");
-		
+
 		Parameters param = RunEnvironment.getInstance().getParameters();
-		Sims.agentCount = (Integer) param.getValue("numNodes");
-		Sims.teamCount = (Integer) param.getValue("numTeams");
-		Sims.percStartMembership = (Integer) param.getValue("percStartMembership");
-		Sims.allowMultiMembership = (Boolean) param.getValue("allowMultiMembership");
-		Sims.numSteps = (Integer) param.getValue("numSteps");
-		Sims.groups = (Integer) param.getValue("cultGroups");
+		simulationParameters.agentCount = (Integer) param.getValue("numNodes");
+		simulationParameters.teamCount = (Integer) param.getValue("numTeams");
+		simulationParameters.percStartMembership = (Integer) param
+				.getValue("percStartMembership");
+		simulationParameters.allowMultiMembership = (Boolean) param
+				.getValue("allowMultiMembership");
+		simulationParameters.numSteps = (Integer) param.getValue("numSteps");
+
+		// --------------------------------------------------------------
+		if (moreThanBasic()) {
+			simulationParameters.groups = (Integer) param
+					.getValue("cultGroups");
+		}
 		say("params loaded");
 
-		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
-				"teams", (Context<Object>) this, true);
+		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("teams",
+				(Context<Object>) this, true);
 		netBuilder.buildNetwork();
-		
+
 		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object>(
 				"skills", (Context<Object>) this, false);
 		netBuilderMM.buildNetwork();
 		NetworkBuilder<Object> netBuilderBlf = new NetworkBuilder<Object>(
 				"competencies", (Context<Object>) this, false);
 		netBuilderBlf.buildNetwork();
-		
-		NetworkBuilder<Object> netBuilderSN = new NetworkBuilder<Object>(
-				"linkedin", (Context<Object>) this, true);
-		netBuilderSN.buildNetwork();
-		say("linkedin network built");
 
-		if (Sims.groups > 1) {
-			agentClique = Sims.agentCount / Sims.groups;
-			teamClique = Sims.teamCount / Sims.groups;
-			say ("agentClique: " + agentClique + " teamClique: " + teamClique );
-		}
+		if (moreThanBasic()) {
+			NetworkBuilder<Object> netBuilderSN = new NetworkBuilder<Object>(
+					"linkedin", (Context<Object>) this, true);
+			netBuilderSN.buildNetwork();
+			say("linkedin network built");
 
-		for (int grp = 0; grp < Sims.groups; grp++) {
-			ArrayList community = new ArrayList();
-			say ("community created");
-			totCommunities.add(community);
-			say ("community added to Vector");
+			if (simulationParameters.groups > 1) {
+				agentClique = simulationParameters.agentCount
+						/ simulationParameters.groups;
+				teamClique = simulationParameters.teamCount
+						/ simulationParameters.groups;
+				say("agentClique: " + agentClique + " teamClique: "
+						+ teamClique);
+			}
+
+			for (int grp = 0; grp < simulationParameters.groups; grp++) {
+				ArrayList community = new ArrayList();
+				say("community created");
+				totCommunities.add(community);
+				say("community added to Vector");
+			}
 		}
 
 		// totGroups.get(group)
-		for (int i = 0; i < Sims.teamCount; i++) {
+		for (int i = 0; i < simulationParameters.teamCount; i++) {
 			Team team = new Team();
 			this.add(team);
 			team.setId(i);
 			allTeams.put(i, team);
-			if (Sims.groups > 1) {
+			if (simulationParameters.groups > 1) {
 				int whichgrp = (int) i / teamClique;
 				ArrayList community = (ArrayList) totCommunities.get(whichgrp);
 				community.add(team);
@@ -99,21 +136,25 @@ public class InternetzCtx extends DefaultContext {
 			}
 		}
 
+		// --------------------------------------
 		Network teams = (Network) this.getProjection("teams");
 		Network skills = (Network) this.getProjection("skills");
 		Network competencies = (Network) this.getProjection("competencies");
-		Network linkedin = (Network) this.getProjection("linkedin");
+		Network linkedin = null;
+		if (moreThanBasic())
+			linkedin = (Network) this.getProjection("linkedin");
 
-		addAgent(Sims.agentCount, true);
+		addAgent(simulationParameters.agentCount, true);
 
-		Sims.algo = (String) param.getValue("emergenceAlgorithm");
-		say ("algo is " + Sims.algo);
+		simulationParameters.algo = (String) param
+				.getValue("emergenceAlgorithm");
+		say("algo is " + simulationParameters.algo);
 
 		System.out.println("Number of teams created "
 				+ this.getObjects(Team.class).size());
 		System.out.println("Number of agents created "
 				+ this.getObjects(Agent.class).size());
-		System.out.println("Algorithm tested: " + Sims.algo);
+		System.out.println("Algorithm tested: " + simulationParameters.algo);
 
 		/*
 		 * ISchedule schedule =
@@ -147,7 +188,7 @@ public class InternetzCtx extends DefaultContext {
 	}
 
 	public boolean isItSuitable(Team team, Agent agent) {
-		return false;//............????
+		return false;// ............????
 	}
 
 	public Hashtable getTeams() {
@@ -166,7 +207,7 @@ public class InternetzCtx extends DefaultContext {
 	public void updatePageRnk() { // Adapted from the netlogo 'diffusion' code
 									// (fingers crossed)
 		//
-		say ("scheduled update page rank lunched");
+		say("scheduled update page rank lunched");
 	}
 
 	// THIS IMPLEMENTS "NEVERENDING SEPTEMBER"
@@ -207,7 +248,7 @@ public class InternetzCtx extends DefaultContext {
 	// UNCOMMENT THE FOLLOWING TO GET A DECREASING INFLOW OF USERS IN THE SYSTEM
 	@ScheduledMethod(start = 10, interval = 2)
 	public void inflow() {
-		say ("scheduled method inflow lunched");
+		say("scheduled method inflow lunched");
 		double time = RunEnvironment.getInstance().getCurrentSchedule()
 				.getTickCount();
 		if (time > 400)

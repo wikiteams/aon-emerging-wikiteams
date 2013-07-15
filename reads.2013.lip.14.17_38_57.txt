@@ -1,0 +1,2 @@
+"Mean reads";"StdvReads";"TotalAgents";"TotalArtifacts"
+0.0;0.0;300;0

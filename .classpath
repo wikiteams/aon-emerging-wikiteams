@@ -5,5 +5,11 @@
 	<classpathentry exported="true" kind="con" path="GROOVY_SUPPORT"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
 	<classpathentry kind="con" path="REPAST_SIMPHONY_SUPPORT"/>
+	<classpathentry kind="lib" path="lib/random-data-generator-0.01.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3-javadoc.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3-sources.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-1.8.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-bean-collections-1.8.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-beanutils-core-1.8.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

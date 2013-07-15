@@ -1,6 +1,6 @@
 <context id="InternetzCtx" class="internetz.InternetzCtx">
-	<projection type="network" id="artifacts"></projection>
-	<projection type="network" id="beliefs"></projection>
-	<projection type="network" id="memorys"></projection>
-	<projection type="network" id="artimemes"></projection>
+	<projection type="network" id="teams"></projection>
+	<projection type="network" id="skills"></projection>
+	<projection type="network" id="competencies"></projection>
+	<projection type="network" id="linkedin"></projection>
 </context>

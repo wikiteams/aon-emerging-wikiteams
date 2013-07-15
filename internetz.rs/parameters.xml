@@ -1,78 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-					<parameter name="agent_count" displayName="Number of agents" type="int" 
-						defaultValue="300" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="pctpubli" displayName="Percentage of publishers" type="double" 
-						defaultValue="0.25" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
-				<parameter name="avgcap" displayName="Average Reading Capacity" type="int" 
-						defaultValue="5" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="randomSeed" displayName="Default Random Seed" type="int" 
-						defaultValue="__NULL__"
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="filteringalgo" displayName="Filtering Algorithm" type="java.lang.String" 
-						defaultValue="social" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-									values="random flaneur searcher web2 social "
-						
-		/>
-				<parameter name="cultGroups" displayName="Cultural Groups" type="int" 
-						defaultValue="4" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="meme_count" displayName="Number of memes" type="int" 
-						defaultValue="5000" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="sticksInMem" displayName="Probability a new Meme is remembered" type="double" 
-						defaultValue="0.35" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
-				<parameter name="linkswithown" displayName="Links with own artifacts" type="int" 
-						defaultValue="2" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="maxbelief" displayName="Max memes believed" type="int" 
-						defaultValue="50" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$IntConverter"
-									
-		/>
-				<parameter name="avgReciprocating" displayName="Probability that a link is reciprocated" type="double" 
-						defaultValue="0.05" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$DoubleConverter"
-									
-		/>
-				<parameter name="unBalance" displayName="Unbalanced groups" type="boolean" 
-						defaultValue="false" 
-						isReadOnly="false" 
-						converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter"
-									
-		/>
-		</parameters>
+
+	<parameter name="randomSeed" displayName="Default Random Seed"
+		type="int" defaultValue="__NULL__" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="numNodes" displayName="numNodes" type="java.lang.Integer"
+		defaultValue="20" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="numTeams" displayName="numTeams" type="java.lang.Integer"
+		defaultValue="4" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="percStartMembership" displayName="percStartMembership"
+		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="allowMultiMembership" displayName="allowMultiMembership"
+		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+	<parameter name="numSteps" displayName="numSteps"
+		type="java.lang.Integer" defaultValue="50000" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+		
+	<parameter name="cultGroups" displayName="cultGroups"
+		type="java.lang.Integer" defaultValue="4" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+		
+	<parameter name="emergenceAlgorithm" displayName="emergenceAlgorithm"
+		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 
 
+</parameters>

@@ -60,7 +60,7 @@ public class InternetzCtx extends DefaultContext {
 	}
 
 	private String getDateLogs() {
-		return new SimpleDateFormat("DD/MM/YYYY HH:mm").format(new Date());
+		return new SimpleDateFormat("DD/MM/yyyy HH:mm").format(new Date());
 	}
 
 	private boolean moreThanBasic() {
@@ -168,12 +168,13 @@ public class InternetzCtx extends DefaultContext {
 	}
 
 	public void addAgent(int agentCnt, boolean concentrate) {
-		Parameters param = RunEnvironment.getInstance().getParameters();
+		//Parameters param = RunEnvironment.getInstance().getParameters();
 		// this this = (this)ContextUtils.getContext(this);
 		Network teams = (Network) this.getProjection("teams");
 		Network skills = (Network) this.getProjection("skills");
 		Network competencies = (Network) this.getProjection("competencies");
 		Network sns = (Network) this.getProjection("linkedin");
+		
 		List<Agent> listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);

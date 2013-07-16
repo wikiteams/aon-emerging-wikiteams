@@ -105,19 +105,19 @@ public class Agent {
 	}
 
 	private void say(String s) {
-		System.out.println(s);
+		PjiitOutputter.say(s);
 	}
 
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
+		int time = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		say("Step(" + time + ") of Agent scheduled method launched..");
 
-		say("Step() of Agent scheduled method launched..");
-
-		Context context = (Context) ContextUtils.getContext(this);
-		belief = (Network) context.getProjection("beliefs");
-		memory = (Network) context.getProjection("memorys");
-		artimeme = (Network) context.getProjection("artimemes");
-		sns = (Network) context.getProjection("twitter");
+//		Context context = (Context) ContextUtils.getContext(this);
+//		belief = (Network) context.getProjection("beliefs");
+//		memory = (Network) context.getProjection("memorys");
+//		artimeme = (Network) context.getProjection("artimemes");
+//		sns = (Network) context.getProjection("twitter");
 
 		// if (RunEnvironment.getInstance().getCurrentSchedule().getTickCount()
 		// == 15) {
@@ -125,25 +125,33 @@ public class Agent {
 		// sns.getDegree());
 		// RunEnvironment.getInstance().endRun();
 		// }
-		RunEnvironment.getInstance().endAt(endTick);
+		
+		//RunEnvironment.getInstance().endAt(endTick);
+		// po co to ???????????????????
 
-		if (isPublisher) {
-			if (status == 0)
-				publish();
-			status += changeStatus();
-		}
+//		if (isPublisher) {
+//			if (status == 0)
+//				publish();
+//			status += changeStatus();
+//		}
 
-		explore();
+		//explore();
 
 		//updateblfs();
 		//updatememz();
 	}
 
+	/****************************
+	 * 
+	 * 
+	 */
 	private void explore() {
 		// TODO Auto-generated method stub
-
 	}
 
+	/*******************************
+	 * 
+	 */
 	private void publish() {
 		// TODO Auto-generated method stub
 
@@ -179,7 +187,7 @@ public class Agent {
 	}
 
 	public void decreaseSocial(Agent friend) {
-		Context context = (Context) ContextUtils.getContext(this);
+		/*Context context = (Context) ContextUtils.getContext(this);
 		sns = (Network) context.getProjection("twitter");
 		if (sns.isPredecessor(this, friend)) {
 			RepastEdge link = sns.getEdge(this, friend);
@@ -192,7 +200,7 @@ public class Agent {
 				sns.removeEdge(link);
 				// System.out.println("A friend is no more");
 			}
-		}
+		}*/
 	}
 
 	/*****
@@ -222,8 +230,17 @@ public class Agent {
 //		}
 	}
 
-	public void updatememz() {
-		Context context = (Context) ContextUtils.getContext(this);
+	/*****
+	 * Here social network of agents is rewiried
+	 * @author Oskar
+	 * @since EXTENDED
+	 * 
+	 * updateAcqouintance2()
+	 * makes rewiring of SN
+	 * 
+	 */
+	public void updateAcqouintance2() {
+		/*Context context = (Context) ContextUtils.getContext(this);
 		memory = (Network) context.getProjection("memorys");
 		ArrayList mmrs = getTransformedIteratorToArrayList(memory
 				.getEdges(this).iterator());
@@ -235,26 +252,48 @@ public class Agent {
 					memory.removeEdge(mmr);
 			} else
 				mmr.setWeight(wgt - memeWeightDecrease);
-		}
+		}*/
 	}
 
-	public int changeStatus() {
-		if (RandomHelper.nextDoubleFromTo(0, 1) > 0.5)
-			return 1;
-		return -1;
+
+	/**************************************************************************
+	 * Change status of an agent..
+	 * @author Oskar
+	 * @since BASIC 1.0
+	 * 
+	 * changeStatus()
+	 * ---
+	 * 
+	 **************************************************************************/
+	public void changeStatus() {
+//		if (RandomHelper.nextDoubleFromTo(0, 1) > 0.5)
+//			return 1;
+//		return -1;
 	}
 
+	/*****
+	 * Here social network of agents is rewiried
+	 * @author Oskar
+	 * @since EXTENDED
+	 * 
+	 * getSilo()
+	 * ---
+	 * 
+	 */
 	public double getSilo() {
 		return 0;// ...?????????
 	}
 
-	/*
+	/*************************************************************************
 	 * This Should be turned on only in the social case. We explore the people
 	 * we follow and read something shared by their friends.
-	 */
+	 * @author Oskar
+	 * @since EXTENDED
+	 * 
+	 **************************************************************************/
 	@ScheduledMethod(start = 4, interval = 5)
 	public void trackFriends() {
-		Context context = (Context) ContextUtils.getContext(this);
+		/*Context context = (Context) ContextUtils.getContext(this);
 		sns = (Network) context.getProjection("linkedin");
 		if (sns.getDegree(this) > 1) {
 			Agent sharer = sns.getRandomAdjacent(this);
@@ -269,7 +308,7 @@ public class Agent {
 					// }
 				}
 			}
-		}
+		}*/
 	}
 
 	public double getReads() {

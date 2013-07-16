@@ -40,7 +40,7 @@ public class InternetzCtx extends DefaultContext {
 	 * 
 	 ********************************************************/
 
-	private static int agentsToAdd = 4;
+	// private static int agentsToAdd = 4;
 	private Hashtable allTeams = new Hashtable();
 
 	/*********************************************************
@@ -52,26 +52,32 @@ public class InternetzCtx extends DefaultContext {
 
 	private int agentClique;
 	private int teamClique;
-	private static double dampingFactor = 0.85;
+	// private static double dampingFactor = 0.85;
 	private Vector totCommunities = new Vector();
 
 	private void say(String s) {
-		System.out.println(getDateLogs() + ": " + s);
-	}
-
-	private String getDateLogs() {
-		return new SimpleDateFormat("DD/MM/yyyy HH:mm").format(new Date());
+		PjiitOutputter.say(s);
 	}
 
 	private boolean moreThanBasic() {
-		return modelFactory.getComplexity() > 1;
+		return modelFactory.getComplexity() > 0;
 	}
 
 	public InternetzCtx() {
 		super("InternetzCtx");
-		say("super object loaded");
+		try {
+			PjiitLogger.init();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		say("Super object InternetzCtx loaded");
+		say("Starting simulation with model: " + modelFactory.toString());
 
 		Parameters param = RunEnvironment.getInstance().getParameters();
+		say("Loading parameters");
+
 		simulationParameters.agentCount = (Integer) param.getValue("numNodes");
 		simulationParameters.teamCount = (Integer) param.getValue("numTeams");
 		simulationParameters.percStartMembership = (Integer) param
@@ -85,12 +91,12 @@ public class InternetzCtx extends DefaultContext {
 			simulationParameters.groups = (Integer) param
 					.getValue("cultGroups");
 		}
-		say("params loaded");
+		say("Parameters loaded");
 
+		// / QUESTIONABLE......
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("teams",
 				(Context<Object>) this, true);
 		netBuilder.buildNetwork();
-
 		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object>(
 				"skills", (Context<Object>) this, false);
 		netBuilderMM.buildNetwork();
@@ -102,7 +108,7 @@ public class InternetzCtx extends DefaultContext {
 			NetworkBuilder<Object> netBuilderSN = new NetworkBuilder<Object>(
 					"linkedin", (Context<Object>) this, true);
 			netBuilderSN.buildNetwork();
-			say("linkedin network built");
+			say("--- LinkedIN networkbuilder built ---");
 
 			if (simulationParameters.groups > 1) {
 				agentClique = simulationParameters.agentCount
@@ -121,25 +127,42 @@ public class InternetzCtx extends DefaultContext {
 			}
 		}
 
-		// totGroups.get(group)
 		for (int i = 0; i < simulationParameters.teamCount; i++) {
 			Team team = new Team();
+			say("Creating team..");
 			this.add(team);
-			team.setId(i);
+			say("Initializing team..");
+			team.initialize();
 			allTeams.put(i, team);
-			if (simulationParameters.groups > 1) {
-				int whichgrp = (int) i / teamClique;
-				ArrayList community = (ArrayList) totCommunities.get(whichgrp);
-				community.add(team);
-				team.setGroup(whichgrp);
-				say("I am a team in group " + whichgrp);
-			}
+
+			if (moreThanBasic())
+				if (simulationParameters.groups > 1) {
+					int whichgrp = (int) i / teamClique;
+					ArrayList community = (ArrayList) totCommunities
+							.get(whichgrp);
+					community.add(team);
+					team.setGroup(whichgrp);
+					say("I am a team in group " + whichgrp);
+				}
 		}
 
-		// --------------------------------------
 		Network teams = (Network) this.getProjection("teams");
+		say("Projection teams (" + teams.getName() + ") exists and is size: "
+				+ teams.size());
 		Network skills = (Network) this.getProjection("skills");
+		say("Projection skills (" + skills.getName() + ") exists and is size: "
+				+ skills.size());
 		Network competencies = (Network) this.getProjection("competencies");
+		say("Projection competencies (" + competencies.getName() + ") exists and is size: "
+				+ competencies.size());
+
+		// --------------------------------------
+		/*
+		 * Network teams = (Network) this.getProjection("teams"); Network skills
+		 * = (Network) this.getProjection("skills"); Network competencies =
+		 * (Network) this.getProjection("competencies"); Network linkedin =
+		 * null;
+		 */
 		Network linkedin = null;
 		if (moreThanBasic())
 			linkedin = (Network) this.getProjection("linkedin");
@@ -165,16 +188,18 @@ public class InternetzCtx extends DefaultContext {
 		 * new OutputRecorder(this, simulation_mode);
 		 * schedule.schedule(schedParams,this, "outputSNSData", "record");
 		 */
+		
+		outputTeamNetworkData();
 	}
 
 	public void addAgent(int agentCnt, boolean concentrate) {
-		//Parameters param = RunEnvironment.getInstance().getParameters();
+		// Parameters param = RunEnvironment.getInstance().getParameters();
 		// this this = (this)ContextUtils.getContext(this);
-		Network teams = (Network) this.getProjection("teams");
-		Network skills = (Network) this.getProjection("skills");
-		Network competencies = (Network) this.getProjection("competencies");
-		Network sns = (Network) this.getProjection("linkedin");
-		
+		// Network teams = (Network) this.getProjection("teams");
+		// Network skills = (Network) this.getProjection("skills");
+		// Network competencies = (Network) this.getProjection("competencies");
+		// Network sns = (Network) this.getProjection("linkedin");
+
 		List<Agent> listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
@@ -216,47 +241,55 @@ public class InternetzCtx extends DefaultContext {
 	// public void september() {
 	// addAgent(100,true);
 	// }
+	
+	private void outputTeamNetworkData(){
+		Network teams = (Network) this.getProjection("teams");
+		Iterator allNodes = teams.getEdges().iterator();
+		for (Object obj : teams.getNodes()) {
+			say( "Team network data output --- " + ((Team) obj).toString() );
+		}
+	}
 
 	@ScheduledMethod(start = 2000, priority = 0)
-	public void outputSNSData() throws IOException {
-		Network sns = (Network) this.getProjection("twitter");
-		StringBuilder dataToWrite = new StringBuilder();
-		dataToWrite.append("Source; Destination\n"); // This is the header for
-														// the csv file
-		Iterator allEdges = sns.getEdges().iterator();
-
-		for (Object obj : sns.getEdges()) {
-			if (obj instanceof RepastEdge) {
-				RepastEdge edge = (RepastEdge) obj;
-				Object src = edge.getSource();
-				Object tar = edge.getTarget();
-				// String srcName = idMap.get(src);
-				// String tarName = idMap.get(tar);
-				// double weight = edge.getWeight();
-				dataToWrite.append(((Agent) src).getId() + ";"
-						+ ((Agent) tar).getId() + "\n");
-				System.out.println(((Agent) src).getId() + ";"
-						+ ((Agent) tar).getId() + "\n");
-			}
-		}
-		// Now write this data to a file
-		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
-				"socialnetwork.edgelist")));
-		bw.write(dataToWrite.toString());
-		bw.close();
+	private void outputSNSData() throws IOException {
+//		Network sns = (Network) this.getProjection("linkedin");
+//		StringBuilder dataToWrite = new StringBuilder();
+//		dataToWrite.append("Source; Destination\n"); // This is the header for
+//														// the csv file
+//		Iterator allEdges = sns.getEdges().iterator();
+//
+//		for (Object obj : sns.getEdges()) {
+//			if (obj instanceof RepastEdge) {
+//				RepastEdge edge = (RepastEdge) obj;
+//				Object src = edge.getSource();
+//				Object tar = edge.getTarget();
+//				// String srcName = idMap.get(src);
+//				// String tarName = idMap.get(tar);
+//				// double weight = edge.getWeight();
+//				dataToWrite.append(((Agent) src).getId() + ";"
+//						+ ((Agent) tar).getId() + "\n");
+//				System.out.println(((Agent) src).getId() + ";"
+//						+ ((Agent) tar).getId() + "\n");
+//			}
+//		}
+//		// Now write this data to a file
+//		BufferedWriter bw = new BufferedWriter(new FileWriter(new File(
+//				"socialnetwork.edgelist")));
+//		bw.write(dataToWrite.toString());
+//		bw.close();
 	}
 
 	// UNCOMMENT THE FOLLOWING TO GET A DECREASING INFLOW OF USERS IN THE SYSTEM
 	@ScheduledMethod(start = 10, interval = 2)
 	public void inflow() {
 		say("scheduled method inflow lunched");
-		double time = RunEnvironment.getInstance().getCurrentSchedule()
-				.getTickCount();
-		if (time > 400)
-			agentsToAdd /= 2;
-		if (time > 800)
-			agentsToAdd = 0;
-		if (agentsToAdd > 0)
-			addAgent(agentsToAdd, false);
+		// double time = RunEnvironment.getInstance().getCurrentSchedule()
+		// .getTickCount();
+		// if (time > 400)
+		// agentsToAdd /= 2;
+		// if (time > 800)
+		// agentsToAdd = 0;
+		// if (agentsToAdd > 0)
+		// addAgent(agentsToAdd, false);
 	}
 }

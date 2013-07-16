@@ -11,32 +11,32 @@ import java.util.Map;
  * 
  */
 public class Team {
-	
+
 	protected static int COUNT = 0;
 
 	private String name;
 	private int id;
 	private int group;
-	
+
 	public Team() {
-		say ("Team object initialized...");
+		say("Team object created...");
 	}
-	
+
 	private Map<String, Skill> skills = new HashMap<String, Skill>();
-	
-	public void addSkill(String key, Skill skill){
+
+	public void addSkill(String key, Skill skill) {
 		skills.put(key, skill);
 	}
-	
-	public Skill getSkill(String key){
+
+	public Skill getSkill(String key) {
 		return skills.get(key);
 	}
-	
-	public void setId(int id){
+
+	public synchronized void setId(int id) {
 		this.id = id;
 	}
-	
-	public void setGroup(int group){
+
+	public void setGroup(int group) {
 		this.group = group;
 	}
 
@@ -48,18 +48,18 @@ public class Team {
 		this.name = name;
 		this.id = id;
 	}
-	
-	@SuppressWarnings("unused")
+
 	private void say(String s) {
-		System.out.println(s);
+		PjiitOutputter.say(s);
 	}
 
 	public String toString() {
 		return "Team " + id + " " + name;
 	}
 
-	public void initialize() {
+	public synchronized void initialize() {
 		setId(++COUNT);
+		say("Team object initialized with id: " + this.id);
 	}
 
 	public Map<String, Skill> getSkills() {

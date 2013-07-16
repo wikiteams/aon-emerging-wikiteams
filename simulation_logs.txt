@@ -1,0 +1,148 @@
+INFO - 197/07/2013 19:38Super object InternetzCtx loaded
+INFO - 197/07/2013 19:38Starting simulation with model: Basic
+INFO - 197/07/2013 19:38Loading parameters
+INFO - 197/07/2013 19:38Parameters loaded
+INFO - 197/07/2013 19:38Team object created...
+INFO - 197/07/2013 19:38Creating team..
+INFO - 197/07/2013 19:38Initializing team..
+INFO - 197/07/2013 19:38Team object initialized with id: 1
+INFO - 197/07/2013 19:38Team object created...
+INFO - 197/07/2013 19:38Creating team..
+INFO - 197/07/2013 19:38Initializing team..
+INFO - 197/07/2013 19:38Team object initialized with id: 2
+INFO - 197/07/2013 19:38Team object created...
+INFO - 197/07/2013 19:38Creating team..
+INFO - 197/07/2013 19:38Initializing team..
+INFO - 197/07/2013 19:38Team object initialized with id: 3
+INFO - 197/07/2013 19:38Team object created...
+INFO - 197/07/2013 19:38Creating team..
+INFO - 197/07/2013 19:38Initializing team..
+INFO - 197/07/2013 19:38Team object initialized with id: 4
+INFO - 197/07/2013 19:38Projection teams (teams) exists and is size: 4
+INFO - 197/07/2013 19:38Projection skills (skills) exists and is size: 4
+INFO - 197/07/2013 19:38Projection competencies (competencies) exists and is size: 4
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38Agent constructor called
+INFO - 197/07/2013 19:38id: 1 name: Mathias Gazda
+INFO - 197/07/2013 19:38in add aggent i: 0
+INFO - 197/07/2013 19:38id: 2 name: Elva Braga
+INFO - 197/07/2013 19:38in add aggent i: 1
+INFO - 197/07/2013 19:38id: 3 name: Dakota Stitely
+INFO - 197/07/2013 19:38in add aggent i: 2
+INFO - 197/07/2013 19:38id: 4 name: Harl Fosso
+INFO - 197/07/2013 19:38in add aggent i: 3
+INFO - 197/07/2013 19:38id: 5 name: Demond Busche
+INFO - 197/07/2013 19:38in add aggent i: 4
+INFO - 197/07/2013 19:38id: 6 name: Hugo Kincaide
+INFO - 197/07/2013 19:38in add aggent i: 5
+INFO - 197/07/2013 19:38id: 7 name: Cosmo Marchiano
+INFO - 197/07/2013 19:38in add aggent i: 6
+INFO - 197/07/2013 19:38id: 8 name: Garett Klebe
+INFO - 197/07/2013 19:38in add aggent i: 7
+INFO - 197/07/2013 19:38id: 9 name: Sanford Beegle
+INFO - 197/07/2013 19:38in add aggent i: 8
+INFO - 197/07/2013 19:38id: 10 name: Patricia Detemple
+INFO - 197/07/2013 19:38in add aggent i: 9
+INFO - 197/07/2013 19:38id: 11 name: Davion Gregorich
+INFO - 197/07/2013 19:38in add aggent i: 10
+INFO - 197/07/2013 19:38id: 12 name: William Menz
+INFO - 197/07/2013 19:38in add aggent i: 11
+INFO - 197/07/2013 19:38id: 13 name: Walker Hanisco
+INFO - 197/07/2013 19:38in add aggent i: 12
+INFO - 197/07/2013 19:38id: 14 name: Nada Demsky
+INFO - 197/07/2013 19:38in add aggent i: 13
+INFO - 197/07/2013 19:38id: 15 name: Augustine Wittig
+INFO - 197/07/2013 19:38in add aggent i: 14
+INFO - 197/07/2013 19:38id: 16 name: Carolyn Delmendo
+INFO - 197/07/2013 19:38in add aggent i: 15
+INFO - 197/07/2013 19:38id: 17 name: Alexzander Ledo
+INFO - 197/07/2013 19:38in add aggent i: 16
+INFO - 197/07/2013 19:38id: 18 name: Jammie Pendry
+INFO - 197/07/2013 19:38in add aggent i: 17
+INFO - 197/07/2013 19:38id: 19 name: Hardie Kardos
+INFO - 197/07/2013 19:38in add aggent i: 18
+INFO - 197/07/2013 19:38id: 20 name: Tambra Jempty
+INFO - 197/07/2013 19:38in add aggent i: 19
+INFO - 197/07/2013 19:38algo is preferential
+INFO - 197/07/2013 19:38Team network data output --- Team 1 null
+INFO - 197/07/2013 19:38Team network data output --- Team 2 null
+INFO - 197/07/2013 19:38Team network data output --- Team 3 null
+INFO - 197/07/2013 19:38Team network data output --- Team 4 null
+ERROR - Error while initializing simulation
+java.lang.ClassCastException: internetz.Agent cannot be cast to internetz.Team
+	at internetz.InternetzCtx.outputTeamNetworkData(InternetzCtx.java:249)
+	at internetz.InternetzCtx.<init>(InternetzCtx.java:192)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)
+	at java.lang.reflect.Constructor.newInstance(Unknown Source)
+	at java.lang.Class.newInstance0(Unknown Source)
+	at java.lang.Class.newInstance(Unknown Source)
+	at repast.simphony.dataLoader.engine.DataLoaderControllerAction.createContext(DataLoaderControllerAction.java:90)
+	at repast.simphony.dataLoader.engine.DataLoaderControllerAction.runInitialize(DataLoaderControllerAction.java:43)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:207)
+	at repast.simphony.engine.controller.DefaultController$2.visit(DefaultController.java:1)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:287)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:290)
+	at repast.simphony.util.collections.NaryTree.preOrderTraverals(NaryTree.java:290)
+	at repast.simphony.util.collections.NaryTree.preOrderTraversal(NaryTree.java:283)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:205)
+	at repast.simphony.engine.controller.DefaultController.runInitialize(DefaultController.java:376)
+	at repast.simphony.ui.RSApplication.initSim(RSApplication.java:159)
+	at repast.simphony.ui.RSApplication.start(RSApplication.java:191)
+	at repast.simphony.ui.action.StartRun.actionPerformed(StartRun.java:17)
+	at javax.swing.AbstractButton.fireActionPerformed(Unknown Source)
+	at javax.swing.AbstractButton$Handler.actionPerformed(Unknown Source)
+	at javax.swing.DefaultButtonModel.fireActionPerformed(Unknown Source)
+	at javax.swing.DefaultButtonModel.setPressed(Unknown Source)
+	at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(Unknown Source)
+	at java.awt.AWTEventMulticaster.mouseReleased(Unknown Source)
+	at java.awt.Component.processMouseEvent(Unknown Source)
+	at javax.swing.JComponent.processMouseEvent(Unknown Source)
+	at java.awt.Component.processEvent(Unknown Source)
+	at java.awt.Container.processEvent(Unknown Source)
+	at java.awt.Component.dispatchEventImpl(Unknown Source)
+	at java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.awt.Component.dispatchEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.retargetMouseEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.processMouseEvent(Unknown Source)
+	at java.awt.LightweightDispatcher.dispatchEvent(Unknown Source)
+	at java.awt.Container.dispatchEventImpl(Unknown Source)
+	at java.awt.Window.dispatchEventImpl(Unknown Source)
+	at java.awt.Component.dispatchEvent(Unknown Source)
+	at java.awt.EventQueue.dispatchEventImpl(Unknown Source)
+	at java.awt.EventQueue.access$000(Unknown Source)
+	at java.awt.EventQueue$1.run(Unknown Source)
+	at java.awt.EventQueue$1.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
+	at java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue$2.run(Unknown Source)
+	at java.awt.EventQueue$2.run(Unknown Source)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.security.AccessControlContext$1.doIntersectionPrivilege(Unknown Source)
+	at java.awt.EventQueue.dispatchEvent(Unknown Source)
+	at java.awt.EventDispatchThread.pumpOneEventForFilters(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForFilter(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEventsForHierarchy(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.pumpEvents(Unknown Source)
+	at java.awt.EventDispatchThread.run(Unknown Source)

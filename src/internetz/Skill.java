@@ -5,14 +5,25 @@ public class Skill {
 	private String name;
 	private short id;
 	private Category category;
+	private int strength;
 
 	public Skill() {
-
+		say ("Empty-constructor Skill initialized");
+	}
+	
+	public Skill(String name, short id, int strength) {
+		this.name = name;
+		this.id = id;
+		this.strength = strength;
+		say ("Skill initialized");
+	}
+	
+	private void say(String s) {
+		PjiitOutputter.say(s);
 	}
 
 	public Skill(String name, short id) {
-		this.name = name;
-		this.id = id;
+		new Skill(name, id, -1);
 	}
 
 	public String getName() {
@@ -31,19 +42,20 @@ public class Skill {
 		this.id = id;
 	}
 
-	public int getRank() {
-		// TODO Auto-generated method stub
-		return 0;
+	public int getStrength() {
+		return strength;
 	}
 
-	public int getVotes() {
-		// TODO Auto-generated method stub
-		return 0;
+	public void setStrength(int strength) {
+		this.strength = strength;
 	}
 
-	public int getViews() {
-		// TODO Auto-generated method stub
-		return 0;
+	public Category getCategory() {
+		return category;
+	}
+
+	public void setCategory(Category category) {
+		this.category = category;
 	}
 
 }

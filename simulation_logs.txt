@@ -1,95 +1,95 @@
-INFO - 197/07/2013 19:38Super object InternetzCtx loaded
-INFO - 197/07/2013 19:38Starting simulation with model: Basic
-INFO - 197/07/2013 19:38Loading parameters
-INFO - 197/07/2013 19:38Parameters loaded
-INFO - 197/07/2013 19:38Team object created...
-INFO - 197/07/2013 19:38Creating team..
-INFO - 197/07/2013 19:38Initializing team..
-INFO - 197/07/2013 19:38Team object initialized with id: 1
-INFO - 197/07/2013 19:38Team object created...
-INFO - 197/07/2013 19:38Creating team..
-INFO - 197/07/2013 19:38Initializing team..
-INFO - 197/07/2013 19:38Team object initialized with id: 2
-INFO - 197/07/2013 19:38Team object created...
-INFO - 197/07/2013 19:38Creating team..
-INFO - 197/07/2013 19:38Initializing team..
-INFO - 197/07/2013 19:38Team object initialized with id: 3
-INFO - 197/07/2013 19:38Team object created...
-INFO - 197/07/2013 19:38Creating team..
-INFO - 197/07/2013 19:38Initializing team..
-INFO - 197/07/2013 19:38Team object initialized with id: 4
-INFO - 197/07/2013 19:38Projection teams (teams) exists and is size: 4
-INFO - 197/07/2013 19:38Projection skills (skills) exists and is size: 4
-INFO - 197/07/2013 19:38Projection competencies (competencies) exists and is size: 4
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38Agent constructor called
-INFO - 197/07/2013 19:38id: 1 name: Mathias Gazda
-INFO - 197/07/2013 19:38in add aggent i: 0
-INFO - 197/07/2013 19:38id: 2 name: Elva Braga
-INFO - 197/07/2013 19:38in add aggent i: 1
-INFO - 197/07/2013 19:38id: 3 name: Dakota Stitely
-INFO - 197/07/2013 19:38in add aggent i: 2
-INFO - 197/07/2013 19:38id: 4 name: Harl Fosso
-INFO - 197/07/2013 19:38in add aggent i: 3
-INFO - 197/07/2013 19:38id: 5 name: Demond Busche
-INFO - 197/07/2013 19:38in add aggent i: 4
-INFO - 197/07/2013 19:38id: 6 name: Hugo Kincaide
-INFO - 197/07/2013 19:38in add aggent i: 5
-INFO - 197/07/2013 19:38id: 7 name: Cosmo Marchiano
-INFO - 197/07/2013 19:38in add aggent i: 6
-INFO - 197/07/2013 19:38id: 8 name: Garett Klebe
-INFO - 197/07/2013 19:38in add aggent i: 7
-INFO - 197/07/2013 19:38id: 9 name: Sanford Beegle
-INFO - 197/07/2013 19:38in add aggent i: 8
-INFO - 197/07/2013 19:38id: 10 name: Patricia Detemple
-INFO - 197/07/2013 19:38in add aggent i: 9
-INFO - 197/07/2013 19:38id: 11 name: Davion Gregorich
-INFO - 197/07/2013 19:38in add aggent i: 10
-INFO - 197/07/2013 19:38id: 12 name: William Menz
-INFO - 197/07/2013 19:38in add aggent i: 11
-INFO - 197/07/2013 19:38id: 13 name: Walker Hanisco
-INFO - 197/07/2013 19:38in add aggent i: 12
-INFO - 197/07/2013 19:38id: 14 name: Nada Demsky
-INFO - 197/07/2013 19:38in add aggent i: 13
-INFO - 197/07/2013 19:38id: 15 name: Augustine Wittig
-INFO - 197/07/2013 19:38in add aggent i: 14
-INFO - 197/07/2013 19:38id: 16 name: Carolyn Delmendo
-INFO - 197/07/2013 19:38in add aggent i: 15
-INFO - 197/07/2013 19:38id: 17 name: Alexzander Ledo
-INFO - 197/07/2013 19:38in add aggent i: 16
-INFO - 197/07/2013 19:38id: 18 name: Jammie Pendry
-INFO - 197/07/2013 19:38in add aggent i: 17
-INFO - 197/07/2013 19:38id: 19 name: Hardie Kardos
-INFO - 197/07/2013 19:38in add aggent i: 18
-INFO - 197/07/2013 19:38id: 20 name: Tambra Jempty
-INFO - 197/07/2013 19:38in add aggent i: 19
-INFO - 197/07/2013 19:38algo is preferential
-INFO - 197/07/2013 19:38Team network data output --- Team 1 null
-INFO - 197/07/2013 19:38Team network data output --- Team 2 null
-INFO - 197/07/2013 19:38Team network data output --- Team 3 null
-INFO - 197/07/2013 19:38Team network data output --- Team 4 null
+INFO - 210/07/2013 16:10Super object InternetzCtx loaded
+INFO - 210/07/2013 16:10Starting simulation with model: Basic
+INFO - 210/07/2013 16:10Loading parameters
+INFO - 210/07/2013 16:10Parameters loaded
+INFO - 210/07/2013 16:10Team object created...
+INFO - 210/07/2013 16:10Creating team..
+INFO - 210/07/2013 16:10Initializing team..
+INFO - 210/07/2013 16:10Team object initialized with id: 1
+INFO - 210/07/2013 16:10Team object created...
+INFO - 210/07/2013 16:10Creating team..
+INFO - 210/07/2013 16:10Initializing team..
+INFO - 210/07/2013 16:10Team object initialized with id: 2
+INFO - 210/07/2013 16:10Team object created...
+INFO - 210/07/2013 16:10Creating team..
+INFO - 210/07/2013 16:10Initializing team..
+INFO - 210/07/2013 16:10Team object initialized with id: 3
+INFO - 210/07/2013 16:10Team object created...
+INFO - 210/07/2013 16:10Creating team..
+INFO - 210/07/2013 16:10Initializing team..
+INFO - 210/07/2013 16:10Team object initialized with id: 4
+INFO - 210/07/2013 16:10Projection teams (teams) exists and is size: 4
+INFO - 210/07/2013 16:10Projection skills (skills) exists and is size: 4
+INFO - 210/07/2013 16:10Projection competencies (competencies) exists and is size: 4
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10Agent constructor called
+INFO - 210/07/2013 16:10id: 1 name: Louvenia Gally
+INFO - 210/07/2013 16:10in add aggent i: 0
+INFO - 210/07/2013 16:10id: 2 name: Rhea Degree
+INFO - 210/07/2013 16:10in add aggent i: 1
+INFO - 210/07/2013 16:10id: 3 name: Modena Klaich
+INFO - 210/07/2013 16:10in add aggent i: 2
+INFO - 210/07/2013 16:10id: 4 name: Andreas Waring
+INFO - 210/07/2013 16:10in add aggent i: 3
+INFO - 210/07/2013 16:10id: 5 name: Janessa Tacheny
+INFO - 210/07/2013 16:10in add aggent i: 4
+INFO - 210/07/2013 16:10id: 6 name: Vito Poggi
+INFO - 210/07/2013 16:10in add aggent i: 5
+INFO - 210/07/2013 16:10id: 7 name: Leala Tranel
+INFO - 210/07/2013 16:10in add aggent i: 6
+INFO - 210/07/2013 16:10id: 8 name: Eric Behnke
+INFO - 210/07/2013 16:10in add aggent i: 7
+INFO - 210/07/2013 16:10id: 9 name: Damarcus Lusby
+INFO - 210/07/2013 16:10in add aggent i: 8
+INFO - 210/07/2013 16:10id: 10 name: Joselin Petrain
+INFO - 210/07/2013 16:10in add aggent i: 9
+INFO - 210/07/2013 16:10id: 11 name: Lucy Wissing
+INFO - 210/07/2013 16:10in add aggent i: 10
+INFO - 210/07/2013 16:10id: 12 name: Elva Devera
+INFO - 210/07/2013 16:10in add aggent i: 11
+INFO - 210/07/2013 16:10id: 13 name: Talon Alcombright
+INFO - 210/07/2013 16:10in add aggent i: 12
+INFO - 210/07/2013 16:10id: 14 name: Hailey Brookens
+INFO - 210/07/2013 16:10in add aggent i: 13
+INFO - 210/07/2013 16:10id: 15 name: Ida Larotta
+INFO - 210/07/2013 16:10in add aggent i: 14
+INFO - 210/07/2013 16:10id: 16 name: Demonte Kesten
+INFO - 210/07/2013 16:10in add aggent i: 15
+INFO - 210/07/2013 16:10id: 17 name: Verne Tepfer
+INFO - 210/07/2013 16:10in add aggent i: 16
+INFO - 210/07/2013 16:10id: 18 name: Lem Marsiglia
+INFO - 210/07/2013 16:10in add aggent i: 17
+INFO - 210/07/2013 16:10id: 19 name: Jason Amo
+INFO - 210/07/2013 16:10in add aggent i: 18
+INFO - 210/07/2013 16:10id: 20 name: Nathalia Gabrial
+INFO - 210/07/2013 16:10in add aggent i: 19
+INFO - 210/07/2013 16:10algo is preferential
+INFO - 210/07/2013 16:10Team network data output --- Team 1 null
+INFO - 210/07/2013 16:10Team network data output --- Team 2 null
+INFO - 210/07/2013 16:10Team network data output --- Team 3 null
+INFO - 210/07/2013 16:10Team network data output --- Team 4 null
 ERROR - Error while initializing simulation
 java.lang.ClassCastException: internetz.Agent cannot be cast to internetz.Team
-	at internetz.InternetzCtx.outputTeamNetworkData(InternetzCtx.java:249)
-	at internetz.InternetzCtx.<init>(InternetzCtx.java:192)
+	at internetz.InternetzCtx.outputTeamNetworkData(InternetzCtx.java:253)
+	at internetz.InternetzCtx.<init>(InternetzCtx.java:195)
 	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
 	at sun.reflect.NativeConstructorAccessorImpl.newInstance(Unknown Source)
 	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(Unknown Source)

@@ -26,6 +26,7 @@ import repast.simphony.parameter.Parameters;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.graph.RepastEdge;
+import repast.simphony.space.projection.Projection;
 import repast.simphony.util.ContextUtils;
 
 public class InternetzCtx extends DefaultContext {
@@ -36,7 +37,7 @@ public class InternetzCtx extends DefaultContext {
 	/*********************************************************
 	 * -------------- Model BASIC ------------------------
 	 * 
-	 * for deadline 20.07.2013 SocInfo conference
+	 * for deadline 1.08.2013 SocInfo conference
 	 * 
 	 ********************************************************/
 
@@ -131,6 +132,7 @@ public class InternetzCtx extends DefaultContext {
 			Team team = new Team();
 			say("Creating team..");
 			this.add(team);
+			//netBuilder.
 			say("Initializing team..");
 			team.initialize();
 			allTeams.put(i, team);
@@ -146,13 +148,14 @@ public class InternetzCtx extends DefaultContext {
 				}
 		}
 
-		Network teams = (Network) this.getProjection("teams");
+		Network<Team> teams = (Network<Team>) this.getProjection("teams");
 		say("Projection teams (" + teams.getName() + ") exists and is size: "
 				+ teams.size());
-		Network skills = (Network) this.getProjection("skills");
+		//teams.
+		Network<Skill> skills = (Network<Skill>) this.getProjection("skills");
 		say("Projection skills (" + skills.getName() + ") exists and is size: "
 				+ skills.size());
-		Network competencies = (Network) this.getProjection("competencies");
+		Network<Competency> competencies = (Network<Competency>) this.getProjection("competencies");
 		say("Projection competencies (" + competencies.getName() + ") exists and is size: "
 				+ competencies.size());
 
@@ -244,6 +247,7 @@ public class InternetzCtx extends DefaultContext {
 	
 	private void outputTeamNetworkData(){
 		Network teams = (Network) this.getProjection("teams");
+		//Projection teams = this.getProjection("teams");
 		Iterator allNodes = teams.getEdges().iterator();
 		for (Object obj : teams.getNodes()) {
 			say( "Team network data output --- " + ((Team) obj).toString() );

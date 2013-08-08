@@ -31,18 +31,28 @@ import repast.simphony.util.ContextUtils;
 
 public class InternetzCtx extends DefaultContext {
 
+	// tutaj tworze factory parametryzacje, dzieki czemu beda wczytywane
+	// parametry.. jakie parametry na jaka symulacje ?
+	// dostosowac parametry do poszczeglonych zlozonosci samej symulacji
 	private SimulationParameters simulationParameters = new SimulationParameters();
+	
+	// moj modelfactory do okreslenia complexity
+	// BASIC, EXTENDED, EXTRA_EXTENDED
 	private ModelFactory modelFactory = new ModelFactory();
 
 	/*********************************************************
-	 * -------------- Model BASIC ------------------------
-	 * 
-	 * for deadline 1.08.2013 SocInfo conference
-	 * 
+	 * -------------- Model BASIC ----------------------------
+	 * -------------------------------------------------------
+	 * for deadline 1.08.2013 SocInfo conference *************
+	 * -------------------------------------------------------
 	 ********************************************************/
-
+	
 	// private static int agentsToAdd = 4;
 	private Hashtable allTeams = new Hashtable();
+	
+	/**********************************************************
+	 * ----------------  END OF BASIC MODEL
+	 *********************************************************/
 
 	/*********************************************************
 	 * --------------- Model EXTENDED ----------------------
@@ -50,11 +60,15 @@ public class InternetzCtx extends DefaultContext {
 	 * for deadline XX.09.2013 JASSS magazine submission
 	 * 
 	 ********************************************************/
-
+	
 	private int agentClique;
 	private int teamClique;
 	// private static double dampingFactor = 0.85;
 	private Vector totCommunities = new Vector();
+	
+	/**********************************************************
+	 * ----------------  END OF EXTENDED MODEL
+	 *********************************************************/
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
@@ -76,9 +90,11 @@ public class InternetzCtx extends DefaultContext {
 		say("Super object InternetzCtx loaded");
 		say("Starting simulation with model: " + modelFactory.toString());
 
+		// getting parameters of simulation
 		Parameters param = RunEnvironment.getInstance().getParameters();
 		say("Loading parameters");
 
+		// assing parameters of a simulation
 		simulationParameters.agentCount = (Integer) param.getValue("numNodes");
 		simulationParameters.teamCount = (Integer) param.getValue("numTeams");
 		simulationParameters.percStartMembership = (Integer) param
@@ -91,6 +107,8 @@ public class InternetzCtx extends DefaultContext {
 		if (moreThanBasic()) {
 			simulationParameters.groups = (Integer) param
 					.getValue("cultGroups");
+		} else {
+			
 		}
 		say("Parameters loaded");
 

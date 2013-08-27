@@ -18,33 +18,13 @@ import repast.simphony.util.ContextUtils;
 
 public class Agent {
 
-	// Parameters param = RunEnvironment.getInstance().getParameters();
-	// String algo = (String)param.getValue("filteringalgo");
-	// int ownlinks = (Integer)param.getValue("linkswithown");
-	// int maxBeliefs = (Integer)param.getValue("maxbelief");
 	SimulationParameters Sims = new SimulationParameters();
 
-	int status = 0;
-	int socialreads = 0;
-
-	final static double weightIncrease = 0.1;
-	final static double memeWeightDecrease = 0.0005;
-	final static double memeWeightInitial = 0.5;
-	final static double learnIncreaseIfKnown = 0.25;
-	final static int maxArtifactsToLinkTo = 15;
-	final static int maxFollowing = 500;
-	final static int endTick = 2000;
-	int grp;
-	static int totalAgents = 0;
-	Network<Object> memory;
-	Network<Object> artimeme;
-	Network<Object> belief;
-	Network<Agent> sns;
-
-	boolean isPublisher;
-	private int readingCapacity;
-	// private int artifactsShared;
-	private int reads;
+	private AgentInternals agentInternals;
+	private Strategy strategy;
+	
+	public static int totalAgents = 0;
+	static double time = 0;
 
 	private int id;
 	private String firstname;
@@ -53,31 +33,8 @@ public class Agent {
 	public Agent() {
 		say("Agent constructor called");
 		this.id = ++totalAgents;
-		// this.readingCapacity = readingCapacity;
-		// this.isPublisher = isPublisher;
-		// this.status = status;
-		// this.grp = grp;
-		// this.artifactsShared=0;
-		this.reads = 0;
-		new Competency().check1();
-	}
-
-	public void setReadingCapacity(int readingCapacity) {
-		this.readingCapacity = readingCapacity;
-
-	}
-
-	public void setGroup(int group) {
-		this.grp = group;
-	}
-
-	public int getGroup() {
-		return this.grp;
-	}
-
-	public void setPublisher(boolean isPublisher) {
-		this.isPublisher = isPublisher;
-
+		
+		AgentSkillsPool agentCompetencyPool = new AgentSkillsPool();
 	}
 
 	public void setId(int id) {
@@ -110,209 +67,19 @@ public class Agent {
 
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
-		int time = (int) RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		say("Step(" + time + ") of Agent scheduled method launched..");
-
-//		Context context = (Context) ContextUtils.getContext(this);
-//		belief = (Network) context.getProjection("beliefs");
-//		memory = (Network) context.getProjection("memorys");
-//		artimeme = (Network) context.getProjection("artimemes");
-//		sns = (Network) context.getProjection("twitter");
-
-		// if (RunEnvironment.getInstance().getCurrentSchedule().getTickCount()
-		// == 15) {
-		// System.out.println("Ending. Total number of links is: " +
-		// sns.getDegree());
-		// RunEnvironment.getInstance().endRun();
-		// }
 		
-		//RunEnvironment.getInstance().endAt(endTick);
-		// po co to ???????????????????
-
-//		if (isPublisher) {
-//			if (status == 0)
-//				publish();
-//			status += changeStatus();
-//		}
-
-		//explore();
-
-		//updateblfs();
-		//updatememz();
-	}
-
-	/****************************
-	 * 
-	 * 
-	 */
-	private void explore() {
-		// TODO Auto-generated method stub
-	}
-
-	/*******************************
-	 * 
-	 */
-	private void publish() {
-		// TODO Auto-generated method stub
-
-	}
-
-	public void exploreByLinks(int capacity, ArrayList startingset) {
-		//
-	}
-
-	public void explorebymemes() {
-		// ....??????????
-	}
-
-	public void exploreSocial(int howmany) {
-		// .......??
-	}
-
-	public void suck(int capacity, ArrayList startingset) {
-		// ....
-	}
-
-	public ArrayList getTransformedIteratorToArrayList(Iterator itr) {
-		ArrayList arr = new ArrayList();
-		while (itr.hasNext()) {
-			arr.add(itr.next());
-		}
-		return arr;
-	}
-
-	@ScheduledMethod(start = 5, interval = 5)
-	public void corrupt() {
-		say("corrupt scheduled method lunched...");
-	}
-
-	public void decreaseSocial(Agent friend) {
-		/*Context context = (Context) ContextUtils.getContext(this);
-		sns = (Network) context.getProjection("twitter");
-		if (sns.isPredecessor(this, friend)) {
-			RepastEdge link = sns.getEdge(this, friend);
-			double weight = link.getWeight();
-			if (weight > weightIncrease) {
-				link.setWeight(weight - weightIncrease);
-
-				// System.out.println("i'm decreasing my friendship. It is now "+link.getWeight());
-			} else {
-				sns.removeEdge(link);
-				// System.out.println("A friend is no more");
-			}
-		}*/
-	}
-
-	/*****
-	 * Here social network of agents is rewiried
-	 * @author Oskar
-	 * @since EXTENDED
-	 * 
-	 * updateAcqouintance()
-	 * makes rewiring of SN
-	 * 
-	 */
-	public void updateAcqouintance() {		
-//		Context context = (Context) ContextUtils.getContext(this);
-//		belief = (Network) context.getProjection("beliefs");
-//		ArrayList blfs = getTransformedIteratorToArrayList(belief
-//				.getEdges(this).iterator());
-//		for (int i = 0; i < blfs.size(); i++) {
-//			RepastEdge blf = (RepastEdge) blfs.get(i);
-//			double wght = blf.getWeight();
-//			if (wght <= 0) {
-//				// if (RandomHelper.nextDoubleFromTo(0, 1)>0.50)
-//				// belief.removeEdge(blf);
-//				// We don't remove a meme anymore.
-//				blf.setWeight(0);
-//			} else
-//				blf.setWeight(wght - memeWeightDecrease);
-//		}
-	}
-
-	/*****
-	 * Here social network of agents is rewiried
-	 * @author Oskar
-	 * @since EXTENDED
-	 * 
-	 * updateAcqouintance2()
-	 * makes rewiring of SN
-	 * 
-	 */
-	public void updateAcqouintance2() {
-		/*Context context = (Context) ContextUtils.getContext(this);
-		memory = (Network) context.getProjection("memorys");
-		ArrayList mmrs = getTransformedIteratorToArrayList(memory
-				.getEdges(this).iterator());
-		for (int i = 0; i < mmrs.size(); i++) {
-			RepastEdge mmr = (RepastEdge) mmrs.get(i);
-			double wgt = mmr.getWeight();
-			if (wgt <= 0) {
-				if (RandomHelper.nextDoubleFromTo(0, 1) > 0.50)
-					memory.removeEdge(mmr);
-			} else
-				mmr.setWeight(wgt - memeWeightDecrease);
-		}*/
-	}
-
-
-	/**************************************************************************
-	 * Change status of an agent..
-	 * @author Oskar
-	 * @since BASIC 1.0
-	 * 
-	 * changeStatus()
-	 * ---
-	 * 
-	 **************************************************************************/
-	public void changeStatus() {
-//		if (RandomHelper.nextDoubleFromTo(0, 1) > 0.5)
-//			return 1;
-//		return -1;
-	}
-
-	/*****
-	 * Here social network of agents is rewiried
-	 * @author Oskar
-	 * @since EXTENDED
-	 * 
-	 * getSilo()
-	 * ---
-	 * 
-	 */
-	public double getSilo() {
-		return 0;// ...?????????
-	}
-
-	/*************************************************************************
-	 * This Should be turned on only in the social case. We explore the people
-	 * we follow and read something shared by their friends.
-	 * @author Oskar
-	 * @since EXTENDED
-	 * 
-	 **************************************************************************/
-	@ScheduledMethod(start = 4, interval = 5)
-	public void trackFriends() {
-		/*Context context = (Context) ContextUtils.getContext(this);
-		sns = (Network) context.getProjection("linkedin");
-		if (sns.getDegree(this) > 1) {
-			Agent sharer = sns.getRandomAdjacent(this);
-			int exploreHowMany = 3;
-			for (int i = 0; i < exploreHowMany; i++) {
-				if (sns.getOutDegree(sharer) > 0) {
-					Agent friend = sns.getRandomSuccessor(sharer);
-					// if(friend.shared.size()>0) {
-					// int siz = friend.shared.size();
-					// Artifact toRead = friend.shared.get(siz-1);
-					// read(toRead,friend);
-					// }
-				}
-			}
-		}*/
-	}
-
-	public double getReads() {
-		return this.reads / endTick;
+		say("Step(" + time + ") of Agent scheduled method launched..");
+		
+		Context context = (Context) ContextUtils.getContext(this);
+		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+ 
+		// Agent Aj uses Aj {strategy for choosing tasks} and chooses a task to work on
+		
+		
+		
+		// Agent Aj works on Ti
+		
+		// Chose and algorithm for inside-task skill choose.
 	}
 
 	public String toString() {

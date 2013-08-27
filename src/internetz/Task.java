@@ -7,45 +7,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author Oskar
+ * Task is a collection of a three-element set of skill, number of work units,
+ * and work done.
  * 
+ * @since 1.0
+ * 
+ * @author Oskar
  */
-public class Team {
+public class Task {
 
 	protected static int COUNT = 0;
 
 	private String name;
 	private int id;
-	private int group;
 
-	public Team() {
-		say("Team object created...");
+	public Task() {
+		say("Task object created...");
 	}
 
-	private Map<String, Skill> skills = new HashMap<String, Skill>();
+	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
 
-	public void addSkill(String key, Skill skill) {
-		skills.put(key, skill);
+	public void addSkill(String key, TaskInternals taskInternals) {
+		skills.put(key, taskInternals);
 	}
 
-	public Skill getSkill(String key) {
+	public TaskInternals getSkill(String key) {
 		return skills.get(key);
 	}
 
 	public synchronized void setId(int id) {
-		this.id = id;
-	}
-
-	public void setGroup(int group) {
-		this.group = group;
-	}
-
-	public Team(short id) {
-		this.id = id;
-	}
-
-	public Team(String name, short id) {
-		this.name = name;
 		this.id = id;
 	}
 
@@ -54,7 +44,7 @@ public class Team {
 	}
 
 	public String toString() {
-		return "Team " + id + " " + name;
+		return "Task " + id + " " + name;
 	}
 
 	public synchronized void initialize() {
@@ -66,7 +56,7 @@ public class Team {
 		return skills;
 	}
 
-	public void setSkills(Map<String, Skill> skills) {
+	public void setSkills(Map<String, TaskInternals> skills) {
 		this.skills = skills;
 	}
 

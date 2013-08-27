@@ -3,7 +3,7 @@ package internetz;
 import cern.jet.random.ChiSquare;
 import repast.simphony.random.RandomHelper;
 
-public class Competency extends Skill {
+public class Experience {
 	
 	LearningCurve lc = null;
 	
@@ -11,7 +11,7 @@ public class Competency extends Skill {
 		System.out.println(s);
 	}
 	
-	public Competency(){
+	public Experience(){
 		lc = new LearningCurve();
 	}
 	

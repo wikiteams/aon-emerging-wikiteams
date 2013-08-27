@@ -4,27 +4,24 @@
 	<parameter name="randomSeed" displayName="Default Random Seed"
 		type="int" defaultValue="__NULL__" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-	<parameter name="numNodes" displayName="numNodes" type="java.lang.Integer"
-		defaultValue="20" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-	<parameter name="numTeams" displayName="numTeams" type="java.lang.Integer"
+	
+	<parameter name="numTasks" displayName="numTasks" type="java.lang.Integer"
 		defaultValue="4" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+		
 	<parameter name="percStartMembership" displayName="percStartMembership"
 		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+		
 	<parameter name="allowMultiMembership" displayName="allowMultiMembership"
 		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+		
 	<parameter name="numSteps" displayName="numSteps"
 		type="java.lang.Integer" defaultValue="50000" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 		
-	<parameter name="cultGroups" displayName="cultGroups"
-		type="java.lang.Integer" defaultValue="4" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-		
-	<parameter name="emergenceAlgorithm" displayName="emergenceAlgorithm"
+	<parameter name="taskChoiceAlgorithm" displayName="taskChoiceAlgorithm"
 		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 

@@ -31,44 +31,10 @@ import repast.simphony.util.ContextUtils;
 
 public class InternetzCtx extends DefaultContext {
 
-	// tutaj tworze factory parametryzacje, dzieki czemu beda wczytywane
-	// parametry.. jakie parametry na jaka symulacje ?
-	// dostosowac parametry do poszczeglonych zlozonosci samej symulacji
 	private SimulationParameters simulationParameters = new SimulationParameters();
-	
-	// moj modelfactory do okreslenia complexity
-	// BASIC, EXTENDED, EXTRA_EXTENDED
 	private ModelFactory modelFactory = new ModelFactory();
-
-	/*********************************************************
-	 * -------------- Model BASIC ----------------------------
-	 * -------------------------------------------------------
-	 * for deadline 1.08.2013 SocInfo conference *************
-	 * -------------------------------------------------------
-	 ********************************************************/
 	
-	// private static int agentsToAdd = 4;
-	private Hashtable allTeams = new Hashtable();
-	
-	/**********************************************************
-	 * ----------------  END OF BASIC MODEL
-	 *********************************************************/
-
-	/*********************************************************
-	 * --------------- Model EXTENDED ----------------------
-	 * 
-	 * for deadline XX.09.2013 JASSS magazine submission
-	 * 
-	 ********************************************************/
-	
-	private int agentClique;
-	private int teamClique;
-	// private static double dampingFactor = 0.85;
-	private Vector totCommunities = new Vector();
-	
-	/**********************************************************
-	 * ----------------  END OF EXTENDED MODEL
-	 *********************************************************/
+	private TaskPool taskPool = new TaskPool();
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
@@ -91,79 +57,19 @@ public class InternetzCtx extends DefaultContext {
 		say("Starting simulation with model: " + modelFactory.toString());
 
 		// getting parameters of simulation
-		Parameters param = RunEnvironment.getInstance().getParameters();
 		say("Loading parameters");
-
-		// assing parameters of a simulation
-		simulationParameters.agentCount = (Integer) param.getValue("numNodes");
-		simulationParameters.teamCount = (Integer) param.getValue("numTeams");
-		simulationParameters.percStartMembership = (Integer) param
-				.getValue("percStartMembership");
-		simulationParameters.allowMultiMembership = (Boolean) param
-				.getValue("allowMultiMembership");
-		simulationParameters.numSteps = (Integer) param.getValue("numSteps");
-
-		// --------------------------------------------------------------
-		if (moreThanBasic()) {
-			simulationParameters.groups = (Integer) param
-					.getValue("cultGroups");
-		} else {
-			
-		}
-		say("Parameters loaded");
-
-		// / QUESTIONABLE......
+		simulationParameters.init();
+		
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("teams",
 				(Context<Object>) this, true);
 		netBuilder.buildNetwork();
-		NetworkBuilder<Object> netBuilderMM = new NetworkBuilder<Object>(
-				"skills", (Context<Object>) this, false);
-		netBuilderMM.buildNetwork();
-		NetworkBuilder<Object> netBuilderBlf = new NetworkBuilder<Object>(
-				"competencies", (Context<Object>) this, false);
-		netBuilderBlf.buildNetwork();
 
-		if (moreThanBasic()) {
-			NetworkBuilder<Object> netBuilderSN = new NetworkBuilder<Object>(
-					"linkedin", (Context<Object>) this, true);
-			netBuilderSN.buildNetwork();
-			say("--- LinkedIN networkbuilder built ---");
-
-			if (simulationParameters.groups > 1) {
-				agentClique = simulationParameters.agentCount
-						/ simulationParameters.groups;
-				teamClique = simulationParameters.teamCount
-						/ simulationParameters.groups;
-				say("agentClique: " + agentClique + " teamClique: "
-						+ teamClique);
-			}
-
-			for (int grp = 0; grp < simulationParameters.groups; grp++) {
-				ArrayList community = new ArrayList();
-				say("community created");
-				totCommunities.add(community);
-				say("community added to Vector");
-			}
-		}
-
-		for (int i = 0; i < simulationParameters.teamCount; i++) {
-			Team team = new Team();
+		for (int i = 0; i < simulationParameters.taskCount; i++) {
+			Task task = new Task();
 			say("Creating team..");
-			this.add(team);
-			//netBuilder.
+			taskPool.addTask("", task);
 			say("Initializing team..");
-			team.initialize();
-			allTeams.put(i, team);
-
-			if (moreThanBasic())
-				if (simulationParameters.groups > 1) {
-					int whichgrp = (int) i / teamClique;
-					ArrayList community = (ArrayList) totCommunities
-							.get(whichgrp);
-					community.add(team);
-					team.setGroup(whichgrp);
-					say("I am a team in group " + whichgrp);
-				}
+			task.initialize();
 		}
 
 		Network<Team> teams = (Network<Team>) this.getProjection("teams");

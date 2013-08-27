@@ -15,9 +15,17 @@ public class PjiitLogger {
 	public static void init() throws IOException{
 		logger = getRootLogger();
 		SimpleLayout layout = new SimpleLayout();   
-		FileAppender appender = new FileAppender(layout,"simulation_logs.txt",false);    
+		FileAppender appender = new FileAppender(layout, "simulation_logs.txt",false);    
 	      logger.addAppender(appender);
-	    setLevel(Level.DEBUG);
+	    setLevel(Level.ALL);
+	}
+	
+	public static void init(Level level) throws IOException{
+		logger = getRootLogger();
+		SimpleLayout layout = new SimpleLayout();   
+		FileAppender appender = new FileAppender(layout, "simulation_logs.txt",false);    
+	      logger.addAppender(appender);
+	    setLevel(level);
 	}
 	
 	// Creation & retrieval methods:
@@ -27,6 +35,11 @@ public class PjiitLogger {
 	
 	public static void setLevel(Level level){
 		logger.setLevel(level);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public static Priority[] getAllPossiblePriorities(){
+		return Priority.getAllPossiblePriorities();
 	}
 
 	public static Logger getLogger(String name) {
@@ -39,6 +52,7 @@ public class PjiitLogger {
 	}
 
 	public static void debug(Object message) {
+		logger.log(Priority.DEBUG, message);
 	}
 
 	public static void info(String message) {
@@ -46,15 +60,19 @@ public class PjiitLogger {
 	}
 
 	public static void warn(Object message) {
+		logger.log(Priority.WARN, message);
 	}
 
 	public static void error(Object message) {
+		logger.log(Priority.ERROR, message);
 	}
 
 	public static void fatal(Object message) {
+		logger.log(Priority.FATAL, message);
 	}
 
 	// generic printing method:
 	public static void log(Level l, Object message) {
+		logger.log(Priority.INFO, message);
 	}
 }

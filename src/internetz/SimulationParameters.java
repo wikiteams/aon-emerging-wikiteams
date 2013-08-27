@@ -22,6 +22,7 @@ public class SimulationParameters {
 		percStartMembership = (Integer) param.getValue("percStartMembership");
 		allowMultiMembership = (Boolean) param.getValue("allowMultiMembership");
 		numSteps = (Integer) param.getValue("numSteps");
+		
 		taskChoiceAlgorithm = (String) param.getValue("taskChoiceAlgorithm");
 		
 		randomSeed = (Integer) param.getValue("randomSeed");

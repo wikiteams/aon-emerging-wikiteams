@@ -1,6 +1,3 @@
 <context id="InternetzCtx" class="internetz.InternetzCtx">
-	<projection type="network" id="teams"></projection>
-	<projection type="network" id="skills"></projection>
-	<projection type="network" id="competencies"></projection>
-	<projection type="network" id="linkedin"></projection>
+	<projection type="network" id="agents"></projection>
 </context>

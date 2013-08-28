@@ -12,12 +12,18 @@ Simulation tests different strategies of working on tasks (ought to be similar t
 1) Task choice strategies
 
 a) heterophyly/homophyly
+
 b) random
+
 c) comparision
+
 d) machine-learned strategy (SVM or decision tree)
+
 
 2) Skill choise strategy
 
 a) Proportional time division
+
 b) Greedy assignment by task
+
 c) Choice of agent

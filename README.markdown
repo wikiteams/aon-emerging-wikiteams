@@ -9,26 +9,31 @@ they are independent and easily characterizable, and they consists of one or mor
 
 Simulation tests different strategies of working on tasks (ought to be similar to FLOSS-projects objectives)
 
-**1) Task choice strategies**
+**1. Task choice strategies**
 
-a) heterophyly/homophyly
-
-b) random
-
-c) comparision
-
-d) machine-learned strategy (SVM or decision tree)
+* heterophyly/homophyly
+* random
+* comparision
+* machine-learned strategy (SVM or decision tree)
 
 
-**2) Skill choise strategy**
+**2. Skill choise strategy**
 
-a) Proportional time division
-
-b) Greedy assignment by task
-
-c) Choice of agent
+* Proportional time division
+* Greedy assignment by task
+* Choice of agent
 
 
-**3) How to lunch simulation?**
+**3. How to lunch simulation?**
 
 In Eclipse, (launchers -> internetz Model.launch), then press Start in Repast window
+
+**4. Simulation parameters**
+
+* randomSeed
+* numTasks
+* agentCount
+* percStartMembership
+* allowMultiMembership
+* numSteps
+* taskChoiceAlgorithm

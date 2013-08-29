@@ -36,29 +36,22 @@ public class InternetzCtx extends DefaultContext {
 			e.printStackTrace();
 			say("Error initializing PjiitLogger !");
 		}
-
 		say("Super object InternetzCtx loaded");
 		say("Starting simulation with model: " + modelFactory.toString());
-
 		// getting parameters of simulation
 		say("Loading parameters");
 		simulationParameters.init();
-		
 		// initialize skill pools
 		AgentSkillsPool agentSkillPool = new AgentSkillsPool();
 		say("Created AgentSkillsPool");
 		TaskSkillsPool taskSkillPool = new TaskSkillsPool();
 		say("Created TaskSkillsPool");
-		
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("agents",(Context<Object>) this, true);
 		netBuilder.buildNetwork();
-
 		for (int i = 0; i < simulationParameters.taskCount; i++) {
 			Task task = new Task();
-			
 			say("Creating task..");
 			taskPool.addTask("", task);
-			
 			say("Initializing task..");
 			task.initialize();
 		}
@@ -66,11 +59,8 @@ public class InternetzCtx extends DefaultContext {
 		Network<Agent> agents = (Network<Agent>) this.getProjection("agents");
 		say("Projection agents (" + agents.getName() + ") exists and is size: "
 				+ agents.size());
-
 		addAgent(simulationParameters.agentCount, true);
-
 		say("Task choice algorithm is " + simulationParameters.taskChoiceAlgorithm);
-
 		System.out.println("Number of teams created "
 				+ this.getObjects(Task.class).size());
 		System.out.println("Number of agents created "

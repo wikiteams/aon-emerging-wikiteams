@@ -1,4 +1,6 @@
 *.class
+simulation_logs.txt
+/bin
 
 # Package Files #
 *.jar

@@ -6,7 +6,11 @@
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	
 	<parameter name="numTasks" displayName="numTasks" type="java.lang.Integer"
-		defaultValue="4" isReadOnly="false"
+		defaultValue="50" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+		
+	<parameter name="agentCount" displayName="agentCount" type="java.lang.Integer"
+		defaultValue="100" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 		
 	<parameter name="percStartMembership" displayName="percStartMembership"

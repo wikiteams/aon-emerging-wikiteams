@@ -27,3 +27,7 @@ a) Proportional time division
 b) Greedy assignment by task
 
 c) Choice of agent
+
+3) How to lunch simulation?
+
+In Eclipse, (launchers -> internetz Model.launch), then press Start in Repast window

@@ -52,7 +52,7 @@ public class Task {
 		say("Team object initialized with id: " + this.id);
 	}
 
-	public Map<String, Skill> getSkills() {
+	public Map<String, TaskInternals> getSkills() {
 		return skills;
 	}
 

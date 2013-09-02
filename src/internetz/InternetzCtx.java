@@ -15,7 +15,7 @@ public class InternetzCtx extends DefaultContext {
 
 	private SimulationParameters simulationParameters = new SimulationParameters();
 	private ModelFactory modelFactory = new ModelFactory();
-	
+
 	private TaskPool taskPool = new TaskPool();
 
 	private void say(String s) {
@@ -36,18 +36,23 @@ public class InternetzCtx extends DefaultContext {
 			e.printStackTrace();
 			say("Error initializing PjiitLogger !");
 		}
+		
 		say("Super object InternetzCtx loaded");
 		say("Starting simulation with model: " + modelFactory.toString());
 		// getting parameters of simulation
 		say("Loading parameters");
 		simulationParameters.init();
 		// initialize skill pools
+		
 		AgentSkillsPool agentSkillPool = new AgentSkillsPool();
 		say("Created AgentSkillsPool");
 		TaskSkillsPool taskSkillPool = new TaskSkillsPool();
 		say("Created TaskSkillsPool");
-		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>("agents",(Context<Object>) this, true);
+		
+		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
+				"agents", (Context<Object>) this, true);
 		netBuilder.buildNetwork();
+		
 		for (int i = 0; i < simulationParameters.taskCount; i++) {
 			Task task = new Task();
 			say("Creating task..");
@@ -59,13 +64,17 @@ public class InternetzCtx extends DefaultContext {
 		Network<Agent> agents = (Network<Agent>) this.getProjection("agents");
 		say("Projection agents (" + agents.getName() + ") exists and is size: "
 				+ agents.size());
+		
 		addAgent(simulationParameters.agentCount, true);
-		say("Task choice algorithm is " + simulationParameters.taskChoiceAlgorithm);
+		
+		say("Task choice algorithm is "
+				+ simulationParameters.taskChoiceAlgorithm);
 		System.out.println("Number of teams created "
 				+ this.getObjects(Task.class).size());
 		System.out.println("Number of agents created "
 				+ this.getObjects(Agent.class).size());
-		System.out.println("Algorithm tested: " + simulationParameters.taskChoiceAlgorithm);
+		System.out.println("Algorithm tested: "
+				+ simulationParameters.taskChoiceAlgorithm);
 
 		/*
 		 * ISchedule schedule =
@@ -76,10 +85,10 @@ public class InternetzCtx extends DefaultContext {
 		 * new OutputRecorder(this, simulation_mode);
 		 * schedule.schedule(schedParams,this, "outputSNSData", "record");
 		 */
-	
+
 	}
 
-	public void addAgent(int agentCnt, boolean concentrate) {
+	public void addAgent(int agentCnt, boolean randomize_task_strategy) {
 		// Parameters param = RunEnvironment.getInstance().getParameters();
 		// this this = (this)ContextUtils.getContext(this);
 		// Network teams = (Network) this.getProjection("teams");
@@ -95,14 +104,14 @@ public class InternetzCtx extends DefaultContext {
 			this.add(agent);
 		}
 	}
-	
-	private void outputAgentNetworkData(){
+
+	private void outputAgentNetworkData() {
 		Network agents = (Network) this.getProjection("agents");
 		Projection agentsProjected = this.getProjection("agents");
-		
+
 		Iterator allNodes = agents.getEdges().iterator();
 		for (Object obj : agents.getNodes()) {
-			say( "Agent network data output --- " + ((Agent) obj).toString() );
+			say("Agent network data output --- " + ((Agent) obj).toString());
 		}
 	}
 

@@ -12,9 +12,9 @@ public class NamesGenerator {
 	
 	static RandomDataGenerator rdg = new RandomDataGenerator();
 
-	public static List<Agent> getnames(int skolka) {
+	public static List<Agent> getnames(int count) {
 		List<Agent> randomPersons = rdg.generateList(
-				skolka,
+				count,
 				new GenConfig().name(Name.Firstname, "firstname").name(
 						Name.Lastname, "lastname"), Agent.class);
 		return randomPersons;

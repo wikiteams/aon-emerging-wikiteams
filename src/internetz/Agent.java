@@ -75,8 +75,6 @@ public class Agent {
  
 		// Agent Aj uses Aj {strategy for choosing tasks} and chooses a task to work on
 		
-		
-		
 		// Agent Aj works on Ti
 		
 		// Chose and algorithm for inside-task skill choose.

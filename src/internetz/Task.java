@@ -49,7 +49,7 @@ public class Task {
 
 	public synchronized void initialize() {
 		setId(++COUNT);
-		say("Team object initialized with id: " + this.id);
+		say("Task object initialized with id: " + this.id);
 	}
 
 	public Map<String, TaskInternals> getSkills() {

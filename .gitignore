@@ -1,5 +1,7 @@
 *.class
 simulation_logs.txt
+velocity_log*
+
 /bin
 
 # Package Files #

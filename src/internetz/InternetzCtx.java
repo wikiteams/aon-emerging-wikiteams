@@ -38,7 +38,7 @@ public class InternetzCtx extends DefaultContext {
 		}
 		
 		say("Super object InternetzCtx loaded");
-		say("Starting simulation with model: " + modelFactory.toString());
+		say("Starting simulation with model: " + modelFactory.toString()); 
 		// getting parameters of simulation
 		say("Loading parameters");
 		simulationParameters.init();

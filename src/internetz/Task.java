@@ -22,7 +22,7 @@ public class Task {
 	private int id;
 
 	public Task() {
-		say("Task object created...");
+		say("Task object " + this + " created");
 	}
 
 	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();

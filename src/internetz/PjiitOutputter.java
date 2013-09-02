@@ -8,7 +8,7 @@ public class PjiitOutputter {
 	public static void say(String s) {
 		String dateStringRepresentation = getDateLogs();
 		System.out.println(dateStringRepresentation + ": " + s);
-		PjiitLogger.info(dateStringRepresentation + s);
+		PjiitLogger.info(dateStringRepresentation + ": " + s);
 	}
 
 	private static String getDateLogs() {

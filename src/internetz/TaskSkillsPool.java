@@ -2,13 +2,9 @@ package internetz;
 
 import java.util.Random;
 
-public class TaskSkillsPool {
+public abstract class TaskSkillsPool {
 	
-	static Skill[] skillSet = null;
-
-	public TaskSkillsPool() {
-		say("TaskSkill object " + this + " created");
-	}
+	private static Skill[] skillSet = null;
 	
 	public static Skill chose_random(){
 		Random generator = new Random();
@@ -16,11 +12,15 @@ public class TaskSkillsPool {
 		return skillSet[i];
 	}
 	
+	public static void fillWithSkills(Task task){
+		say("Task " + task + " filled with skills");
+	}
+	
 	public static Skill[] get_skill_set(int count){
 		return skillSet;
 	}
 	
-	private void say(String s) {
+	private static void say(String s) {
 		PjiitOutputter.say(s);
 	}
 	

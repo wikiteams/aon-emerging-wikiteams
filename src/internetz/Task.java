@@ -17,15 +17,14 @@ import java.util.Map;
 public class Task {
 
 	protected static int COUNT = 0;
-
 	private String name;
 	private int id;
+	private Map<String, TaskInternals> skills = 
+			new HashMap<String, TaskInternals>();
 
 	public Task() {
 		say("Task object " + this + " created");
 	}
-
-	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
 
 	public void addSkill(String key, TaskInternals taskInternals) {
 		skills.put(key, taskInternals);
@@ -33,10 +32,6 @@ public class Task {
 
 	public TaskInternals getSkill(String key) {
 		return skills.get(key);
-	}
-
-	public synchronized void setId(int id) {
-		this.id = id;
 	}
 
 	private void say(String s) {
@@ -49,6 +44,7 @@ public class Task {
 
 	public synchronized void initialize() {
 		setId(++COUNT);
+		TaskSkillsPool.fillWithSkills(this);
 		say("Task object initialized with id: " + this.id);
 	}
 
@@ -58,6 +54,14 @@ public class Task {
 
 	public void setSkills(Map<String, TaskInternals> skills) {
 		this.skills = skills;
+	}
+	
+	public synchronized void setId(int id) {
+		this.id = id;
+	}
+	
+	public synchronized int getId() {
+		return this.id;
 	}
 
 }

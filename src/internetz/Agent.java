@@ -34,7 +34,7 @@ public class Agent {
 		say("Agent constructor called");
 		this.id = ++totalAgents;
 		
-		AgentSkillsPool agentCompetencyPool = new AgentSkillsPool();
+		AgentSkillsPool.fillWithSkills(this);
 	}
 
 	public void setId(int id) {

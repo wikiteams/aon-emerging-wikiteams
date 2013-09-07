@@ -44,10 +44,10 @@ public class InternetzCtx extends DefaultContext {
 		simulationParameters.init();
 		// initialize skill pools
 		
-		AgentSkillsPool agentSkillPool = new AgentSkillsPool();
-		say("Created AgentSkillsPool");
-		TaskSkillsPool taskSkillPool = new TaskSkillsPool();
-		say("Created TaskSkillsPool");
+		AgentSkillsPool.instantiate();
+		say("Instatiated AgentSkillsPool");
+		TaskSkillsPool.instantiate();
+		say("Instatied TaskSkillsPool");
 		
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
 				"agents", (Context<Object>) this, true);

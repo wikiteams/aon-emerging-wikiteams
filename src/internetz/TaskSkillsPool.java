@@ -6,6 +6,10 @@ public abstract class TaskSkillsPool {
 	
 	private static Skill[] skillSet = null;
 	
+	public static void instantiate(){
+		say("initialized TaskSkillsPool");
+	}
+	
 	public static Skill chose_random(){
 		Random generator = new Random();
 		int i = generator.nextInt(skillSet.length);

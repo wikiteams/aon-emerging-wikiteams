@@ -75,6 +75,10 @@ public abstract class TaskSkillsPool {
 	public static Skill[] get_skill_set(int count) {
 		return skillSet;
 	}
+	
+	public static Skill[] get_skill_set() {
+		return skillSet;
+	}
 
 	private static void say(String s) {
 		PjiitOutputter.say(s);

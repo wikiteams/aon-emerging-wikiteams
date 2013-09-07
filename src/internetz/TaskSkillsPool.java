@@ -1,8 +1,16 @@
 package internetz;
 
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Random;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 public abstract class TaskSkillsPool {
+
+	private static String filename = "top-users-final.csv";
+	private static String filename2 = "50-skills.csv";
 
 	public enum Method {
 		STATIC_TABLE, LINEAR_KNN, SVM;
@@ -11,14 +19,46 @@ public abstract class TaskSkillsPool {
 	private static Skill[] skillSet = null;
 
 	public static void instantiate() {
-		say("initialized TaskSkillsPool");
+		//say("initialized TaskSkillsPool");
+		instantiate(Method.STATIC_TABLE);
 	}
 
 	public static void instantiate(Method method) {
-		say("initialized TaskSkillsPool");
-
 		if (method == Method.STATIC_TABLE) {
+			try {
+				parse_csv();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		say("initialized TaskSkillsPool");
+	}
 
+	private static void parse_csv() throws IOException, FileNotFoundException {
+		CSVReader reader = new CSVReader(new FileReader(filename2));
+		String[] nextLine;
+		skillSet = new Skill[50];
+		int i = 0;
+		
+		while ((nextLine = reader.readNext()) != null) {
+			// nextLine[] is an array of values from the line
+			/*System.out.println(nextLine[0] + nextLine[1] + nextLine[2]
+					+ nextLine[3] + "etc...");*/
+			skillSet[i++] = new Skill(nextLine[1], (short) i);
+		}
+	}
+	
+	private static void parse_top_1000_csv() throws IOException, FileNotFoundException {
+		CSVReader reader = new CSVReader(new FileReader(filename));
+		String[] nextLine;
+		while ((nextLine = reader.readNext()) != null) {
+			// nextLine[] is an array of values from the line
+			System.out.println(nextLine[0] + nextLine[1] + nextLine[2]
+					+ nextLine[3] + "etc...");
 		}
 	}
 

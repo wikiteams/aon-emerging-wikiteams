@@ -1,4 +1,5 @@
 *.class
+
 simulation_logs.txt
 velocity_log*
 debug_log*
@@ -10,3 +11,5 @@ debug.log
 *.jar
 *.war
 *.ear
+
+/velocity.log

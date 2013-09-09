@@ -1,5 +1,6 @@
 package internetz;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +16,7 @@ public class InternetzCtx extends DefaultContext {
 
 	private SimulationParameters simulationParameters = new SimulationParameters();
 	private ModelFactory modelFactory = new ModelFactory();
-
+	private SkillFactory skillFactory = new SkillFactory();
 	private TaskPool taskPool = new TaskPool();
 
 	private void say(String s) {
@@ -36,23 +37,35 @@ public class InternetzCtx extends DefaultContext {
 			e.printStackTrace();
 			say("Error initializing PjiitLogger !");
 		}
-		
+
 		say("Super object InternetzCtx loaded");
-		say("Starting simulation with model: " + modelFactory.toString()); 
+		say("Starting simulation with model: " + modelFactory.toString());
 		// getting parameters of simulation
 		say("Loading parameters");
 		simulationParameters.init();
 		// initialize skill pools
-		
+
+		try {
+			skillFactory.parse_csv_all_skills();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			say("SkillFactory parsed successfully all skills");
+		}
+
 		AgentSkillsPool.instantiate();
 		say("Instatiated AgentSkillsPool");
 		TaskSkillsPool.instantiate();
 		say("Instatied TaskSkillsPool");
-		
+
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
 				"agents", (Context<Object>) this, true);
 		netBuilder.buildNetwork();
-		
+
 		for (int i = 0; i < simulationParameters.taskCount; i++) {
 			Task task = new Task();
 			say("Creating task..");
@@ -64,9 +77,9 @@ public class InternetzCtx extends DefaultContext {
 		Network<Agent> agents = (Network<Agent>) this.getProjection("agents");
 		say("Projection agents (" + agents.getName() + ") exists and is size: "
 				+ agents.size());
-		
+
 		addAgent(simulationParameters.agentCount, true);
-		
+
 		say("Task choice algorithm is "
 				+ simulationParameters.taskChoiceAlgorithm);
 		System.out.println("Number of teams created "

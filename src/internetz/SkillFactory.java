@@ -10,7 +10,7 @@ import au.com.bytecode.opencsv.CSVReader;
 public class SkillFactory {
 	
 	public SkillFactory(){
-		
+		say("SkillFactory object created");
 	}
 
 	private static String filename = "all-skills.csv";
@@ -25,6 +25,10 @@ public class SkillFactory {
 			Skill skill = new Skill(nextLine[0]);
 			skills.add(skill);
 		}
+	}
+	
+	private static void say(String s) {
+		PjiitOutputter.say(s);
 	}
 
 }

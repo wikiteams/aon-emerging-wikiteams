@@ -15,7 +15,14 @@ public class Skill {
 		this.name = name;
 		this.id = id;
 		this.strength = strength;
-		say ("Skill initialized");
+		say ("Skill created");
+	}
+	
+	public Skill(String name) {
+		this.name = name;
+		this.id = id;
+		this.strength = strength;
+		say ("Skill created with minimum data");
 	}
 	
 	private void say(String s) {

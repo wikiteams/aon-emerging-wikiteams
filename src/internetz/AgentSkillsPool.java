@@ -62,16 +62,6 @@ public abstract class AgentSkillsPool {
 		}
 	}
 
-	private static void parse_csv_all_skills() throws IOException,
-			FileNotFoundException {
-		CSVReader reader = new CSVReader(new FileReader(filename));
-		String[] nextLine;
-		while ((nextLine = reader.readNext()) != null) {
-			// nextLine[] is an array of values from the line
-			System.out.println(nextLine[0] + nextLine[1] + "etc...");
-		}
-	}
-
 	public static Skill chose_random() {
 		Random generator = new Random();
 		int i = generator.nextInt(allSkills.length);
@@ -86,8 +76,9 @@ public abstract class AgentSkillsPool {
 	public static void fillWithSkills(Agent agent) {
 		ArrayList skill = getByIndex(skillSet, COUNTABLE);
 		Experience experience = new Experience();
+		//
 		TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
-		agent.addSkill(key, agentInternals)
+		agent.addSkill(key, agentInternals);
 		say("Agent " + agent + " filled with skills");
 	}
 

@@ -53,11 +53,10 @@ public abstract class AgentSkillsPool {
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
 			ArrayList l = new ArrayList();
-			l.add(nextLine[1]);
-			l.add(nextLine[2]);
-			l.add(nextLine[3]);
-			say("Parsed fro CSV: " + nextLine[0] + " " + nextLine[1] + " "
-					+ nextLine[2] + " " + nextLine[3]);
+			for(int i = 0 ; i < nextLine.length ; i++){
+				l.add(nextLine[i]);
+				say("Parsed from CSV: " + nextLine[i]);
+			}
 			skillSet.put(nextLine[0], l);
 		}
 	}

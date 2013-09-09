@@ -2,8 +2,11 @@ package internetz;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
+
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -20,7 +23,8 @@ public class Agent {
 
 	SimulationParameters Sims = new SimulationParameters();
 
-	private AgentInternals agentInternals;
+	private Map<String, AgentInternals> skills = 
+			new HashMap<String, AgentInternals>();
 	private Strategy strategy;
 	
 	public static int totalAgents = 0;
@@ -33,8 +37,11 @@ public class Agent {
 	public Agent() {
 		say("Agent constructor called");
 		this.id = ++totalAgents;
-		
 		AgentSkillsPool.fillWithSkills(this);
+	}
+	
+	public void addSkill(String key, AgentInternals agentInternals) {
+		skills.put(key, agentInternals);
 	}
 
 	public void setId(int id) {

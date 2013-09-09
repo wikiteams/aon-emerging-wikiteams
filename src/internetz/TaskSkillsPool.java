@@ -69,6 +69,14 @@ public abstract class TaskSkillsPool {
 	}
 
 	public static void fillWithSkills(Task task) {
+		Skill skill = chose_random();
+		WorkUnit w1 = new WorkUnit();
+		WorkUnit w2 = new WorkUnit();
+		Random generator = new Random();
+		w1.d = generator.nextInt(8);
+		w2.d = 0;
+		TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
+		task.addSkill(skill.getName(), taskInternals);
 		say("Task " + task + " filled with skills");
 	}
 

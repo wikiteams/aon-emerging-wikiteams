@@ -6,6 +6,12 @@ public class TaskInternals {
 	private WorkUnit workUnits;
 	private WorkUnit workDone;
 	
+	public TaskInternals(Skill skill, WorkUnit workUnits, WorkUnit workDone){
+		this.skill = skill;
+		this.workDone = workDone;
+		this.workUnits = workUnits;
+	}
+	
 	public Skill getSkill() {
 		return skill;
 	}

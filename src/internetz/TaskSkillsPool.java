@@ -19,7 +19,7 @@ public abstract class TaskSkillsPool {
 	private static Skill[] skillSet = null;
 
 	public static void instantiate() {
-		//say("initialized TaskSkillsPool");
+		// say("initialized TaskSkillsPool");
 		instantiate(Method.STATIC_TABLE);
 	}
 
@@ -39,20 +39,19 @@ public abstract class TaskSkillsPool {
 	}
 
 	private static void parse_csv() throws IOException, FileNotFoundException {
-		CSVReader reader = new CSVReader(new FileReader(filename2));
+		CSVReader reader = new CSVReader(new FileReader(filename2), ',',
+				CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
 		String[] nextLine;
 		skillSet = new Skill[50];
 		int i = 0;
-		
+
 		while ((nextLine = reader.readNext()) != null) {
-			// nextLine[] is an array of values from the line
-			/*System.out.println(nextLine[0] + nextLine[1] + nextLine[2]
-					+ nextLine[3] + "etc...");*/
 			skillSet[i++] = new Skill(nextLine[1], (short) i);
 		}
 	}
-	
-	private static void parse_top_1000_csv() throws IOException, FileNotFoundException {
+
+	private static void parse_top_1000_csv() throws IOException,
+			FileNotFoundException {
 		CSVReader reader = new CSVReader(new FileReader(filename));
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
@@ -83,7 +82,7 @@ public abstract class TaskSkillsPool {
 	public static Skill[] get_skill_set(int count) {
 		return skillSet;
 	}
-	
+
 	public static Skill[] get_skill_set() {
 		return skillSet;
 	}

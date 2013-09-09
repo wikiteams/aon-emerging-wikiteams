@@ -16,7 +16,7 @@ public class InternetzCtx extends DefaultContext {
 
 	private SimulationParameters simulationParameters = new SimulationParameters();
 	private ModelFactory modelFactory = new ModelFactory();
-	private SkillFactory skillFactory = new SkillFactory();
+	private SkillFactory skillFactory;
 	private TaskPool taskPool = new TaskPool();
 
 	private void say(String s) {
@@ -44,8 +44,9 @@ public class InternetzCtx extends DefaultContext {
 		say("Loading parameters");
 		simulationParameters.init();
 		// initialize skill pools
-
+		
 		try {
+			skillFactory = new SkillFactory();
 			skillFactory.parse_csv_all_skills();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block

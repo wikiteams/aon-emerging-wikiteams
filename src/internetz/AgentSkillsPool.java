@@ -74,12 +74,11 @@ public abstract class AgentSkillsPool {
 	}
 
 	public static void fillWithSkills(Agent agent) {
-		ArrayList skill = getByIndex(skillSet, COUNTABLE);
-		Experience experience = new Experience();
-		//
-		TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
-		agent.addSkill(key, agentInternals);
-		say("Agent " + agent + " filled with skills");
+//		ArrayList skill = getByIndex(skillSet, COUNTABLE);
+//		Experience experience = new Experience();
+//		AgentInternals agentInternals = new AgentInternals(skill, experience);
+//		agent.addSkill(key, agentInternals);
+//		say("Agent " + agent + " filled with skills");
 	}
 
 	public static Skill[] get_skill_set(int count) {

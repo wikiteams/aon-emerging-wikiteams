@@ -8,9 +8,15 @@ import java.util.ArrayList;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+/***
+ * Here ALL skills from GitHub are read and hold in ArrayList
+ * 
+ * @author Oskar Jarczyk
+ * @since 1.0
+ */
 public class SkillFactory {
-	
-	public SkillFactory(){
+
+	public SkillFactory() {
 		say("SkillFactory object created");
 	}
 
@@ -20,16 +26,16 @@ public class SkillFactory {
 
 	public void parse_csv_all_skills() throws IOException,
 			FileNotFoundException {
-		say ("Searching for file in: " + new File(".").getAbsolutePath());
+		say("Searching for file in: " + new File(".").getAbsolutePath());
 		CSVReader reader = new CSVReader(new FileReader(filename));
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
 			Skill skill = new Skill(nextLine[0]);
 			skills.add(skill);
-			say("skill " + skill.getName() + " added " + "to factory");
+			say("Skill " + skill.getName() + " added to factory");
 		}
 	}
-	
+
 	private static void say(String s) {
 		PjiitOutputter.say(s);
 	}

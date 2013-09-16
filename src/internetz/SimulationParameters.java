@@ -3,6 +3,12 @@ package internetz;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 
+/**
+ * Basicly stores parameters from repast file to a factory
+ * 
+ * @author Oskar
+ * @since 1.0
+ */
 public class SimulationParameters {
 	
 	public static int agentCount = 0;

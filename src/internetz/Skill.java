@@ -1,5 +1,11 @@
 package internetz;
 
+/***
+ * Represents a "skill" - a GitHub language
+ * 
+ * @author Oskar
+ * @since 1.0
+ */
 public class Skill {
 
 	private String name;
@@ -8,23 +14,21 @@ public class Skill {
 	private int strength;
 
 	public Skill() {
-		say ("Empty-constructor Skill initialized");
+		say("Empty-constructor Skill initialized");
 	}
-	
+
 	public Skill(String name, short id, int strength) {
 		this.name = name;
 		this.id = id;
 		this.strength = strength;
-		say ("Skill created");
+		say("Skill created");
 	}
-	
+
 	public Skill(String name) {
 		this.name = name;
-		this.id = id;
-		this.strength = strength;
-		say ("Skill created with minimum data");
+		say("Skill created with minimum data");
 	}
-	
+
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}

@@ -8,6 +8,12 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
 import org.apache.log4j.SimpleLayout;
 
+/**
+ * Outputs logs to simulation_logs.txt
+ * 
+ * @author Oskar
+ * @since 1.0
+ */
 public class PjiitLogger {
 	
 	public static Logger logger = null;

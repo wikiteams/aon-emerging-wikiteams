@@ -89,4 +89,17 @@ public class Skill {
 		this.cardinalProbability = cardinalProbability;
 	}
 
+	@Override
+	public int hashCode() {
+		return name.hashCode() * id;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this.name.toLowerCase().equals(((Skill) obj).name))
+			return true;
+		else
+			return false;
+	}
+
 }

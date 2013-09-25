@@ -5,14 +5,22 @@ import repast.simphony.random.RandomHelper;
 
 public class Experience {
 	
-	LearningCurve lc = null;
+	public LearningCurve lc = null;
+	public double percentage;
+	public int top;
 	
 	private void say(String s) {
 		System.out.println(s);
 	}
 	
 	public Experience(){
+		new Experience(0d, 0);
+	}
+	
+	public Experience(double percentage, int top){
 		lc = new LearningCurve();
+		this.percentage = percentage;
+		this.top = top;
 	}
 	
 	public void check1(){

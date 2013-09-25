@@ -1,9 +1,12 @@
 package internetz;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import au.com.bytecode.opencsv.CSVWriter;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -12,24 +15,20 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 
-public class InternetzCtx extends DefaultContext {
+public class InternetzCtx extends DefaultContext<Object> {
 
 	private SimulationParameters simulationParameters = new SimulationParameters();
 
 	private ModelFactory modelFactory = new ModelFactory();
-	private SkillFactory skillFactory;
+	private SkillFactory skillFactory = null;
+	
 	private TaskPool taskPool = new TaskPool();
+	private List<Agent> listAgent = null;
 
-	private void say(String s) {
-		PjiitOutputter.say(s);
-	}
-
-	private boolean moreThanBasic() {
-		return modelFactory.getComplexity() > 0;
-	}
-
+	@SuppressWarnings("unchecked")
 	public InternetzCtx() {
 		super("InternetzCtx");
+		
 		try {
 			PjiitLogger.init();
 			say("PjiitLogger initialized");
@@ -90,28 +89,19 @@ public class InternetzCtx extends DefaultContext {
 				+ this.getObjects(Agent.class).size());
 		System.out.println("Algorithm tested: "
 				+ simulationParameters.taskChoiceAlgorithm);
-
-		/*
-		 * ISchedule schedule =
-		 * RunEnvironment.getInstance().getCurrentSchedule(); ScheduleParameters
-		 * schedParams; schedParams =
-		 * ScheduleParameters.createAtEnd(ScheduleParameters
-		 * .FIRST_PRIORITY);//.createOneTime(103); // OutputRecorder recorder =
-		 * new OutputRecorder(this, simulation_mode);
-		 * schedule.schedule(schedParams,this, "outputSNSData", "record");
-		 */
-
 	}
 
-	public void addAgent(int agentCnt, boolean randomize_task_strategy) {
-		// Parameters param = RunEnvironment.getInstance().getParameters();
-		// this this = (this)ContextUtils.getContext(this);
-		// Network teams = (Network) this.getProjection("teams");
-		// Network skills = (Network) this.getProjection("skills");
-		// Network competencies = (Network) this.getProjection("competencies");
-		// Network sns = (Network) this.getProjection("linkedin");
+	private void outputAgentSkillMatrix() throws IOException {
+		CSVWriter writer = new CSVWriter(new FileWriter("input_a1.csv"), '\t');
+		for(Agent agent : listAgent){
+			String[] entries = "first#second#third".split("#");
+			writer.writeNext(entries);
+		}
+		writer.close();
+	}
 
-		List<Agent> listAgent = NamesGenerator.getnames(agentCnt);
+	private void addAgent(int agentCnt, boolean randomize_task_strategy) {
+		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
 			say(agent.toString());
@@ -121,18 +111,26 @@ public class InternetzCtx extends DefaultContext {
 	}
 
 	private void outputAgentNetworkData() {
-		Network agents = (Network) this.getProjection("agents");
-		Projection agentsProjected = this.getProjection("agents");
+		Network<?> agents = (Network<?>) this.getProjection("agents");
+		Projection<?> agentsProjected = this.getProjection("agents");
 
-		Iterator allNodes = agents.getEdges().iterator();
+		Iterator<?> allNodes = agents.getEdges().iterator();
 		for (Object obj : agents.getNodes()) {
 			say("Agent network data output --- " + ((Agent) obj).toString());
 		}
 	}
 
+	private boolean moreThanBasic() {
+		return modelFactory.getComplexity() > 0;
+	}
+
 	@ScheduledMethod(start = 2000, priority = 0)
 	private void outputSNSData() throws IOException {
 		outputAgentNetworkData();
+	}
+
+	private void say(String s) {
+		PjiitOutputter.say(s);
 	}
 
 }

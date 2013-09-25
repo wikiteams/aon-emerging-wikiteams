@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Random;
 
 import au.com.bytecode.opencsv.CSVReader;
 
@@ -30,6 +31,12 @@ public class SkillFactory {
 			}
 		}
 		return null;
+	}
+	
+	public Skill getRandomSkill(){
+		Random generator = new Random();
+		int i = generator.nextInt(skills.size());
+		return skills.get(i);
 	}
 
 	public void parse_csv_all_skills() throws IOException,

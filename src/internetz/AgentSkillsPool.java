@@ -16,15 +16,12 @@ public abstract class AgentSkillsPool {
 	 * 
 	 * username, skill1, skill2, skill3
 	 * 
-	 * i.e.
-	 * 'fabpot', 'PHP', 'Shell', 'JavaScript'
+	 * i.e. 'fabpot', 'PHP', 'Shell', 'JavaScript'
 	 */
 	private static String filename = "top-users-final.csv";
 
 	private enum Method {
-		STATIC_TABLE, 
-		UNIMPLEMENTED1,
-		UNIMPLEMENTED2;
+		STATIC_TABLE, MUTATE_STATIC_TABLE, RANDOM;
 	}
 
 	private static LinkedHashMap<String, ArrayList> skillSet = 
@@ -72,7 +69,7 @@ public abstract class AgentSkillsPool {
 	public static ArrayList choseRandom() {
 		Random generator = new Random();
 		int i = generator.nextInt(skillSet.size());
-		return getByIndex(skillSet,i);
+		return getByIndex(skillSet, i);
 	}
 
 	public static ArrayList getByIndex(LinkedHashMap<String, ArrayList> hMap,
@@ -81,6 +78,37 @@ public abstract class AgentSkillsPool {
 	}
 
 	public static void fillWithSkills(Agent agent) {
+		fillWithSkills(agent, Method.RANDOM);
+	}
+
+	public static void fillWithSkills(Agent agent, Method method) {
+		if (method == Method.RANDOM) {
+			// randomize HOW MANY SKILLS
+			Random generator = new Random();
+			int how_many = generator
+					.nextInt(SimulationParameters.agentSkillsPoolRandomize1);
+			ArrayList<Skill> __skills = new ArrayList<Skill>();
+			for (int i = 0 ; i < how_many ; i++){
+				Skill s1 = null;
+				while (true){
+					s1 = skillFactory.getRandomSkill();
+					if (__skills.contains(s1)){
+						continue;
+					} else {
+						__skills.add(s1);
+						break;
+					}
+				}
+				Random generator_exp = new Random();
+				int top = SimulationParameters.agentSkillsPoolRandomize2;
+				int exp__ = generator_exp
+						.nextInt(SimulationParameters.agentSkillsPoolRandomize2);
+				AgentInternals __agentInternals = new AgentInternals(s1, 
+						new Experience(exp__ / top, top));
+				agent.addSkill(s1.getName(), __agentInternals);
+			}
+
+		}
 		// ArrayList skill = getByIndex(skillSet, COUNTABLE);
 		// Experience experience = new Experience();
 		// AgentInternals agentInternals = new AgentInternals(skill,
@@ -88,10 +116,6 @@ public abstract class AgentSkillsPool {
 		// agent.addSkill(key, agentInternals);
 		// say("Agent " + agent + " filled with skills");
 	}
-
-//	public static Skill[] get_skill_set(int count) {
-//		return allSkills;
-//	}
 
 	private static void say(String s) {
 		PjiitOutputter.say(s);

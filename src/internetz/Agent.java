@@ -1,22 +1,11 @@
 package internetz;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.Map;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
-//import repast.simphony.engine.watcher.Watch;
-//import repast.simphony.engine.watcher.WatcherTriggerSchedule;
-import repast.simphony.parameter.Parameters;
-import repast.simphony.query.PropertyEquals;
-import repast.simphony.random.RandomHelper;
-import repast.simphony.space.graph.Network;
-import repast.simphony.space.graph.RepastEdge;
 import repast.simphony.util.ContextUtils;
 
 public class Agent {
@@ -33,6 +22,7 @@ public class Agent {
 	private int id;
 	private String firstname;
 	private String lastname;
+	private String nick;
 
 	public Agent() {
 		say("Agent constructor called");
@@ -89,5 +79,14 @@ public class Agent {
 
 	public String toString() {
 		return "id: " + id + " name: " + firstname + " " + lastname;
+	}
+
+	public String getNick() {
+		return nick;
+	}
+
+	public void setNick(String nick) {
+		say("Agent's login set to: " + nick);
+		this.nick = nick;
 	}
 }

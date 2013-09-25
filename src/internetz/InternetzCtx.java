@@ -3,10 +3,9 @@ package internetz;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import au.com.bytecode.opencsv.CSVWriter;
 
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
@@ -14,6 +13,7 @@ import repast.simphony.context.space.graph.NetworkBuilder;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public class InternetzCtx extends DefaultContext<Object> {
 
@@ -94,8 +94,13 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private void outputAgentSkillMatrix() throws IOException {
 		CSVWriter writer = new CSVWriter(new FileWriter("input_a1.csv"), '\t');
 		for(Agent agent : listAgent){
-			String[] entries = "first#second#third".split("#");
-			writer.writeNext(entries);
+			for(AgentInternals __agentInternal : agent.getSkills()){
+				ArrayList<String> entries = new ArrayList<String>();
+				entries.add(agent.getNick());
+				entries.add(__agentInternal.getExperience().top + "");
+				entries.add(__agentInternal.getSkill().getName());
+				writer.writeNext((String[]) entries.toArray());
+			}
 		}
 		writer.close();
 	}

@@ -1,5 +1,6 @@
 package internetz;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +33,10 @@ public class Agent {
 	
 	public void addSkill(String key, AgentInternals agentInternals) {
 		skills.put(key, agentInternals);
+	}
+	
+	public Collection<AgentInternals> getSkills() {
+		return skills.values();
 	}
 
 	public void setId(int id) {

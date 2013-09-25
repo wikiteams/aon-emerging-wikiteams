@@ -15,14 +15,22 @@ import au.com.bytecode.opencsv.CSVReader;
  * @since 1.0
  */
 public class SkillFactory {
+	
+	private static String filename = "all-languages.csv";
+	public static ArrayList<Skill> skills = new ArrayList<Skill>();
 
 	public SkillFactory() {
 		say("SkillFactory object created");
 	}
-
-	private static String filename = "all-languages.csv";
-
-	public static ArrayList skills = new ArrayList<Skill>();
+	
+	public Skill getSkill(String name){
+		for(Skill skill : skills){
+			if (skill.getName().toLowerCase().equals(name)) {
+				return skill;
+			}
+		}
+		return null;
+	}
 
 	public void parse_csv_all_skills() throws IOException,
 			FileNotFoundException {
@@ -30,9 +38,10 @@ public class SkillFactory {
 		CSVReader reader = new CSVReader(new FileReader(filename));
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
-			Skill skill = new Skill(nextLine[0]);
+			Skill skill = new Skill(nextLine[0], skills.size() + 1);
 			skills.add(skill);
-			say("Skill " + skill.getName() + " added to factory");
+			say("Skill " + skill.getId() + ": " + skill.getName()
+					+ " added to factory");
 		}
 	}
 

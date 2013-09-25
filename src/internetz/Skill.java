@@ -9,9 +9,11 @@ package internetz;
 public class Skill {
 
 	private String name;
-	private short id;
+	private int id;
 	private Category category;
 	private int strength;
+	private double probability;
+	private int cardinalProbability;
 
 	public Skill() {
 		say("Empty-constructor Skill initialized");
@@ -33,8 +35,10 @@ public class Skill {
 		PjiitOutputter.say(s);
 	}
 
-	public Skill(String name, short id) {
-		new Skill(name, id, -1);
+	public Skill(String name, int id) {
+		this.name = name;
+		this.id = id;
+		say("Skill created");
 	}
 
 	public String getName() {
@@ -45,11 +49,11 @@ public class Skill {
 		this.name = name;
 	}
 
-	public short getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(short id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -67,6 +71,22 @@ public class Skill {
 
 	public void setCategory(Category category) {
 		this.category = category;
+	}
+
+	public double getProbability() {
+		return probability;
+	}
+
+	public void setProbability(double probability) {
+		this.probability = probability;
+	}
+
+	public int getCardinalProbability() {
+		return cardinalProbability;
+	}
+
+	public void setCardinalProbability(int cardinalProbability) {
+		this.cardinalProbability = cardinalProbability;
 	}
 
 }

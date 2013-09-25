@@ -11,19 +11,27 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public abstract class AgentSkillsPool {
 
+	/***
+	 * Input format of a .CSV file:
+	 * 
+	 * username, skill1, skill2, skill3
+	 * 
+	 * i.e.
+	 * 'fabpot', 'PHP', 'Shell', 'JavaScript'
+	 */
 	private static String filename = "top-users-final.csv";
 
 	private enum Method {
-		STATIC_TABLE, LINEAR_KNN, SVM;
+		STATIC_TABLE, 
+		UNIMPLEMENTED1,
+		UNIMPLEMENTED2;
 	}
 
-	private static Skill[] allSkills = null;
-	private static LinkedHashMap skillSet = new LinkedHashMap<String, ArrayList>();
-
-	private static int COUNTABLE = 0;
+	private static LinkedHashMap<String, ArrayList> skillSet = 
+			new LinkedHashMap<String, ArrayList>();
+	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate() {
-		// say("initialized AgentSkillsPool");
 		instantiate(Method.STATIC_TABLE);
 	}
 
@@ -52,19 +60,19 @@ public abstract class AgentSkillsPool {
 		CSVReader reader = new CSVReader(new FileReader(filename), ',', '\'', 1);
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
-			ArrayList l = new ArrayList();
-			for(int i = 0 ; i < nextLine.length ; i++){
-				l.add(nextLine[i]);
+			ArrayList<Skill> l = new ArrayList<Skill>();
+			for (int i = 1; i < nextLine.length; i++) {
+				l.add(skillFactory.getSkill(nextLine[i]));
 				say("Parsed from CSV: " + nextLine[i]);
 			}
 			skillSet.put(nextLine[0], l);
 		}
 	}
 
-	public static Skill chose_random() {
+	public static ArrayList choseRandom() {
 		Random generator = new Random();
-		int i = generator.nextInt(allSkills.length);
-		return allSkills[i];
+		int i = generator.nextInt(skillSet.size());
+		return getByIndex(skillSet,i);
 	}
 
 	public static ArrayList getByIndex(LinkedHashMap<String, ArrayList> hMap,
@@ -73,16 +81,17 @@ public abstract class AgentSkillsPool {
 	}
 
 	public static void fillWithSkills(Agent agent) {
-//		ArrayList skill = getByIndex(skillSet, COUNTABLE);
-//		Experience experience = new Experience();
-//		AgentInternals agentInternals = new AgentInternals(skill, experience);
-//		agent.addSkill(key, agentInternals);
-//		say("Agent " + agent + " filled with skills");
+		// ArrayList skill = getByIndex(skillSet, COUNTABLE);
+		// Experience experience = new Experience();
+		// AgentInternals agentInternals = new AgentInternals(skill,
+		// experience);
+		// agent.addSkill(key, agentInternals);
+		// say("Agent " + agent + " filled with skills");
 	}
 
-	public static Skill[] get_skill_set(int count) {
-		return allSkills;
-	}
+//	public static Skill[] get_skill_set(int count) {
+//		return allSkills;
+//	}
 
 	private static void say(String s) {
 		PjiitOutputter.say(s);

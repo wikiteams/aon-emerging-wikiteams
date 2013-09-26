@@ -26,7 +26,7 @@ public class SkillFactory {
 	
 	public Skill getSkill(String name){
 		for(Skill skill : skills){
-			if (skill.getName().toLowerCase().equals(name)) {
+			if (skill.getName().toLowerCase().equals(name.toLowerCase())) {
 				return skill;
 			}
 		}

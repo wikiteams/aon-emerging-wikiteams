@@ -21,14 +21,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private ModelFactory modelFactory = new ModelFactory();
 	private SkillFactory skillFactory = null;
-	
+
 	private TaskPool taskPool = new TaskPool();
 	private List<Agent> listAgent = null;
 
 	@SuppressWarnings("unchecked")
 	public InternetzCtx() {
 		super("InternetzCtx");
-		
+
 		try {
 			PjiitLogger.init();
 			say("PjiitLogger initialized");
@@ -89,17 +89,28 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ this.getObjects(Agent.class).size());
 		System.out.println("Algorithm tested: "
 				+ simulationParameters.taskChoiceAlgorithm);
+
+		try {
+			outputAgentSkillMatrix();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 	private void outputAgentSkillMatrix() throws IOException {
-		CSVWriter writer = new CSVWriter(new FileWriter("input_a1.csv"), '\t');
-		for(Agent agent : listAgent){
-			for(AgentInternals __agentInternal : agent.getSkills()){
+		CSVWriter writer = new CSVWriter(new FileWriter("input_a1.csv"), ',',
+				CSVWriter.NO_QUOTE_CHARACTER);
+		for (Agent agent : listAgent) {
+			for (AgentInternals __agentInternal : agent.getSkills()) {
 				ArrayList<String> entries = new ArrayList<String>();
 				entries.add(agent.getNick());
-				entries.add(__agentInternal.getExperience().top + "");
+				entries.add(__agentInternal.getExperience().getCardinal() + "");
 				entries.add(__agentInternal.getSkill().getName());
-				writer.writeNext((String[]) entries.toArray());
+				String[] stockArr = new String[entries.size()];
+				stockArr = entries.toArray(stockArr);
+				writer.writeNext(stockArr);
 			}
 		}
 		writer.close();

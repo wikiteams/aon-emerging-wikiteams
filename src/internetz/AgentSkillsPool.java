@@ -24,8 +24,7 @@ public abstract class AgentSkillsPool {
 		STATIC_TABLE, MUTATE_STATIC_TABLE, RANDOM;
 	}
 
-	private static LinkedHashMap<String, ArrayList> skillSet = 
-			new LinkedHashMap<String, ArrayList>();
+	private static LinkedHashMap<String, ArrayList> skillSet = new LinkedHashMap<String, ArrayList>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate() {
@@ -88,11 +87,11 @@ public abstract class AgentSkillsPool {
 			int how_many = generator
 					.nextInt(SimulationParameters.agentSkillsPoolRandomize1);
 			ArrayList<Skill> __skills = new ArrayList<Skill>();
-			for (int i = 0 ; i < how_many ; i++){
+			for (int i = 0; i < how_many; i++) {
 				Skill s1 = null;
-				while (true){
+				while (true) {
 					s1 = skillFactory.getRandomSkill();
-					if (__skills.contains(s1)){
+					if (__skills.contains(s1)) {
 						continue;
 					} else {
 						__skills.add(s1);
@@ -101,10 +100,11 @@ public abstract class AgentSkillsPool {
 				}
 				Random generator_exp = new Random();
 				int top = SimulationParameters.agentSkillsPoolRandomize2;
-				int exp__ = generator_exp
-						.nextInt(SimulationParameters.agentSkillsPoolRandomize2);
-				AgentInternals __agentInternals = new AgentInternals(s1, 
-						new Experience(exp__ / top, top));
+				int exp__ = generator_exp.nextInt(top);
+				double exp__d = (double)exp__ / (double)top;
+				say ("exp randomized to: " + exp__);
+				AgentInternals __agentInternals = new AgentInternals(s1,
+						new Experience(exp__d, top));
 				agent.addSkill(s1.getName(), __agentInternals);
 			}
 

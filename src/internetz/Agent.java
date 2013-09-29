@@ -1,5 +1,6 @@
 package internetz;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,8 +36,17 @@ public class Agent {
 		skills.put(key, agentInternals);
 	}
 	
-	public Collection<AgentInternals> getSkills() {
+	public Collection<AgentInternals> getAgentInternals() {
 		return skills.values();
+	}
+	
+	public Collection<Skill> getSkills() {
+		ArrayList<Skill> __skills = new ArrayList<Skill>();
+		Collection<AgentInternals> internals = this.getAgentInternals();
+		for(AgentInternals ai : internals){
+			__skills.add(ai.getSkill());
+		}
+		return __skills;
 	}
 
 	public void setId(int id) {
@@ -93,5 +103,13 @@ public class Agent {
 	public void setNick(String nick) {
 		say("Agent's login set to: " + nick);
 		this.nick = nick;
+	}
+
+	public Strategy getStrategy() {
+		return strategy;
+	}
+
+	public void setStrategy(Strategy strategy) {
+		this.strategy = strategy;
 	}
 }

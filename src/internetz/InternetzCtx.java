@@ -103,7 +103,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		CSVWriter writer = new CSVWriter(new FileWriter("input_a1.csv"), ',',
 				CSVWriter.NO_QUOTE_CHARACTER);
 		for (Agent agent : listAgent) {
-			for (AgentInternals __agentInternal : agent.getSkills()) {
+			for (AgentInternals __agentInternal : agent.getAgentInternals()) {
 				ArrayList<String> entries = new ArrayList<String>();
 				entries.add(agent.getNick());
 				entries.add(__agentInternal.getExperience().getCardinal() + "");

@@ -16,9 +16,11 @@ import java.util.Map;
  */
 public class Task {
 
-	protected static int COUNT = 0;
+	private static int COUNT = 0;
+	
 	private String name;
 	private int id;
+	
 	private Map<String, TaskInternals> skills = 
 			new HashMap<String, TaskInternals>();
 

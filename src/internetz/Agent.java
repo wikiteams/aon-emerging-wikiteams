@@ -14,10 +14,9 @@ public class Agent {
 
 	SimulationParameters Sims = new SimulationParameters();
 
-	private Map<String, AgentInternals> skills = 
-			new HashMap<String, AgentInternals>();
+	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
 	private Strategy strategy;
-	
+
 	public static int totalAgents = 0;
 	static double time = 0;
 
@@ -31,19 +30,19 @@ public class Agent {
 		this.id = ++totalAgents;
 		AgentSkillsPool.fillWithSkills(this);
 	}
-	
+
 	public void addSkill(String key, AgentInternals agentInternals) {
 		skills.put(key, agentInternals);
 	}
-	
+
 	public Collection<AgentInternals> getAgentInternals() {
 		return skills.values();
 	}
-	
+
 	public Collection<Skill> getSkills() {
 		ArrayList<Skill> __skills = new ArrayList<Skill>();
 		Collection<AgentInternals> internals = this.getAgentInternals();
-		for(AgentInternals ai : internals){
+		for (AgentInternals ai : internals) {
 			__skills.add(ai.getSkill());
 		}
 		return __skills;
@@ -79,16 +78,19 @@ public class Agent {
 
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
-		
+
 		say("Step(" + time + ") of Agent scheduled method launched..");
-		
+
 		Context context = (Context) ContextUtils.getContext(this);
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
- 
-		// Agent Aj uses Aj {strategy for choosing tasks} and chooses a task to work on
-		
+
+		// Agent Aj uses Aj {strategy for choosing tasks} and chooses a task to
+		// work on
+
+		Task taskToWork = TaskPool.chooseTask(this, this.strategy.taskChoice);
+
 		// Agent Aj works on Ti
-		
+
 		// Chose and algorithm for inside-task skill choose.
 	}
 

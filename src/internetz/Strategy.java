@@ -2,6 +2,9 @@ package internetz;
 
 public class Strategy {
 	
+	public TaskChoice taskChoice;
+	public SkillChoice skillChoice;
+	
 	public enum TaskChoice {
 		HETEROPHYLY_HOMOPHYLY,
 		RANDOM,

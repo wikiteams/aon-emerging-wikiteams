@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class TaskPool {
 
-	private Map<String, Task> tasks = new HashMap<String, Task>();
+	private static Map<String, Task> tasks = new HashMap<String, Task>();
 
 	public void addTask(String key, Task task) {
 		tasks.put(key, task);
@@ -23,7 +23,8 @@ public class TaskPool {
 		return tasks.size();
 	}
 
-	public Task chooseTask(Agent agent, Strategy.TaskChoice strategy) {
+	public static synchronized Task chooseTask(Agent agent,
+			Strategy.TaskChoice strategy) {
 		Task chosen = null;
 		switch (strategy) {
 		case HETEROPHYLY_HOMOPHYLY:

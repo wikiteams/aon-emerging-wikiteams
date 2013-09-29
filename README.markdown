@@ -28,7 +28,9 @@ Agent is characterized by: a collection of a two-element set which consists of s
 ![p3](http://liveexpert.pl/p3.png "p3")
 
 To remark “number of work units”, notice a G constant in Ti, while a work unit in Aj named E is a variable.
- 
+
+![p4](http://liveexpert.pl/p4.png "p4")
+
 Picture 1: Sigmoid learning curve
 Delta δ function is a sigmoid function (S-curve) reflecting human learning progress calculated by an equation δ (Sk) = 1 / (1 + e^-E) . 
  

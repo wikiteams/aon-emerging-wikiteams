@@ -24,7 +24,9 @@ We define task as a collection of a three-element set of skill, number of work u
 ![p2](http://liveexpert.pl/p2.png "p2")
 
 Agent is characterized by: a collection of a two-element set which consists of skills and experience (number of work units) in this particular skill, and a strategy for choosing tasks. 
-  
+
+![p3](http://liveexpert.pl/p3.png "p3")
+
 To remark “number of work units”, notice a G constant in Ti, while a work unit in Aj named E is a variable.
  
 Picture 1: Sigmoid learning curve

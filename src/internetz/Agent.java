@@ -38,6 +38,10 @@ public class Agent {
 	public Collection<AgentInternals> getAgentInternals() {
 		return skills.values();
 	}
+	
+	public AgentInternals getAgentInternals(String key) {
+		return skills.get(key);
+	}
 
 	public Collection<Skill> getSkills() {
 		ArrayList<Skill> __skills = new ArrayList<Skill>();
@@ -90,6 +94,7 @@ public class Agent {
 		Task taskToWork = TaskPool.chooseTask(this, this.strategy.taskChoice);
 
 		// Agent Aj works on Ti
+		taskToWork.workOnTask(this, this.strategy.skillChoice);
 
 		// Chose and algorithm for inside-task skill choose.
 	}

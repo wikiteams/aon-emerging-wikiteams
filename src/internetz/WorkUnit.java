@@ -13,5 +13,9 @@ public class WorkUnit {
 		this.d = d;
 		this.factor = factor;
 	}
+	
+	public void increment(){
+		this.d += 1;
+	}
 
 }

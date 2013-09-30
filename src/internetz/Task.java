@@ -17,15 +17,29 @@ import java.util.Map;
 public class Task {
 
 	private static int COUNT = 0;
-	
+
 	private String name;
 	private int id;
-	
-	private Map<String, TaskInternals> skills = 
-			new HashMap<String, TaskInternals>();
+
+	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
 
 	public Task() {
 		say("Task object " + this + " created");
+	}
+
+	public void workOnTask(Agent agent, Strategy.SkillChoice strategy){
+		switch(strategy){
+		case PROPORTIONAL_TIME_DIVISION:
+			for (TaskInternals __skill : skills.values()){
+				int n = skills.size();
+				double delta = agent.getAgentInternals(__skill.getSkill().getName()).getExperience().percentage;
+				ProportionalTimeDivision.increment(__skill, n, delta);
+			};
+		case GREEDY_ASSIGNMENT_BY_TASK:
+			;
+		case CHOICE_OF_AGENT:
+			;
+		}
 	}
 
 	public void addSkill(String key, TaskInternals taskInternals) {
@@ -57,11 +71,11 @@ public class Task {
 	public void setSkills(Map<String, TaskInternals> skills) {
 		this.skills = skills;
 	}
-	
+
 	public synchronized void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public synchronized int getId() {
 		return this.id;
 	}

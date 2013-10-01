@@ -39,7 +39,11 @@ public class TaskPool {
 					}
 				}
 			}
-			chosen = __tasks.get(new Random().nextInt(__tasks.size()));
+			if (__tasks.size() > 0) {
+				chosen = __tasks.get(new Random().nextInt(__tasks.size()));
+			}else{
+				say("Didnt found task with such skills!");
+			}
 		case COMPARISION:
 			;
 		case MACHINE_LEARNED:
@@ -50,7 +54,7 @@ public class TaskPool {
 		return chosen;
 	}
 
-	private void say(String s) {
+	private static void say(String s) {
 		PjiitOutputter.say(s);
 	}
 

@@ -38,7 +38,7 @@ public class Agent {
 	public Collection<AgentInternals> getAgentInternals() {
 		return skills.values();
 	}
-	
+
 	public AgentInternals getAgentInternals(String key) {
 		return skills.get(key);
 	}
@@ -95,7 +95,11 @@ public class Agent {
 		// TO DO: make a good assertion to prevent nulls !!
 
 		// Agent Aj works on Ti
-		taskToWork.workOnTask(this, this.strategy.skillChoice);
+		if (taskToWork != null)
+			taskToWork.workOnTask(this, this.strategy.skillChoice);
+		else {
+			say("Agent " + this.id + " didnt work on anything");
+		}
 
 		// Chose and algorithm for inside-task skill choose.
 	}

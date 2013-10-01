@@ -9,6 +9,7 @@ package internetz;
 public class Skill {
 
 	private String name;
+	
 	private int id;
 	private Category category;
 	private int strength;
@@ -101,5 +102,9 @@ public class Skill {
 		else
 			return false;
 	}
-
+	@Override
+	public String toString(){
+		return this.name;
+	}
+	
 }

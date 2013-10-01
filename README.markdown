@@ -39,28 +39,34 @@ Delta δ function is a sigmoid function (S-curve) reflecting human learning prog
 Picture 2: Frequency of skills in tasks
 Set of skills and it’s characteristics in TASKS is different from a set of skills existing in AGENTS.
 Steps of the T-CEM simulation per one step in a time (for every Aj do following):
+
 1.	Agent Aj uses Aj {strategy for choosing tasks} and choses a task to work on
 2.	Agent Aj works on Ti
 
-![p6](http://liveexpert.pl/p6.png "p6")
+   ![p6](http://liveexpert.pl/p6.png "p6")
 
-Work is done be by incrementing the “work done” counter in one the skills of a task.
+   Work is done be by incrementing the “work done” counter in one the skills of a task.
+
 3.	Chose an algorithm for skill – inside – task choose. Agent have a problem of choosing which skill to work on on current time unit.
 
-![p7](http://liveexpert.pl/p7.png "p7")
+   ![p7](http://liveexpert.pl/p7.png "p7")
 
-a.	Proportional time division
-For every Sn, do
+   a.	Proportional time division
 
-![p8](http://liveexpert.pl/p8.png "p8")
+   For every Sn, do
 
-b.	Greedy assignment by task
-For chosen Sn, do
+   ![p8](http://liveexpert.pl/p8.png "p8")
 
-![p9](http://liveexpert.pl/p9.png "p9")
+   b.	Greedy assignment by task
 
-c.	Choice of agent
+   For chosen Sn, do
+
+   ![p9](http://liveexpert.pl/p9.png "p9")
+
+   c.	Choice of agent
+
 4.	Tasks done leave the environment
+
 5.	Agents with high learning rate quit the environment
 
 

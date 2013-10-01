@@ -98,4 +98,8 @@ In Eclipse, (launchers -> internetz Model.launch), then press Start in Repast wi
 * percStartMembership
 * allowMultiMembership
 * numSteps
+* strategyDistribution
 * taskChoiceAlgorithm
+* skillChoiceAlgorithm
+* agentSkillsPoolRandomize1
+* agentSkillsPoolRandomize2

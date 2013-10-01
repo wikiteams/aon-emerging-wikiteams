@@ -33,20 +33,27 @@ To remark “number of work units”, notice a G constant in Ti, while a work un
 
 Picture 1: Sigmoid learning curve
 Delta δ function is a sigmoid function (S-curve) reflecting human learning progress calculated by an equation δ (Sk) = 1 / (1 + e^-E) . 
- 
+
+![p5](http://liveexpert.pl/p5.png "p5")
+
 Picture 2: Frequency of skills in tasks
 Set of skills and it’s characteristics in TASKS is different from a set of skills existing in AGENTS.
 Steps of the T-CEM simulation per one step in a time (for every Aj do following):
 1.	Agent Aj uses Aj {strategy for choosing tasks} and choses a task to work on
 2.	Agent Aj works on Ti
- 
+
+![p6](http://liveexpert.pl/p6.png "p6")
+
 Work is done be by incrementing the “work done” counter in one the skills of a task.
 3.	Chose an algorithm for skill – inside – task choose. Agent have a problem of choosing which skill to work on on current time unit.
- 
+
+![p7](http://liveexpert.pl/p7.png "p7")
+
 a.	Proportional time division
 For every Sn, do
- 
- 
+
+![p8](http://liveexpert.pl/p8.png "p8")
+
 b.	Greedy assignment by task
 For chosen Sn, do
  

@@ -17,7 +17,8 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public class InternetzCtx extends DefaultContext<Object> {
 
-	private SimulationParameters simulationParameters = new SimulationParameters();
+	private SimulationParameters simulationParameters;
+	private StrategyDistribution strategyDistribution;
 
 	private ModelFactory modelFactory = new ModelFactory();
 	private SkillFactory skillFactory = null;
@@ -29,21 +30,25 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public InternetzCtx() {
 		super("InternetzCtx");
 
+		simulationParameters = new SimulationParameters();
+		strategyDistribution = new StrategyDistribution();
+
 		try {
 			PjiitLogger.init();
 			say("PjiitLogger initialized");
+			say("Super object InternetzCtx loaded");
+			say("Starting simulation with model: " + modelFactory.toString());
+			// getting parameters of simulation
+			say("Loading parameters");
+			simulationParameters.init();
+			// initialize skill pools
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			say("Error initializing PjiitLogger !");
+			say("Error initializing PjiitLogger!");
+		} catch (Exception exc) {
+			say("Error initializing PjiitLogger and/or Simulation Parameters!");
 		}
-
-		say("Super object InternetzCtx loaded");
-		say("Starting simulation with model: " + modelFactory.toString());
-		// getting parameters of simulation
-		say("Loading parameters");
-		simulationParameters.init();
-		// initialize skill pools
 
 		try {
 			skillFactory = new SkillFactory();
@@ -55,13 +60,22 @@ public class InternetzCtx extends DefaultContext<Object> {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} finally {
-			say("SkillFactory parsed successfully all skills");
+			say("SkillFactory parsed all skills from CSV file");
 		}
 
-		AgentSkillsPool.instantiate();
-		say("Instatiated AgentSkillsPool");
-		TaskSkillsPool.instantiate();
-		say("Instatied TaskSkillsPool");
+		try {
+			AgentSkillsPool.instantiate();
+			say("Instatiated AgentSkillsPool");
+			TaskSkillsPool.instantiate();
+			say("Instatied TaskSkillsPool");
+
+			strategyDistribution.setType(simulationParameters.strategyDistribution);
+			strategyDistribution.setSkillChoice(simulationParameters.skillChoiceAlgorithm);
+			strategyDistribution.setTaskChoice(simulationParameters.taskChoiceAlgorithm);
+		} catch (Exception exc) {
+			exc.printStackTrace();
+			say("Unknown exception");
+		}
 
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
 				"agents", (Context<Object>) this, true);
@@ -79,7 +93,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("Projection agents (" + agents.getName() + ") exists and is size: "
 				+ agents.size());
 
-		addAgent(simulationParameters.agentCount, true);
+		addAgent(simulationParameters.agentCount);
 
 		say("Task choice algorithm is "
 				+ simulationParameters.taskChoiceAlgorithm);
@@ -116,10 +130,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 		writer.close();
 	}
 
-	private void addAgent(int agentCnt, boolean randomize_task_strategy) {
+	private void addAgent(int agentCnt) {
 		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
+			Strategy strategy = new Strategy();
+			strategy.skillChoice = strategyDistribution.getSkillStrategy(agent);
+			strategy.taskChoice = strategyDistribution.getTaskStrategy(agent);
+			agent.setStrategy(strategy);
 			say(agent.toString());
 			say("in add aggent i: " + i);
 			this.add(agent);

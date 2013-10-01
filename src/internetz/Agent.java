@@ -92,6 +92,7 @@ public class Agent {
 		// work on
 
 		Task taskToWork = TaskPool.chooseTask(this, this.strategy.taskChoice);
+		// TO DO: make a good assertion to prevent nulls !!
 
 		// Agent Aj works on Ti
 		taskToWork.workOnTask(this, this.strategy.skillChoice);

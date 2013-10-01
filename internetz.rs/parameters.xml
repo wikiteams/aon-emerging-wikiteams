@@ -25,8 +25,16 @@
 		defaultValue="50000" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 
+	<parameter name="strategyDistribution" displayName="strategyDistribution"
+		type="java.lang.Integer" defaultValue="0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+
 	<parameter name="taskChoiceAlgorithm" displayName="taskChoiceAlgorithm"
 		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+
+	<parameter name="skillChoiceAlgorithm" displayName="skillChoiceAlgorithm"
+		type="java.lang.String" defaultValue="proportional" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 
 	<parameter name="agentSkillsPoolRandomize1" displayName="agentSkillsPoolRandomizeNoOfTasks"

@@ -16,7 +16,10 @@ public class SimulationParameters {
 	public static int percStartMembership = 0;
 	public static boolean allowMultiMembership = false;
 	public static int numSteps = 0;
+	
 	public static String taskChoiceAlgorithm = "";
+	public static String skillChoiceAlgorithm = "";
+	public static int strategyDistribution = 0;
 
 	public static int randomSeed = 0;
 
@@ -33,6 +36,8 @@ public class SimulationParameters {
 		numSteps = (Integer) param.getValue("numSteps");
 
 		taskChoiceAlgorithm = (String) param.getValue("taskChoiceAlgorithm");
+		skillChoiceAlgorithm = (String) param.getValue("skillChoiceAlgorithm");
+		strategyDistribution = (Integer) param.getValue("strategyDistribution");
 
 		randomSeed = (Integer) param.getValue("randomSeed");
 

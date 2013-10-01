@@ -27,14 +27,16 @@ public class Task {
 		say("Task object " + this + " created");
 	}
 
-	public void workOnTask(Agent agent, Strategy.SkillChoice strategy){
-		switch(strategy){
+	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
+		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
-			for (TaskInternals __skill : skills.values()){
+			for (TaskInternals __skill : skills.values()) {
 				int n = skills.size();
-				double delta = agent.getAgentInternals(__skill.getSkill().getName()).getExperience().percentage;
+				double delta = agent.getAgentInternals(
+						__skill.getSkill().getName()).getExperience().percentage;
 				ProportionalTimeDivision.increment(__skill, n, delta);
-			};
+			}
+			;
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			;
 		case CHOICE_OF_AGENT:

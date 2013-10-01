@@ -56,7 +56,9 @@ For every Sn, do
 
 b.	Greedy assignment by task
 For chosen Sn, do
- 
+
+![p9](http://liveexpert.pl/p9.png "p9")
+
 c.	Choice of agent
 4.	Tasks done leave the environment
 5.	Agents with high learning rate quit the environment

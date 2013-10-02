@@ -84,7 +84,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		for (int i = 0; i < simulationParameters.taskCount; i++) {
 			Task task = new Task();
 			say("Creating task..");
-			taskPool.addTask("", task);
+			taskPool.addTask(task.getName(), task);
 			say("Initializing task..");
 			task.initialize();
 		}

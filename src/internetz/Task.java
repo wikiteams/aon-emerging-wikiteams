@@ -12,7 +12,7 @@ import java.util.Map;
  * 
  * @since 1.0
  * 
- * @author Oskar
+ * @author Oskar Jarczyk
  */
 public class Task {
 
@@ -24,6 +24,8 @@ public class Task {
 	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
 
 	public Task() {
+		this.id = COUNT++;
+		this.name = "Task_" + COUNT;
 		say("Task object " + this + " created");
 	}
 
@@ -80,6 +82,14 @@ public class Task {
 
 	public synchronized int getId() {
 		return this.id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

@@ -15,7 +15,16 @@ public class StrategyDistribution {
 	public TaskChoice getTaskStrategy(Agent agent){
 		if (type == 0){
 			if (taskChoice.equals("preferential")){
-				return Strategy.TaskChoice.HETEROPHYLY_HOMOPHYLY;
+				return Strategy.TaskChoice.RANDOM;
+			}
+			if (taskChoice.equals("random")){
+				return Strategy.TaskChoice.RANDOM;
+			}
+			if (taskChoice.equals("comparision")){
+				return Strategy.TaskChoice.RANDOM;
+			}
+			if (taskChoice.equals("machine_learned")){
+				return Strategy.TaskChoice.RANDOM;
 			}
 		}
 		return null;
@@ -23,7 +32,7 @@ public class StrategyDistribution {
 	
 	public SkillChoice getSkillStrategy(Agent agent){
 		if (type == 0){
-			if (taskChoice.equals("proportional")){
+			if (skillChoice.equals("proportional")){
 				return Strategy.SkillChoice.PROPORTIONAL_TIME_DIVISION;
 			}
 		}

@@ -76,10 +76,6 @@ public class Agent {
 		this.lastname = lastname;
 	}
 
-	private void say(String s) {
-		PjiitOutputter.say(s);
-	}
-
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 
@@ -104,8 +100,9 @@ public class Agent {
 		// Chose and algorithm for inside-task skill choose.
 	}
 
+	@Override
 	public String toString() {
-		return "id: " + id + " name: " + firstname + " " + lastname;
+		return getNick();
 	}
 
 	public String getNick() {
@@ -123,5 +120,23 @@ public class Agent {
 
 	public void setStrategy(Strategy strategy) {
 		this.strategy = strategy;
+	}
+
+	@Override
+	public int hashCode() {
+		return nick.hashCode() * id;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if ((this.id == ((Agent) obj).id)
+				&& (this.nick.toLowerCase().equals((((Agent) obj).nick))))
+			return true;
+		else
+			return false;
+	}
+
+	private void say(String s) {
+		PjiitOutputter.say(s);
 	}
 }

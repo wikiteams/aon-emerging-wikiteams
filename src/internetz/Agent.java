@@ -79,7 +79,8 @@ public class Agent {
 	@ScheduledMethod(start = 1, interval = 1)
 	public void step() {
 
-		say("Step(" + time + ") of Agent scheduled method launched..");
+		say("Step(" + time + ") of Agent " + this.id
+				+ "scheduled method launched.");
 
 		Context context = (Context) ContextUtils.getContext(this);
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
@@ -91,9 +92,10 @@ public class Agent {
 		// TO DO: make a good assertion to prevent nulls !!
 
 		// Agent Aj works on Ti
-		if (taskToWork != null)
+		if (taskToWork != null) {
+			say("Agent " + this.id + " will work on task " + taskToWork.getId());
 			taskToWork.workOnTask(this, this.strategy.skillChoice);
-		else {
+		} else {
 			say("Agent " + this.id + " didnt work on anything");
 		}
 

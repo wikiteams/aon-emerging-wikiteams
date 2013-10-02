@@ -36,6 +36,7 @@ public class Task {
 				int n = skills.size();
 				double delta = agent.getAgentInternals(
 						__skill.getSkill().getName()).getExperience().percentage;
+				say ("Inside switch - PROPORTIONAL_TIME_DIVISION");
 				ProportionalTimeDivision.increment(__skill, n, delta);
 			}
 			;

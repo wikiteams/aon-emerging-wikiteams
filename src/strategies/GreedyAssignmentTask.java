@@ -1,6 +1,9 @@
-package internetz;
+package strategies;
 
-public class ProportionalTimeDivision extends EmergenceStrategy {
+import internetz.TaskInternals;
+import internetz.WorkUnit;
+
+public class GreedyAssignmentTask extends EmergenceStrategy {
 	
 	public static void increment(TaskInternals __skill, int n, double experience){
 		WorkUnit wd = __skill.getWorkDone();
@@ -8,5 +11,5 @@ public class ProportionalTimeDivision extends EmergenceStrategy {
 		
 		wd.increment();
 	}
-	
+
 }

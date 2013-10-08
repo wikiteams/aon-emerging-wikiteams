@@ -1,5 +1,7 @@
 package internetz;
 
+import logger.PjiitOutputter;
+
 public class Category {
 	
 	private String name;

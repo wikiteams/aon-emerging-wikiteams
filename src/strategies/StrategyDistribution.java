@@ -1,7 +1,8 @@
-package internetz;
+package strategies;
 
-import internetz.Strategy.SkillChoice;
-import internetz.Strategy.TaskChoice;
+import strategies.Strategy.SkillChoice;
+import strategies.Strategy.TaskChoice;
+import internetz.Agent;
 
 public class StrategyDistribution {
 	

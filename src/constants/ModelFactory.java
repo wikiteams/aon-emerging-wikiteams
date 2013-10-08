@@ -1,4 +1,4 @@
-package internetz;
+package constants;
 
 public class ModelFactory {
 

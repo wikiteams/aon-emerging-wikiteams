@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+import logger.PjiitOutputter;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 public abstract class TaskSkillsPool {

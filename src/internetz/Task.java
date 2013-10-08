@@ -6,6 +6,11 @@ package internetz;
 import java.util.HashMap;
 import java.util.Map;
 
+import strategies.ProportionalTimeDivision;
+import strategies.Strategy;
+
+import logger.PjiitOutputter;
+
 /**
  * Task is a collection of a three-element set of skill, number of work units,
  * and work done.

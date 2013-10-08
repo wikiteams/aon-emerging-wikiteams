@@ -6,6 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import strategies.Strategy;
+
+import logger.PjiitOutputter;
+
 public class TaskPool {
 
 	private static Map<String, Task> tasks = new HashMap<String, Task>();

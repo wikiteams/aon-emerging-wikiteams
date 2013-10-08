@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+import logger.PjiitOutputter;
+
 import au.com.bytecode.opencsv.CSVReader;
 
 public abstract class AgentSkillsPool {
@@ -24,7 +26,11 @@ public abstract class AgentSkillsPool {
 		STATIC_TABLE, MUTATE_STATIC_TABLE, RANDOM;
 	}
 
-	private static LinkedHashMap<String, ArrayList> skillSet = new LinkedHashMap<String, ArrayList>();
+	/***
+	 * <String:user, <skill1, skill2, skill3>>
+	 */
+	private static LinkedHashMap<String, ArrayList> skillSet = 
+			new LinkedHashMap<String, ArrayList>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate() {

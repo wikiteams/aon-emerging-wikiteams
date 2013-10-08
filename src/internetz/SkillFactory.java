@@ -7,6 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import constants.RandomMethod;
+
+import logger.PjiitOutputter;
+
 import au.com.bytecode.opencsv.CSVReader;
 import cern.jet.random.BreitWigner;
 import cern.jet.random.Normal;
@@ -66,7 +70,7 @@ public class SkillFactory {
 		return null;
 	}
 
-	public void parse_csv_all_skills() throws IOException,
+	public void buildSkillsLibrary() throws IOException,
 			FileNotFoundException {
 		say("Searching for file in: " + new File(".").getAbsolutePath());
 		CSVReader reader = new CSVReader(new FileReader(filename));

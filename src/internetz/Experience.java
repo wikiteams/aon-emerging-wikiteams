@@ -1,5 +1,6 @@
 package internetz;
 
+import logger.PjiitOutputter;
 import cern.jet.random.ChiSquare;
 import repast.simphony.random.RandomHelper;
 

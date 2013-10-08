@@ -13,3 +13,5 @@ debug.log
 *.ear
 
 /velocity.log
+/velocity.log.1
+/input_a1.csv

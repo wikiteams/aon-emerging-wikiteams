@@ -1,5 +1,7 @@
 package internetz;
 
+import logger.PjiitOutputter;
+
 /***
  * Represents a "skill" - a GitHub language
  * 

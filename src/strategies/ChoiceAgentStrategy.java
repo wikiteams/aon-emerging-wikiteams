@@ -1,4 +1,7 @@
-package internetz;
+package strategies;
+
+import internetz.TaskInternals;
+import internetz.WorkUnit;
 
 public class ChoiceAgentStrategy extends EmergenceStrategy {
 	

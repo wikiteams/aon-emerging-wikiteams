@@ -7,12 +7,21 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import constants.ModelFactory;
+
+import logger.PjiitLogger;
+import logger.PjiitOutputter;
+import logger.SanityLogger;
+
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.NetworkBuilder;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
+import strategies.Strategy;
+import strategies.StrategyDistribution;
+import utils.NamesGenerator;
 import au.com.bytecode.opencsv.CSVWriter;
 
 public class InternetzCtx extends DefaultContext<Object> {
@@ -36,12 +45,21 @@ public class InternetzCtx extends DefaultContext<Object> {
 		try {
 			PjiitLogger.init();
 			say("PjiitLogger initialized");
+			SanityLogger.init();
+			sanity("PjiitLogger initialized");
+			
 			say("Super object InternetzCtx loaded");
 			say("Starting simulation with model: " + modelFactory.toString());
 			// getting parameters of simulation
 			say("Loading parameters");
+			
 			simulationParameters.init();
+			
 			// initialize skill pools
+			skillFactory = new SkillFactory();
+			skillFactory.buildSkillsLibrary();
+			
+			say("SkillFactory parsed all skills from CSV file");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -49,20 +67,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		} catch (Exception exc) {
 			say("Error initializing PjiitLogger and/or Simulation Parameters!");
 		}
-
-		try {
-			skillFactory = new SkillFactory();
-			skillFactory.parse_csv_all_skills();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			say("SkillFactory parsed all skills from CSV file");
-		}
-
+		
 		try {
 			AgentSkillsPool.instantiate();
 			say("Instatiated AgentSkillsPool");
@@ -165,6 +170,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
+	}
+	
+	private void sanity(String s){
+		PjiitOutputter.sanity(s);
 	}
 
 }

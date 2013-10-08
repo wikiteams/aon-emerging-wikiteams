@@ -1,4 +1,6 @@
-package internetz;
+package utils;
+
+import internetz.Agent;
 
 import java.util.ArrayList;
 import java.util.List;

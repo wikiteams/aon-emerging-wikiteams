@@ -1,4 +1,4 @@
-package internetz;
+package strategies;
 
 public class Strategy {
 	

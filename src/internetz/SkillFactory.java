@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import au.com.bytecode.opencsv.CSVReader;
+import cern.jet.random.BreitWigner;
 import cern.jet.random.Normal;
 
 /***
@@ -53,8 +54,14 @@ public class SkillFactory {
 			return skills.get(i);
 		case NORMAL_DISTRIBUTION:
 			Normal normal = new Normal(0.0, 1.0,
-					cern.jet.random.ChiSquare.makeDefaultGenerator());
+					cern.jet.random.Normal.makeDefaultGenerator());
 			return skills.get((int)(normal.nextDouble() * skills.size()));
+		case BREIT_WIGNER:
+			BreitWigner bw = new BreitWigner(1.0, 1.0, 1.0,
+					cern.jet.random.BreitWigner.makeDefaultGenerator());
+			return skills.get((int)(bw.nextDouble() * skills.size()));
+		default:
+			break;
 		}
 		return null;
 	}

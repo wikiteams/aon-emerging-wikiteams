@@ -45,25 +45,25 @@ Steps of the T-CEM simulation per one step in a time (for every Aj do following)
 1.	Agent Aj uses Aj {strategy for choosing tasks} and choses a task to work on
 2.	Agent Aj works on Ti
 
-   ![p6](http://liveexpert.pl/p6.png "p6")
+   ![p6](http://latex.codecogs.com/gif.latex?T_%7Bi%7D%20%5Ccap%20A_%7Bj%7D%20%3D%20%5C%7BS_%7Bn%7D%5C%7D_%7Bn%3D1%7D%5E%7BN%7D "p6")
 
    Work is done be by incrementing the “work done” counter in one the skills of a task.
 
 3.	Chose an algorithm for skill – inside – task choose. Agent have a problem of choosing which skill to work on on current time unit.
 
-   ![p7](http://liveexpert.pl/p7.png "p7")
+   ![p7](http://latex.codecogs.com/gif.latex?%5Calpha%20%3D%20%5Cfrac%7B1%7D%7BN%7D "p7")
 
    a.	Proportional time division
 
    For every Sn, do
 
-   ![p8](http://liveexpert.pl/p8.png "p8")
+   ![p8](http://latex.codecogs.com/gif.latex?%5C%5C%5B1mm%5D%20W%5E%7BS_%7Bn%7D%7D%20%3D%20W%5E%7BS_%7Bn%7D%7D%20&plus;%201%20%5Ccdot%20%5Calpha%20%5Ccdot%20%5Cdelta%28E%29%20%5C%5C%5B1mm%5D%20E%5E%7BS_%7Bn%7D%7D%20%3D%20E%5E%7BS_%7Bn%7D%7D%20&plus;%201%20%5Ccdot%20%5Calpha "p8")
 
    b.	Greedy assignment by task
 
    For chosen Sn, do
 
-   ![p9](http://liveexpert.pl/p9.png "p9")
+   ![p9](http://latex.codecogs.com/gif.latex?%5C%5C%5B1mm%5D%20W%5E%7BS_%7Bn%7D%7D%20%3D%20W%5E%7BS_%7Bn%7D%7D%20&plus;%201%20%5Ccdot%20%5Cdelta%28E%29%20%5C%5C%5B1mm%5D%20E%5E%7BS_%7Bn%7D%7D%20%3D%20E%5E%7BS_%7Bn%7D%7D%20&plus;%201 "p9")
 
    c.	Choice of agent
 

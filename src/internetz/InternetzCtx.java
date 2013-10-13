@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import constants.Constraints;
 import constants.ModelFactory;
 
 import logger.PjiitLogger;
@@ -44,9 +45,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		try {
 			PjiitLogger.init();
-			say("PjiitLogger initialized");
+			say(Constraints.LOGGER_INITIALIZED);
 			SanityLogger.init();
-			sanity("PjiitLogger initialized");
+			sanity(Constraints.LOGGER_INITIALIZED);
 			
 			say("Super object InternetzCtx loaded");
 			say("Starting simulation with model: " + modelFactory.toString());
@@ -74,19 +75,19 @@ public class InternetzCtx extends DefaultContext<Object> {
 			TaskSkillsPool.instantiate();
 			say("Instatied TaskSkillsPool");
 
-			strategyDistribution.setType(simulationParameters.strategyDistribution);
-			strategyDistribution.setSkillChoice(simulationParameters.skillChoiceAlgorithm);
-			strategyDistribution.setTaskChoice(simulationParameters.taskChoiceAlgorithm);
+			strategyDistribution.setType(SimulationParameters.strategyDistribution);
+			strategyDistribution.setSkillChoice(SimulationParameters.skillChoiceAlgorithm);
+			strategyDistribution.setTaskChoice(SimulationParameters.taskChoiceAlgorithm);
 		} catch (Exception exc) {
 			exc.printStackTrace();
-			say("Unknown exception");
+			say(Constraints.UNKNOWN_EXCEPTION);
 		}
 
 		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
 				"agents", (Context<Object>) this, true);
 		netBuilder.buildNetwork();
 
-		for (int i = 0; i < simulationParameters.taskCount; i++) {
+		for (int i = 0; i < SimulationParameters.taskCount; i++) {
 			Task task = new Task();
 			say("Creating task..");
 			taskPool.addTask(task.getName(), task);
@@ -98,21 +99,21 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("Projection agents (" + agents.getName() + ") exists and is size: "
 				+ agents.size());
 
-		addAgent(simulationParameters.agentCount);
+		addAgent(SimulationParameters.agentCount);
 
 		say("Task choice algorithm is "
-				+ simulationParameters.taskChoiceAlgorithm);
+				+ SimulationParameters.taskChoiceAlgorithm);
 		System.out.println("Number of teams created "
 				+ this.getObjects(Task.class).size());
 		System.out.println("Number of agents created "
 				+ this.getObjects(Agent.class).size());
 		System.out.println("Algorithm tested: "
-				+ simulationParameters.taskChoiceAlgorithm);
+				+ SimulationParameters.taskChoiceAlgorithm);
 
 		try {
 			outputAgentSkillMatrix();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			say(Constraints.IO_EXCEPTION);
 			e.printStackTrace();
 		}
 

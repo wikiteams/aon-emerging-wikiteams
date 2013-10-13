@@ -1,4 +1,5 @@
 0. First time run (circa 3 times an getting rid of errors)
+a) without evolution model
 
 1. Integrate to CSV dump and Gephi visualization!
 

@@ -29,24 +29,27 @@ public class TaskPool {
 
 	public static synchronized Task chooseTask(Agent agent,
 			Strategy.TaskChoice strategy) {
+
 		Task chosen = null;
 		switch (strategy) {
 		case HETEROPHYLY_HOMOPHYLY:
 			;
 		case RANDOM:
-			ArrayList<Task> __tasks = new ArrayList<Task>();
-			Collection<Skill> __skills = agent.getSkills();
-			for (Task _task : tasks.values()) {
-				for (Skill _skill : __skills) {
-					if (_task.getSkills().containsKey(_skill.toString())) {
-						__tasks.add(_task);
+			ArrayList<Task> tasksWithMatchingSkills = new ArrayList<Task>();
+			Collection<Skill> allAgentSkills = agent.getSkills();
+			for (Task singleTaskFromPool : tasks.values()) {
+				for (Skill singleSkill : allAgentSkills) {
+					if (singleTaskFromPool.getTaskInternals().containsKey(
+							singleSkill.toString())) {
+						tasksWithMatchingSkills.add(singleTaskFromPool);
 					}
 				}
 			}
-			if (__tasks.size() > 0) {
-				chosen = __tasks.get(new Random().nextInt(__tasks.size()));
-			}else{
-				say("Didnt found task with such skills!");
+			if (tasksWithMatchingSkills.size() > 0) {
+				chosen = tasksWithMatchingSkills.get(new Random()
+						.nextInt(tasksWithMatchingSkills.size()));
+			} else {
+				say("Didn't found task with such skills which agent have!");
 			}
 		case COMPARISION:
 			;
@@ -55,7 +58,19 @@ public class TaskPool {
 		default:
 			;
 		}
+		if (chosen != null) {
+			sanity("Agent " + agent.toString() + " uses strategy "
+					+ agent.getStrategy() + " and chooses task "
+					+ chosen.getId() + " to work on.");
+		} else {
+			sanity("Agent " + agent.toString() + " uses strategy "
+					+ agent.getStrategy() + " but didnt found any task to work on.");
+		}
 		return chosen;
+	}
+	
+	private static void sanity(String s){
+		PjiitOutputter.sanity(s);
 	}
 
 	private static void say(String s) {

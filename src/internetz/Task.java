@@ -16,7 +16,7 @@ import logger.PjiitOutputter;
  * and work done.
  * 
  * @since 1.0
- * 
+ * @version 1.0
  * @author Oskar Jarczyk
  */
 public class Task {
@@ -34,38 +34,12 @@ public class Task {
 		say("Task object " + this + " created");
 	}
 
-	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
-		switch (strategy) {
-		case PROPORTIONAL_TIME_DIVISION:
-			for (TaskInternals __skill : skills.values()) {
-				int n = skills.size();
-				double delta = agent.getAgentInternals(
-						__skill.getSkill().getName()).getExperience().percentage;
-				say ("Inside switch - PROPORTIONAL_TIME_DIVISION");
-				ProportionalTimeDivision.increment(__skill, n, delta);
-			}
-			;
-		case GREEDY_ASSIGNMENT_BY_TASK:
-			;
-		case CHOICE_OF_AGENT:
-			;
-		}
-	}
-
 	public void addSkill(String key, TaskInternals taskInternals) {
 		skills.put(key, taskInternals);
 	}
 
-	public TaskInternals getSkill(String key) {
+	public TaskInternals getTaskInternals(String key) {
 		return skills.get(key);
-	}
-
-	private void say(String s) {
-		PjiitOutputter.say(s);
-	}
-
-	public String toString() {
-		return "Task " + id + " " + name;
 	}
 
 	public synchronized void initialize() {
@@ -74,11 +48,11 @@ public class Task {
 		say("Task object initialized with id: " + this.id);
 	}
 
-	public Map<String, TaskInternals> getSkills() {
+	public Map<String, TaskInternals> getTaskInternals() {
 		return skills;
 	}
 
-	public void setSkills(Map<String, TaskInternals> skills) {
+	public void setTaskInternals(Map<String, TaskInternals> skills) {
 		this.skills = skills;
 	}
 
@@ -96,6 +70,33 @@ public class Task {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
+		switch (strategy) {
+		case PROPORTIONAL_TIME_DIVISION:
+			for (TaskInternals __skill : skills.values()) {
+				int n = skills.size();
+				double delta = agent.getAgentInternals(
+						__skill.getSkill().getName()).getExperience().percentage;
+				say("Inside switch - PROPORTIONAL_TIME_DIVISION");
+				ProportionalTimeDivision.increment(__skill, n, delta);
+			}
+			;
+		case GREEDY_ASSIGNMENT_BY_TASK:
+			;
+		case CHOICE_OF_AGENT:
+			;
+		}
+	}
+	
+	@Override
+	public String toString() {
+		return "Task " + id + " " + name;
+	}
+	
+	private void say(String s) {
+		PjiitOutputter.say(s);
 	}
 
 }

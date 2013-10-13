@@ -1,0 +1,6 @@
+Type of sanity class messages to log:
+
+- "Agent Aj uses Aj{strategy for choosing tasks} and choses a task to work on"
+- "Agent Aj works on Ti"
+- "Choosing Si inside Ti"
+- "Incrementing W counter in S"

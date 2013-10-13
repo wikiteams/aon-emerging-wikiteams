@@ -6,6 +6,8 @@ package internetz;
 import java.util.HashMap;
 import java.util.Map;
 
+import constants.Constraints;
+
 import strategies.ProportionalTimeDivision;
 import strategies.Strategy;
 
@@ -75,16 +77,26 @@ public class Task {
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
+			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
+			for (TaskInternals singleTaskInternal : skills.values()) {
+				sanity("Choosing Si:{" + 
+						singleTaskInternal.getSkill().getName() + 
+						"} inside Ti:{" + singleTaskInternal.toString() + "}");
+				int n = skills.size();
+				double alpha = 1 / n;
+				double delta = agent.getAgentInternals(
+						singleTaskInternal.getSkill().getName()).getExperience().getDelta();
+				ProportionalTimeDivision.increment(singleTaskInternal, alpha, delta);
+				//agent.
+			}
+		case GREEDY_ASSIGNMENT_BY_TASK:
 			for (TaskInternals __skill : skills.values()) {
 				int n = skills.size();
 				double delta = agent.getAgentInternals(
-						__skill.getSkill().getName()).getExperience().percentage;
+						__skill.getSkill().getName()).getExperience().getDelta();
 				say("Inside switch - PROPORTIONAL_TIME_DIVISION");
 				ProportionalTimeDivision.increment(__skill, n, delta);
 			}
-			;
-		case GREEDY_ASSIGNMENT_BY_TASK:
-			;
 		case CHOICE_OF_AGENT:
 			;
 		}
@@ -97,6 +109,10 @@ public class Task {
 	
 	private void say(String s) {
 		PjiitOutputter.say(s);
+	}
+	
+	private void sanity(String s){
+		PjiitOutputter.sanity(s);
 	}
 
 }

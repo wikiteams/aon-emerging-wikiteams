@@ -7,65 +7,88 @@ import repast.simphony.random.RandomHelper;
 public class Experience {
 
 	public LearningCurve lc = null;
-	public double percentage;
-	public int top;
+	public double value;
+	public int top; // hipotetyczne przeuczenie
 
 	public Experience() {
 		new Experience(0d, 0);
 	}
 
-	public Experience(double percentage, int top) {
+	public Experience(double value, int top) {
 		lc = new LearningCurve();
-		say("Creating Experience object with percentage: " + percentage
+		say("Creating Experience object with value: " + value
 				+ " and top: " + top);
-		this.percentage = percentage;
+		this.value = value;
 		this.top = top;
 	}
-
-	public int getCardinal() {
-		return (int) (percentage * top);
+	
+	public double getDelta(){
+		return lc.getDelta((top / value));
 	}
 
-	public void check1() {
-		if (lc != null)
-			lc.checkZeta();
-	}
+//	public int getCardinal() {
+//		return (int) (percentage * top);
+//	}
+//
+//	public void check1() {
+//		if (lc != null)
+//			lc.checkZeta();
+//	}
 
+	/**
+	 * 
+	 * To jest nasza funkcja delty! delta(E)
+	 * Ta klasa nie ma nic wspolnego ze zmienna E (doswiadczenia)
+	 * a sluzy jedyni otrzymaniu wartosci delta z E
+	 * 
+	 * @author Oskar
+	 * @since 1.1
+	 */
 	class LearningCurve {
 
 		cern.jet.random.ChiSquare chi = null;
-		cern.jet.random.ChiSquare zeta = null;
+		//cern.jet.random.ChiSquare zeta = null;
 
-		int freedom = 1;
+		int freedom = 4;
+		int k = 5;
 
 		LearningCurve() {
-			chi = RandomHelper.getChiSquare();
-			zeta = new ChiSquare(freedom,
+			//chi = RandomHelper.getChiSquare();
+			chi = new ChiSquare(k,
 					cern.jet.random.ChiSquare.makeDefaultGenerator());
 		}
-
-		public void checkChi() {
-			say("chi.cdf(0): " + chi.cdf(0));
-			say("chi.cdf(0.5): " + chi.cdf(0.5));
-			say("chi.cdf(1): " + chi.cdf(1));
-			say("chi.pdf(0): " + chi.pdf(0));
-			say("chi.pdf(0.5): " + chi.pdf(0.5));
-			say("chi.pdf(1): " + chi.pdf(1));
-			say("chi.nextDouble(): " + chi.nextDouble());
+		
+		private double getDelta(double k){
+			//NOTE: freedom (x axis of CDF) should be between 0 and 4
+			return chi.cdf(k * freedom);
 		}
 
-		public void checkZeta() {
-			say("chi.cdf(0): " + zeta.cdf(0));
-			say("chi.cdf(0.5): " + zeta.cdf(0.5));
-			say("chi.cdf(1): " + zeta.cdf(1));
-			say("chi.pdf(0): " + zeta.pdf(0.01));
-			say("chi.pdf(0.5): " + zeta.pdf(0.5));
-			say("chi.pdf(1): " + zeta.pdf(1));
-			say("chi.nextDouble(): " + zeta.nextDouble());
-		}
+//		public void checkChi() {
+//			say("chi.cdf(0): " + chi.cdf(0));
+//			say("chi.cdf(0.5): " + chi.cdf(0.5));
+//			say("chi.cdf(1): " + chi.cdf(1));
+//			say("chi.pdf(0): " + chi.pdf(0));
+//			say("chi.pdf(0.5): " + chi.pdf(0.5));
+//			say("chi.pdf(1): " + chi.pdf(1));
+//			say("chi.nextDouble(): " + chi.nextDouble());
+//		}
+//
+//		public void checkZeta() {
+//			say("chi.cdf(0): " + zeta.cdf(0));
+//			say("chi.cdf(0.5): " + zeta.cdf(0.5));
+//			say("chi.cdf(1): " + zeta.cdf(1));
+//			say("chi.pdf(0): " + zeta.pdf(0.01));
+//			say("chi.pdf(0.5): " + zeta.pdf(0.5));
+//			say("chi.pdf(1): " + zeta.pdf(1));
+//			say("chi.nextDouble(): " + zeta.nextDouble());
+//		}
 	}
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
+	}
+	
+	private void sanity(String s){
+		PjiitOutputter.sanity(s);
 	}
 }

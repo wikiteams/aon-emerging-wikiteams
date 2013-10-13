@@ -52,7 +52,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say("Super object InternetzCtx loaded");
 			say("Starting simulation with model: " + modelFactory.toString());
 			// getting parameters of simulation
-			say("Loading parameters");
+			say(Constraints.LOADING_PARAMETERS);
 			
 			simulationParameters.init();
 			
@@ -62,11 +62,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 			
 			say("SkillFactory parsed all skills from CSV file");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			say("Error initializing PjiitLogger!");
+			say(Constraints.ERROR_INITIALIZING_PJIITLOGGER);
 		} catch (Exception exc) {
-			say("Error initializing PjiitLogger and/or Simulation Parameters!");
+			say(Constraints.ERROR_INITIALIZING_PJIITLOGGER_AO_PARAMETERS);
 		}
 		
 		try {
@@ -126,7 +125,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			for (AgentInternals __agentInternal : agent.getAgentInternals()) {
 				ArrayList<String> entries = new ArrayList<String>();
 				entries.add(agent.getNick());
-				entries.add(__agentInternal.getExperience().getCardinal() + "");
+				entries.add(__agentInternal.getExperience().value + "");
 				entries.add(__agentInternal.getSkill().getName());
 				String[] stockArr = new String[entries.size()];
 				stockArr = entries.toArray(stockArr);

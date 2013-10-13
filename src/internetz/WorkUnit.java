@@ -1,21 +1,31 @@
 package internetz;
 
+/**
+ * 
+ * Represents a time bit during which agent spends time on work
+ * 
+ * @version 1.1
+ * @since 1.0
+ * @author Oskar
+ *
+ */
 public class WorkUnit {
 
-	public double factor;
-	public int d;
+	public int factor;
+	public double d;
 
-	public WorkUnit() {
-
-	}
-
-	public WorkUnit(int d, double factor) {
+	public WorkUnit(double d, int factor) {
 		this.d = d;
 		this.factor = factor;
 	}
 	
-	public void increment(){
-		this.d += 1;
+	public WorkUnit(double d) {
+		this.d = d;
+		this.factor = 1;
+	}
+	
+	public void increment(double how_much){
+		this.d += how_much;
 	}
 
 }

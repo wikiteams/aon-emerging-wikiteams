@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import logger.PjiitOutputter;
+import logger.SanityLogger;
 
 import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
@@ -85,11 +86,11 @@ public class Agent {
 		say("Step(" + time + ") of Agent " + this.id
 				+ "scheduled method launched.");
 
-		Context context = (Context) ContextUtils.getContext(this);
+		//Context context = (Context) ContextUtils.getContext(this);
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 
-		// Agent Aj uses Aj {strategy for choosing tasks} and chooses a task to
-		// work on
+		// Agent Aj uses Aj {strategy for choosing tasks} 
+		// and chooses a task to work on
 
 		Task taskToWork = TaskPool.chooseTask(this, this.strategy.taskChoice);
 		// TO DO: make a good assertion to prevent nulls !!
@@ -100,6 +101,7 @@ public class Agent {
 			taskToWork.workOnTask(this, this.strategy.skillChoice);
 		} else {
 			say("Agent " + this.id + " didnt work on anything");
+			sanity("Agent " + this.id + " don't have a task to work on in step " + time);
 		}
 
 		// Chose and algorithm for inside-task skill choose.
@@ -143,5 +145,9 @@ public class Agent {
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
+	}
+	
+	private void sanity(String s){
+		PjiitOutputter.sanity(s);
 	}
 }

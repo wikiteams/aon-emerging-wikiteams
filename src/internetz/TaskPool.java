@@ -32,7 +32,11 @@ public class TaskPool {
 
 		Task chosen = null;
 		switch (strategy) {
-		case HETEROPHYLY_HOMOPHYLY:
+		case HETEROPHYLY:
+			;
+		case HOMOPHYLY:
+			;
+		case SOCIAL_VECTOR:
 			;
 		case RANDOM:
 			ArrayList<Task> tasksWithMatchingSkills = new ArrayList<Task>();

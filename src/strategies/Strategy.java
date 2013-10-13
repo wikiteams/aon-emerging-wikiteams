@@ -6,7 +6,7 @@ package strategies;
  * 
  * @author Oskar Jarczyk
  * @since 1.0
- * @version 1.0
+ * @version 1.1
  *
  */
 public class Strategy {
@@ -15,7 +15,9 @@ public class Strategy {
 	public SkillChoice skillChoice;
 	
 	public enum TaskChoice {
-		HETEROPHYLY_HOMOPHYLY,
+		HETEROPHYLY,
+		HOMOPHYLY,
+		SOCIAL_VECTOR,
 		RANDOM,
 		COMPARISION,
 		MACHINE_LEARNED

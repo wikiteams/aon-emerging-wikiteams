@@ -48,12 +48,12 @@ public class Agent {
 	}
 
 	public Collection<Skill> getSkills() {
-		ArrayList<Skill> __skills = new ArrayList<Skill>();
+		ArrayList<Skill> skillCollection = new ArrayList<Skill>();
 		Collection<AgentInternals> internals = this.getAgentInternals();
 		for (AgentInternals ai : internals) {
-			__skills.add(ai.getSkill());
+			skillCollection.add(ai.getSkill());
 		}
-		return __skills;
+		return skillCollection;
 	}
 
 	public void setId(int id) {
@@ -107,11 +107,6 @@ public class Agent {
 		// Chose and algorithm for inside-task skill choose.
 	}
 
-	@Override
-	public String toString() {
-		return getNick();
-	}
-
 	public String getNick() {
 		return nick;
 	}
@@ -127,6 +122,20 @@ public class Agent {
 
 	public void setStrategy(Strategy strategy) {
 		this.strategy = strategy;
+	}
+	
+	public String describeExperience(){
+		Collection<AgentInternals> internals = this.getAgentInternals();
+		Map<String, Double> deltaE = new HashMap<String, Double>();
+		for (AgentInternals ai : internals) {
+			deltaE.put(ai.getSkill().getName() , ai.getExperience().getDelta());
+		}
+		return deltaE.entrySet().toString();
+	}
+	
+	@Override
+	public String toString() {
+		return getNick();
 	}
 
 	@Override

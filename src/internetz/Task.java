@@ -3,15 +3,17 @@
  */
 package internetz;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import constants.Constraints;
-
-import strategies.ProportionalTimeDivision;
-import strategies.Strategy;
+import java.util.Random;
 
 import logger.PjiitOutputter;
+import strategies.GreedyAssignmentTask;
+import strategies.ProportionalTimeDivision;
+import strategies.Strategy;
+import constants.Constraints;
 
 /**
  * Task is a collection of a three-element set of skill, number of work units,
@@ -84,21 +86,61 @@ public class Task {
 						"} inside Ti:{" + singleTaskInternal.toString() + "}");
 				int n = skills.size();
 				double alpha = 1 / n;
-				double delta = agent.getAgentInternals(
-						singleTaskInternal.getSkill().getName()).getExperience().getDelta();
-				ProportionalTimeDivision.increment(singleTaskInternal, alpha, delta);
-				//agent.
+				Experience experience = agent.getAgentInternals(
+						singleTaskInternal.getSkill().getName()).getExperience();
+				double delta = experience.getDelta();
+				ProportionalTimeDivision.increment(singleTaskInternal, 1, alpha, delta);
+				experience.increment(alpha);
 			}
+			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
-			for (TaskInternals __skill : skills.values()) {
-				int n = skills.size();
-				double delta = agent.getAgentInternals(
-						__skill.getSkill().getName()).getExperience().getDelta();
-				say("Inside switch - PROPORTIONAL_TIME_DIVISION");
-				ProportionalTimeDivision.increment(__skill, n, delta);
+			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
+			TaskInternals singleTaskInternal = null;
+			double highest = -1;
+			for (TaskInternals searchTaskInternal : skills.values()) {
+				if (searchTaskInternal.getWorkDone().d > highest){
+					highest = searchTaskInternal.getWorkDone().d;
+					singleTaskInternal = searchTaskInternal;
+				}
 			}
+			{
+				sanity("Choosing Si:{" + 
+						singleTaskInternal.getSkill().getName() + 
+						"} inside Ti:{" + singleTaskInternal.toString() + "}");
+				int n = skills.size();
+				//double alpha = 1 / n;
+				Experience experience = agent.getAgentInternals(
+						singleTaskInternal.getSkill().getName()).getExperience();
+				double delta = experience.getDelta();
+				GreedyAssignmentTask.increment(singleTaskInternal, 1, delta);
+				experience.increment(1);
+			}
+			break;
 		case CHOICE_OF_AGENT:
 			;
+			break;
+		case RANDOM:
+			say(Constraints.INSIDE_RANDOM);
+			Random generator = new Random();
+			List<String> keys = new ArrayList<String>(skills.keySet());
+			String randomKey = keys.get(generator.nextInt(keys.size()));
+			TaskInternals randomTaskInternal = skills.get(randomKey);
+			{
+				sanity("Choosing Si:{" + 
+						randomTaskInternal.getSkill().getName() + 
+						"} inside Ti:{" + randomTaskInternal.toString() + "}");
+				int n = skills.size();
+				//double alpha = 1 / n;
+				Experience experience = agent.getAgentInternals(
+						randomTaskInternal.getSkill().getName()).getExperience();
+				double delta = experience.getDelta();
+				GreedyAssignmentTask.increment(randomTaskInternal, 1, delta);
+				experience.increment(1);
+			}
+			break;
+		default:
+			;
+			break;
 		}
 	}
 	

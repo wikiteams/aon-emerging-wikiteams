@@ -25,6 +25,11 @@ public class Experience {
 	public double getDelta(){
 		return lc.getDelta((top / value));
 	}
+	
+	public void increment(double how_much){
+		this.value += how_much;
+		sanity("Experience incremented by: " + how_much);
+	}
 
 //	public int getCardinal() {
 //		return (int) (percentage * top);

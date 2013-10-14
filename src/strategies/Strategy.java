@@ -26,7 +26,8 @@ public class Strategy {
 	public enum SkillChoice {
 	    PROPORTIONAL_TIME_DIVISION,
 	    GREEDY_ASSIGNMENT_BY_TASK,
-	    CHOICE_OF_AGENT
+	    CHOICE_OF_AGENT,
+	    RANDOM
 	}
 	
 	@Override

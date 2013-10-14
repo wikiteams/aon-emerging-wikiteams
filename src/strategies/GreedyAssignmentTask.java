@@ -9,7 +9,7 @@ public class GreedyAssignmentTask extends EmergenceStrategy {
 		WorkUnit workDone = singleTaskInternal.getWorkDone();
 		WorkUnit workUnit = singleTaskInternal.getWorkUnits();
 		
-		//wd.increment();
+		workDone.increment(n * experience);
 	}
 
 }

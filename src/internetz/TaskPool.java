@@ -34,10 +34,13 @@ public class TaskPool {
 		switch (strategy) {
 		case HETEROPHYLY:
 			;
+			break;
 		case HOMOPHYLY:
 			;
+			break;
 		case SOCIAL_VECTOR:
 			;
+			break;
 		case RANDOM:
 			ArrayList<Task> tasksWithMatchingSkills = new ArrayList<Task>();
 			Collection<Skill> allAgentSkills = agent.getSkills();
@@ -55,12 +58,16 @@ public class TaskPool {
 			} else {
 				say("Didn't found task with such skills which agent have!");
 			}
+			break;
 		case COMPARISION:
 			;
+			break;
 		case MACHINE_LEARNED:
 			;
+			break;
 		default:
 			;
+			break;
 		}
 		if (chosen != null) {
 			sanity("Agent " + agent.toString() + " uses strategy "

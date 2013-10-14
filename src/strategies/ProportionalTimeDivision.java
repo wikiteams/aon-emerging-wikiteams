@@ -6,11 +6,11 @@ import internetz.WorkUnit;
 public class ProportionalTimeDivision extends EmergenceStrategy {
 	
 	public static void increment(
-			TaskInternals singleTaskInternal, double alpha, double experience){
+			TaskInternals singleTaskInternal, int n, double alpha, double experience){
 		WorkUnit workDone = singleTaskInternal.getWorkDone();
 		WorkUnit workUnit = singleTaskInternal.getWorkUnits();
 		
-		workDone.increment(alpha * experience);
+		workDone.increment(n * alpha * experience);
 	}
 	
 }

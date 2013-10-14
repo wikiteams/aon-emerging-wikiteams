@@ -139,7 +139,7 @@ public class Task {
 			}
 			break;
 		default:
-			;
+			assert false; // there is no default method, so please never happen
 			break;
 		}
 	}

@@ -2,4 +2,5 @@
 <Scenario>
 <repast.simphony.action.data_set context="InternetzCtx" file="repast.simphony.action.data_set_0.xml" />
 <repast.simphony.dataLoader.engine.ContextXMLDataLoaderAction context="InternetzCtx" file="repast.simphony.dataLoader.engine.ContextXMLDataLoaderAction_1.xml" />
+<repast.simphony.action.display context="InternetzCtx" file="repast.simphony.action.display_2.xml" />
 </Scenario>

@@ -3,21 +3,21 @@
   <type>TWO_D</type>
   <styles>
     <entry>
-      <string>internetz.TaskInternals</string>
+      <string>internetz.Task</string>
       <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
     </entry>
     <entry>
-      <string>internetz.Task</string>
+      <string>internetz.TaskInternals</string>
       <string>repast.simphony.visualizationOGL2D.DefaultStyleOGL2D</string>
     </entry>
   </styles>
   <editedStyles>
     <entry>
-      <string>internetz.TaskInternals</string>
+      <string>internetz.Task</string>
       <null/>
     </entry>
     <entry>
-      <string>internetz.Task</string>
+      <string>internetz.TaskInternals</string>
       <null/>
     </entry>
   </editedStyles>
@@ -46,12 +46,12 @@
   <layoutInterval>0</layoutInterval>
   <layerOrder>
     <entry>
-      <string>internetz.TaskInternals</string>
-      <int>0</int>
-    </entry>
-    <entry>
       <string>internetz.Task</string>
       <int>1</int>
+    </entry>
+    <entry>
+      <string>internetz.TaskInternals</string>
+      <int>0</int>
     </entry>
   </layerOrder>
   <projections>

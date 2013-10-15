@@ -1,0 +1,15 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>AgentExperience File Sink</name>
+  <dataSet>AgentExperience</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>describeExperience</string>
+    <string>Id</string>
+    <string>Nick</string>
+    <string>tick</string>
+    <string>run</string>
+  </sourceIds>
+  <fileName>AgentExperienceFileSink.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

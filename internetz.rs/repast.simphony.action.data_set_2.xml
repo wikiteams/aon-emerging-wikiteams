@@ -1,7 +1,7 @@
 <repast.simphony.data2.engine.DataSetDescriptor>
-  <name>TaskAndInternals</name>
+  <name>AgentExperience</name>
   <type>NON_AGGREGATE</type>
-  <sourceType>internetz.Task</sourceType>
+  <sourceType>internetz.Agent</sourceType>
   <inclTick>true</inclTick>
   <inclBatchRun>true</inclBatchRun>
   <inclRandomSeed>false</inclRandomSeed>
@@ -14,35 +14,27 @@
   </scheduleParams>
   <methodDataSources class="linked-hash-map">
     <entry>
+      <string>describeExperience</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>describeExperience</id>
+        <className>internetz.Agent</className>
+        <methodName>describeExperience</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
       <string>Id</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
         <id>Id</id>
-        <className>internetz.Task</className>
+        <className>internetz.Agent</className>
         <methodName>getId</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
     <entry>
-      <string>countTaskInternals</string>
+      <string>Nick</string>
       <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>countTaskInternals</id>
-        <className>internetz.Task</className>
-        <methodName>countTaskInternals</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>Name</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>Name</id>
-        <className>internetz.Task</className>
-        <methodName>getName</methodName>
-      </repast.simphony.data2.engine.MethodDataSourceDefinition>
-    </entry>
-    <entry>
-      <string>toString</string>
-      <repast.simphony.data2.engine.MethodDataSourceDefinition>
-        <id>toString</id>
-        <className>internetz.Task</className>
-        <methodName>toString</methodName>
+        <id>Nick</id>
+        <className>internetz.Agent</className>
+        <methodName>getNick</methodName>
       </repast.simphony.data2.engine.MethodDataSourceDefinition>
     </entry>
   </methodDataSources>

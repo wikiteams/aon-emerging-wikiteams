@@ -75,12 +75,13 @@ public class TaskPool {
 					+ chosen.getId() + " to work on.");
 		} else {
 			sanity("Agent " + agent.toString() + " uses strategy "
-					+ agent.getStrategy() + " but didnt found any task to work on.");
+					+ agent.getStrategy()
+					+ " but didnt found any task to work on.");
 		}
 		return chosen;
 	}
-	
-	private static void sanity(String s){
+
+	private static void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}
 
@@ -90,14 +91,16 @@ public class TaskPool {
 
 	public static void considerEnding(Task task) {
 		boolean notfinished = false;
-		for (TaskInternals taskInternal : task.getTaskInternals().values()){
-			if (taskInternal.getWorkDone().d < taskInternal.getWorkRequired().d){
+		for (TaskInternals taskInternal : task.getTaskInternals().values()) {
+			if (taskInternal.getWorkDone().d < taskInternal.getWorkRequired().d) {
 				notfinished = true;
 				break;
 			}
 		}
-		if (!notfinished){
+		if (!notfinished) {
 			tasks.remove(task.getName());
+			sanity("Task id:" + task.getId() + " name:" + task.getName()
+					+ " is depleted and leaving the environment");
 		}
 	}
 

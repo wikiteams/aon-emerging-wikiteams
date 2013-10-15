@@ -17,6 +17,7 @@ import logger.SanityLogger;
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.NetworkBuilder;
+import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
@@ -159,13 +160,22 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 	}
 
-	private boolean moreThanBasic() {
-		return modelFactory.getComplexity() > 0;
-	}
+//	private boolean moreThanBasic() {
+//		return modelFactory.getComplexity() > 0;
+//	}
 
 	@ScheduledMethod(start = 2000, priority = 0)
 	private void outputSNSData() throws IOException {
 		outputAgentNetworkData();
+	}
+	
+	@SuppressWarnings("unused")
+	@ScheduledMethod(start = 1, interval = 100)
+	private void finishSimulation(){
+		say("finishSimulation() check launched");
+		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		if (time >= SimulationParameters.numSteps)
+			RunEnvironment.getInstance().endRun();
 	}
 
 	private void say(String s) {

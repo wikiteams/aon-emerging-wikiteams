@@ -1,3 +1,4 @@
 <context id="InternetzCtx" class="internetz.InternetzCtx">
 	<projection type="network" id="agents"></projection>
+	<projection type="network" id="tasks"></projection>
 </context>

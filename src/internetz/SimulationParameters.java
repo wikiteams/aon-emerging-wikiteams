@@ -28,6 +28,7 @@ public class SimulationParameters {
 	
 	public static boolean deployedTasksLeave = false;
 	public static boolean fullyLearnedAgentsLeave = false;
+	public static int maxWorkRequired = 0;
 
 	public void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
@@ -48,6 +49,9 @@ public class SimulationParameters {
 				.getValue("agentSkillsPoolRandomize1");
 		agentSkillsPoolRandomize2 = (Integer) param
 				.getValue("agentSkillsPoolRandomize2");
+		
+		maxWorkRequired = (Integer) param
+				.getValue("maxWorkRequired");
 		
 		deployedTasksLeave = (Boolean) param
 				.getValue("deployedTasksLeave");

@@ -59,6 +59,10 @@ public class Task {
 	public void setTaskInternals(Map<String, TaskInternals> skills) {
 		this.skills = skills;
 	}
+	
+	public int countTaskInternals(){
+		return skills.size();
+	}
 
 	public synchronized void setId(int id) {
 		this.id = id;

@@ -3,13 +3,13 @@ package internetz;
 public class TaskInternals {
 	
 	private Skill skill;
-	private WorkUnit workUnits;
+	private WorkUnit workRequired;
 	private WorkUnit workDone;
 	
-	public TaskInternals(Skill skill, WorkUnit workUnits, WorkUnit workDone){
+	public TaskInternals(Skill skill, WorkUnit workRequired, WorkUnit workDone){
 		this.skill = skill;
 		this.workDone = workDone;
-		this.workUnits = workUnits;
+		this.workRequired = workRequired;
 	}
 	
 	public Skill getSkill() {
@@ -18,11 +18,11 @@ public class TaskInternals {
 	public void setSkill(Skill skill) {
 		this.skill = skill;
 	}
-	public WorkUnit getWorkUnits() {
-		return workUnits;
+	public WorkUnit getWorkRequired() {
+		return workRequired;
 	}
-	public void setWorkUnits(WorkUnit workUnits) {
-		this.workUnits = workUnits;
+	public void setWorkRequired(WorkUnit workRequired) {
+		this.workRequired = workRequired;
 	}
 	public WorkUnit getWorkDone() {
 		return workDone;

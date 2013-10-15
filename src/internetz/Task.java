@@ -75,21 +75,23 @@ public class Task {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
 			for (TaskInternals singleTaskInternal : skills.values()) {
-				sanity("Choosing Si:{" + 
-						singleTaskInternal.getSkill().getName() + 
-						"} inside Ti:{" + singleTaskInternal.toString() + "}");
+				sanity("Choosing Si:{"
+						+ singleTaskInternal.getSkill().getName()
+						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
 				int n = skills.size();
 				double alpha = 1 / n;
 				Experience experience = agent.getAgentInternals(
-						singleTaskInternal.getSkill().getName()).getExperience();
+						singleTaskInternal.getSkill().getName())
+						.getExperience();
 				double delta = experience.getDelta();
-				ProportionalTimeDivision.increment(singleTaskInternal, 1, alpha, delta);
+				ProportionalTimeDivision.increment(singleTaskInternal, 1,
+						alpha, delta);
 				experience.increment(alpha);
 			}
 			break;
@@ -98,19 +100,20 @@ public class Task {
 			TaskInternals singleTaskInternal = null;
 			double highest = -1;
 			for (TaskInternals searchTaskInternal : skills.values()) {
-				if (searchTaskInternal.getWorkDone().d > highest){
+				if (searchTaskInternal.getWorkDone().d > highest) {
 					highest = searchTaskInternal.getWorkDone().d;
 					singleTaskInternal = searchTaskInternal;
 				}
 			}
 			{
-				sanity("Choosing Si:{" + 
-						singleTaskInternal.getSkill().getName() + 
-						"} inside Ti:{" + singleTaskInternal.toString() + "}");
+				sanity("Choosing Si:{"
+						+ singleTaskInternal.getSkill().getName()
+						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
 				int n = skills.size();
-				//double alpha = 1 / n;
+				// double alpha = 1 / n;
 				Experience experience = agent.getAgentInternals(
-						singleTaskInternal.getSkill().getName()).getExperience();
+						singleTaskInternal.getSkill().getName())
+						.getExperience();
 				double delta = experience.getDelta();
 				GreedyAssignmentTask.increment(singleTaskInternal, 1, delta);
 				experience.increment(1);
@@ -126,13 +129,14 @@ public class Task {
 			String randomKey = keys.get(generator.nextInt(keys.size()));
 			TaskInternals randomTaskInternal = skills.get(randomKey);
 			{
-				sanity("Choosing Si:{" + 
-						randomTaskInternal.getSkill().getName() + 
-						"} inside Ti:{" + randomTaskInternal.toString() + "}");
+				sanity("Choosing Si:{"
+						+ randomTaskInternal.getSkill().getName()
+						+ "} inside Ti:{" + randomTaskInternal.toString() + "}");
 				int n = skills.size();
-				//double alpha = 1 / n;
+				// double alpha = 1 / n;
 				Experience experience = agent.getAgentInternals(
-						randomTaskInternal.getSkill().getName()).getExperience();
+						randomTaskInternal.getSkill().getName())
+						.getExperience();
 				double delta = experience.getDelta();
 				GreedyAssignmentTask.increment(randomTaskInternal, 1, delta);
 				experience.increment(1);
@@ -142,18 +146,34 @@ public class Task {
 			assert false; // there is no default method, so please never happen
 			break;
 		}
+		if (SimulationParameters.deployedTasksLeave)
+			TaskPool.considerEnding(this);
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Task " + id + " " + name;
 	}
-	
+
+	@Override
+	public int hashCode() {
+		return name.hashCode() * id;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if ((this.name.toLowerCase().equals(((Task) obj).name))
+				&& (this.id == ((Task) obj).id))
+			return true;
+		else
+			return false;
+	}
+
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}
-	
-	private void sanity(String s){
+
+	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}
 

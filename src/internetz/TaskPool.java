@@ -88,4 +88,17 @@ public class TaskPool {
 		PjiitOutputter.say(s);
 	}
 
+	public static void considerEnding(Task task) {
+		boolean notfinished = false;
+		for (TaskInternals taskInternal : task.getTaskInternals().values()){
+			if (taskInternal.getWorkDone().d < taskInternal.getWorkRequired().d){
+				notfinished = true;
+				break;
+			}
+		}
+		if (!notfinished){
+			tasks.remove(task.getName());
+		}
+	}
+
 }

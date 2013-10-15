@@ -25,6 +25,9 @@ public class SimulationParameters {
 
 	public static int agentSkillsPoolRandomize1 = 0;
 	public static int agentSkillsPoolRandomize2 = 0;
+	
+	public static boolean deployedTasksLeave = false;
+	public static boolean fullyLearnedAgentsLeave = false;
 
 	public void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
@@ -45,5 +48,10 @@ public class SimulationParameters {
 				.getValue("agentSkillsPoolRandomize1");
 		agentSkillsPoolRandomize2 = (Integer) param
 				.getValue("agentSkillsPoolRandomize2");
+		
+		deployedTasksLeave = (Boolean) param
+				.getValue("deployedTasksLeave");
+		fullyLearnedAgentsLeave = (Boolean) param
+				.getValue("fullyLearnedAgentsLeave");
 	}
 }

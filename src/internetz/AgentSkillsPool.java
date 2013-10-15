@@ -29,8 +29,7 @@ public abstract class AgentSkillsPool {
 	/***
 	 * <String:user, <skill1, skill2, skill3>>
 	 */
-	private static LinkedHashMap<String, ArrayList> skillSet = 
-			new LinkedHashMap<String, ArrayList>();
+	private static LinkedHashMap<String, ArrayList> skillSet = new LinkedHashMap<String, ArrayList>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate() {
@@ -105,13 +104,15 @@ public abstract class AgentSkillsPool {
 					}
 				}
 				Random generator_exp = new Random();
-				int top = SimulationParameters.agentSkillsPoolRandomize2;
-				int exp__ = generator_exp.nextInt(top);
-				double exp__d = (double)exp__ / (double)top;
-				say ("exp randomized to: " + exp__);
-				AgentInternals __agentInternals = new AgentInternals(s1,
-						new Experience(exp__d, top));
-				agent.addSkill(s1.getName(), __agentInternals);
+				int topExperience = SimulationParameters.agentSkillsMaximumExperience;
+				int experienceRandomized = generator_exp.nextInt(topExperience);
+				// double exp__d = (double)exp__ / (double)top;
+				// dont do that, we want to persist integer experience
+				// not result of delta(exp) function !
+				say("exp randomized to: " + experienceRandomized);
+				AgentInternals builtAgentInternals = new AgentInternals(s1,
+						new Experience(experienceRandomized, topExperience));
+				agent.addSkill(s1.getName(), builtAgentInternals);
 			}
 
 		}

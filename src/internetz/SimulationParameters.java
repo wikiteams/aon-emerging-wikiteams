@@ -24,7 +24,7 @@ public class SimulationParameters {
 	public static int randomSeed = 0;
 
 	public static int agentSkillsPoolRandomize1 = 0;
-	public static int agentSkillsPoolRandomize2 = 0;
+	public static int agentSkillsMaximumExperience = 0;
 	
 	public static boolean deployedTasksLeave = false;
 	public static boolean fullyLearnedAgentsLeave = false;
@@ -47,8 +47,8 @@ public class SimulationParameters {
 
 		agentSkillsPoolRandomize1 = (Integer) param
 				.getValue("agentSkillsPoolRandomize1");
-		agentSkillsPoolRandomize2 = (Integer) param
-				.getValue("agentSkillsPoolRandomize2");
+		agentSkillsMaximumExperience = (Integer) param
+				.getValue("agentSkillsMaximumExperience");
 		
 		maxWorkRequired = (Integer) param
 				.getValue("maxWorkRequired");

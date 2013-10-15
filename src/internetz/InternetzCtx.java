@@ -170,12 +170,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 	
 	@SuppressWarnings("unused")
-	@ScheduledMethod(start = 1, interval = 100)
+	@ScheduledMethod(start = 1, interval = 100, priority = 0)
 	private void finishSimulation(){
 		say("finishSimulation() check launched");
 		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		if (time >= SimulationParameters.numSteps)
+		if (time >= SimulationParameters.numSteps){
+			RunEnvironment.getInstance().getCurrentSchedule().setFinishing(true);
 			RunEnvironment.getInstance().endRun();
+		}
 	}
 
 	private void say(String s) {

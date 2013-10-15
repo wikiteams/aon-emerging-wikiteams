@@ -7,7 +7,7 @@ import repast.simphony.random.RandomHelper;
 public class Experience {
 
 	public LearningCurve lc = null;
-	public double value;
+	public double value; // aktualne "plain" doswiadczenie
 	public int top; // hipotetyczne przeuczenie
 
 	public Experience() {
@@ -23,7 +23,7 @@ public class Experience {
 	}
 	
 	public double getDelta(){
-		return lc.getDelta((top / value));
+		return lc.getDelta((value / top));
 	}
 	
 	public void increment(double how_much){
@@ -54,8 +54,8 @@ public class Experience {
 		cern.jet.random.ChiSquare chi = null;
 		//cern.jet.random.ChiSquare zeta = null;
 
-		int freedom = 4;
-		int k = 5;
+		int freedom = 15; // osi x
+		int k = 6;
 
 		LearningCurve() {
 			//chi = RandomHelper.getChiSquare();
@@ -64,8 +64,10 @@ public class Experience {
 		}
 		
 		private double getDelta(double k){
+			double x = chi.cdf(k * freedom);
 			//NOTE: freedom (x axis of CDF) should be between 0 and 4
-			return chi.cdf(k * freedom);
+			say ("getDelta returned x:" + x);
+			return x;
 		}
 
 //		public void checkChi() {

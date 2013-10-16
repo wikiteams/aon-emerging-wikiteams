@@ -15,11 +15,47 @@ public class Strategy {
 	public SkillChoice skillChoice;
 	
 	public enum TaskChoice {
+		/**
+		 * Heterofilia - milosc do tego samego - szukamy takiego taska maksymalnie 
+		 * podobnego nad ktorym ju¿ pracowalismy. Jezeli jeszcze nie pracowalismy
+		 * nad zadnym to szukamy pierwszego mozliwie odpowiadajacego naszej
+		 * macierzy umiejetnosci. Wtedy budowanie doswiadczenia bedzie w miare
+		 * odpowiadalo elementom w naszej macierzy. I agent caly czas stara sie
+		 * szukac podobnych taskow.
+		 */
 		HETEROPHYLY,
+		/**
+		 * Tutaj przeciwienstwo tego co wyzej, agent stara sie znalezc zupelnie
+		 * inne taski niz te nad ktorym dotychczas pracowal. Jest to strategia
+		 * tworzaca doswiadczenie. Jezeli agent nie pracowal jeszcze nad zadnym taskiem,
+		 * to szuka takiego taska ktory zupelnie nie odpowiada macierzy jego
+		 * umiejetnosci.
+		 */
 		HOMOPHYLY,
+		/**
+		 * Social vector - znajdowanie mozliwie najblizszego wektora umiejetnosci.
+		 * Umiejetnosci niesie ze soba dodatkowe informacje - kategoria umiejetnosci
+		 * - np. programowanie niskopoziomowe, frontend, itp. Wiec mimo ze nie posiadamy
+		 * takich umiejetnosci jakie maja taski w puli, to szukamy najblizej pasujacego
+		 * wektora i bierzemy ten task
+		 */
 		SOCIAL_VECTOR,
+		/**
+		 * Losowanie taska z puli dostepnych - tylko pod warunkiem ze ma choc jeden skill
+		 * nad ktorym jest mozliwe pracowanie. Generalnie stosujemy Random, ale mozna 
+		 * rowniez uruchomic jakis rozklad normalny.
+		 */
 		RANDOM,
+		/**
+		 * Ta strategia polega na porownywaniu siebie do innych uzytownikow, agent
+		 * stara sie nasladowac innego mozliwie podobnego do siebie uzytkownika
+		 * sprawdza gdzie pracuje, i pracuje nad tym samym.
+		 */
 		COMPARISION,
+		/**
+		 * To wymaga podlaczenia sie do jakiegos datasetu uczacego sie, narazie
+		 * low priority. ?
+		 */
 		MACHINE_LEARNED
 	}
 	

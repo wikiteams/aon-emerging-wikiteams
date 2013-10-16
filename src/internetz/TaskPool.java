@@ -33,12 +33,26 @@ public class TaskPool {
 		Task chosen = null;
 		switch (strategy) {
 		case HETEROPHYLY:
-			;
+			if (agent.wasWorkingOnAnything()){
+				// describe what he was working on..
+				;
+			} else {
+				// he wasn't working on anything, take skill matrix
+				;
+			}
 			break;
 		case HOMOPHYLY:
-			;
+			if (agent.wasWorkingOnAnything()){
+				// describe what he was working on..
+				;
+			} else {
+				// he wasn't working on anything, take skill matrix
+				// and negate..
+				;
+			}
 			break;
 		case SOCIAL_VECTOR:
+			// TODO: check if you added "category" attribute to Skills
 			;
 			break;
 		case RANDOM:

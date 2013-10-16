@@ -5,8 +5,9 @@ import logger.PjiitOutputter;
 /***
  * Represents a "skill" - a GitHub language
  * 
- * @author Oskar
+ * @author Oskar Jarczyk
  * @since 1.0
+ * @version 1.1
  */
 public class Skill {
 

@@ -10,6 +10,11 @@ public class Category {
 		say ("Category initialized");
 	}
 	
+	public Category(String name){
+		say ("Category initialized");
+		this.name = name;
+	}
+	
 	public String getName() {
 		return name;
 	}

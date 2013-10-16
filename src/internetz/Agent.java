@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import argonauts.PersistJobDone;
+
 import logger.PjiitOutputter;
 import logger.SanityLogger;
 
@@ -150,6 +152,10 @@ public class Agent {
 			return true;
 		else
 			return false;
+	}
+	
+	protected boolean wasWorkingOnAnything(){
+		return PersistJobDone.contributions.containsKey(this.getNick());
 	}
 
 	private void say(String s) {

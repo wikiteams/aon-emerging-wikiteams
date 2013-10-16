@@ -1,20 +1,16 @@
 package internetz;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import argonauts.PersistJobDone;
-
 import logger.PjiitOutputter;
-import logger.SanityLogger;
-
-import repast.simphony.context.Context;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.util.ContextUtils;
 import strategies.Strategy;
+import argonauts.PersistJobDone;
 
 public class Agent {
 
@@ -102,7 +98,7 @@ public class Agent {
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
 			taskToWork.workOnTask(this, this.strategy.skillChoice);
 		} else {
-			say("Agent " + this.id + " didnt work on anything");
+			say("Agent " + this.id + " didn't work on anything");
 			sanity("Agent " + this.id + " don't have a task to work on in step " + time);
 		}
 
@@ -127,10 +123,17 @@ public class Agent {
 	}
 	
 	public String describeExperience(){
+//		Collection<AgentInternals> internals = this.getAgentInternals();
+//		Map<String, Double> deltaE = new HashMap<String, Double>();
+//		for (AgentInternals ai : internals) {
+//			deltaE.put(ai.getSkill().getName() , ai.getExperience().getDelta());
+//		}
+//		return deltaE.entrySet().toString();
+		
 		Collection<AgentInternals> internals = this.getAgentInternals();
-		Map<String, Double> deltaE = new HashMap<String, Double>();
+		Map<String, String> deltaE = new HashMap<String, String>();
 		for (AgentInternals ai : internals) {
-			deltaE.put(ai.getSkill().getName() , ai.getExperience().getDelta());
+			deltaE.put( ai.getSkill().getName() , (new DecimalFormat("#.######")).format(ai.getExperience().getDelta()) );
 		}
 		return deltaE.entrySet().toString();
 	}

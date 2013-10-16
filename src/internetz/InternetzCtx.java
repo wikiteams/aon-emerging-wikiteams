@@ -1,19 +1,14 @@
 package internetz;
 
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import constants.Constraints;
-import constants.ModelFactory;
-
 import logger.PjiitLogger;
 import logger.PjiitOutputter;
 import logger.SanityLogger;
-
 import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.context.space.graph.NetworkBuilder;
@@ -25,6 +20,8 @@ import strategies.Strategy;
 import strategies.StrategyDistribution;
 import utils.NamesGenerator;
 import au.com.bytecode.opencsv.CSVWriter;
+import constants.Constraints;
+import constants.ModelFactory;
 
 public class InternetzCtx extends DefaultContext<Object> {
 

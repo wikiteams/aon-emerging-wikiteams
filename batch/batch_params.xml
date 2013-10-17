@@ -13,4 +13,6 @@
 <parameter name="agentSkillsPoolRandomize1" type="constant" constant_type="int" value="5" />
 <parameter name="percStartMembership" type="constant" constant_type="int" value="10" />
 <parameter name="fullyLearnedAgentsLeave" type="constant" constant_type="java.lang.Boolean" value="false" />
+<parameter name="gitHubClusterizedDistribution" type="constant" constant_type="java.lang.String" value="distribute" />
+
 </sweep>

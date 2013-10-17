@@ -10,27 +10,26 @@ import internetz.WorkUnit;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Random;
 
 import logger.PjiitOutputter;
-
 import au.com.bytecode.opencsv.CSVReader;
+import cern.jet.random.Poisson;
 
 /**
  * 
- * A factory for creating of real skill data for COIN TASKS
- * data taken mostly from GitHub portal, possible
- * randomization for bigger variation of results
+ * A factory for creating of real skill data for COIN TASKS data taken mostly
+ * from GitHub portal, possible randomization for bigger variation of results
  * 
  * @since 1.0
- * @version 1.2 
+ * @version 1.2
  * @author Oskar Jarczyk
- *
+ * 
  */
 public abstract class TaskSkillsPool {
 
@@ -42,10 +41,8 @@ public abstract class TaskSkillsPool {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = 
-			new LinkedHashMap<String, Skill>();
-	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
-			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -161,8 +158,13 @@ public abstract class TaskSkillsPool {
 		return getByIndex(singleSkillSet, i);
 	}
 
-	public static Skill getByIndex(LinkedHashMap<String, Skill> hMap, int index) {
+	private static Skill getByIndex(LinkedHashMap<String, Skill> hMap, int index) {
 		return (Skill) hMap.values().toArray()[index];
+	}
+
+	private static HashMap<Skill, Double> getByIndex(
+			LinkedHashMap<Repository, HashMap<Skill, Double>> hMap, int index) {
+		return (HashMap<Skill, Double>) hMap.values().toArray()[index];
 	}
 
 	public static void fillWithSkills(Task task) {
@@ -179,11 +181,28 @@ public abstract class TaskSkillsPool {
 		} else if (SimulationParameters.taskSkillPoolDataset
 				.equals("GITHUB_CLUSTERIZED")) {
 			if (SimulationParameters.gitHubClusterizedDistribution
-					.toUpperCase().equals("clusters")) {
+					.toLowerCase().equals("clusters")) {
 
 			} else if (SimulationParameters.gitHubClusterizedDistribution
-					.toUpperCase().equals("distribute")) {
-
+					.toLowerCase().equals("distribute")) {
+				Poisson poisson = new Poisson(10, Poisson.makeDefaultGenerator());
+				double d = poisson.nextDouble() / 20;
+				
+				HashMap<Skill, Double> skillSetG = 
+						getByIndex(skillSetMatrix, (int)(skillSetMatrix.size() * d) );
+				Iterator it = skillSetG.entrySet().iterator();
+			    while (it.hasNext()) {
+			        Map.Entry pairs = (Map.Entry)it.next();
+			        Skill key = (Skill) pairs.getKey();
+			    	Double value = (Double) pairs.getValue();
+			    	if (value > 0.0){
+			    		WorkUnit w1 = new WorkUnit(value);
+						WorkUnit w2 = new WorkUnit(0);
+						TaskInternals taskInternals = new TaskInternals(key, w1, w2);
+						task.addSkill(key.getName(), taskInternals);
+			    	}
+			        //it.remove(); // avoids a ConcurrentModificationException
+			    }
 			}
 		}
 	}

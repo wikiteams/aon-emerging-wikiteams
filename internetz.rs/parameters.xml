@@ -25,7 +25,7 @@
 		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="gitHubClusterizedDistribution" displayName="gitHubClusterizedDistribution"
-		type="java.lang.String" defaultValue="clusters" isReadOnly="false"
+		type="java.lang.String" defaultValue="distribute" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="agentCount" displayName="agentCount" type="java.lang.Integer"
 		defaultValue="50" isReadOnly="false"

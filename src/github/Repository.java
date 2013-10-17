@@ -41,7 +41,7 @@ public class Repository {
 	@Override
 	public boolean equals(Object obj) {
 		if ((this.name == ((Repository) obj).name)
-				&& (this.cluster.toLowerCase().equals((((Repository) obj).cluster))))
+				&& (this.cluster.equals((((Repository) obj).cluster))))
 			return true;
 		else
 			return false;

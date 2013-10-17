@@ -25,6 +25,8 @@ public class SimulationParameters {
 	
 	public static String taskSkillPoolDataset = "";
 	public static String agentSkillPoolDataset = "";
+	
+	public static String gitHubClusterizedDistribution = "";
 
 	public static int agentSkillsPoolRandomize1 = 0;
 	public static int agentSkillsMaximumExperience = 0;
@@ -48,6 +50,8 @@ public class SimulationParameters {
 		
 		taskSkillPoolDataset = (String) param.getValue("taskSkillPoolDataset");
 		agentSkillPoolDataset = (String) param.getValue("agentSkillPoolDataset");
+		
+		gitHubClusterizedDistribution = (String) param.getValue("gitHubClusterizedDistribution");
 
 		randomSeed = (Integer) param.getValue("randomSeed");
 

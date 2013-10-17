@@ -3,6 +3,8 @@
  */
 package internetz;
 
+import github.TaskSkillsPool;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +27,7 @@ import constants.Constraints;
  */
 public class Task {
 
-	private static int COUNT = 0;
+	private static int idIncrementalCounter = 0;
 
 	private String name;
 	private int id;
@@ -33,8 +35,8 @@ public class Task {
 	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
 
 	public Task() {
-		this.id = COUNT++;
-		this.name = "Task_" + COUNT;
+		this.id = ++idIncrementalCounter;
+		this.name = "Task_" + this.id;
 		say("Task object " + this + " created");
 	}
 
@@ -47,7 +49,7 @@ public class Task {
 	}
 
 	public synchronized void initialize() {
-		setId(++COUNT);
+		//setId(++COUNT);
 		TaskSkillsPool.fillWithSkills(this);
 		say("Task object initialized with id: " + this.id);
 	}

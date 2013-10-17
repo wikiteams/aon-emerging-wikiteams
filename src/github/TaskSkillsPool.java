@@ -1,4 +1,11 @@
-package internetz;
+package github;
+
+import internetz.SimulationParameters;
+import internetz.Skill;
+import internetz.SkillFactory;
+import internetz.Task;
+import internetz.TaskInternals;
+import internetz.WorkUnit;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,27 +21,31 @@ import logger.PjiitOutputter;
 
 import au.com.bytecode.opencsv.CSVReader;
 
+/**
+ * 
+ * A factory for creating of real skill data for COIN TASKS
+ * data taken mostly from GitHub portal, possible
+ * randomization for bigger variation of results
+ * 
+ * @since 1.0
+ * @version 1.2 
+ * @author Oskar Jarczyk
+ *
+ */
 public abstract class TaskSkillsPool {
 
-	/**
-	 * count_language,language
-	 * 
-	 * 22477796,JavaScript 12214048,Ruby 12015918,Java
-	 */
 	private static String filenameFrequencySkills = "data\\50-skills.csv";
-
 	private static String filenameGoogleSkills = "data\\task-skills.csv";
-
 	private static String filenameGithubClusters = "data\\github_clusters.csv";
 
 	public enum Method {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
-
-	private static LinkedHashMap<String, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<String, HashMap<Skill, Double>>();
-
+	private static LinkedHashMap<String, Skill> singleSkillSet = 
+			new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
+			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -134,28 +145,15 @@ public abstract class TaskSkillsPool {
 		}
 
 		while ((nextLine = reader.readNext()) != null) {
-			String repo = nextLine[11];
+			Repository repo = new Repository(nextLine[11], nextLine[12]);
 			HashMap<Skill, Double> hmp = new HashMap<Skill, Double>();
 			for (int i = 0; i < 10; i++) {
 				hmp.put(shs.get(i), Double.parseDouble(nextLine[i]));
 			}
 			skillSetMatrix.put(repo, hmp);
 		}
-		// for (Skill skill : skillSet.values()) {
-		// skill.setProbability(skill.getCardinalProbability() / count);
-		// }
-	}
 
-	// private static void parse_top_1000_csv() throws IOException,
-	// FileNotFoundException {
-	// CSVReader reader = new CSVReader(new FileReader(filename));
-	// String[] nextLine;
-	// while ((nextLine = reader.readNext()) != null) {
-	// // nextLine[] is an array of values from the line
-	// System.out.println(nextLine[0] + nextLine[1] + nextLine[2]
-	// + nextLine[3] + "etc...");
-	// }
-	// }
+	}
 
 	public static Skill choseRandomSkill() {
 		Random generator = new Random();
@@ -180,7 +178,13 @@ public abstract class TaskSkillsPool {
 			say("Task " + task + " filled with skills");
 		} else if (SimulationParameters.taskSkillPoolDataset
 				.equals("GITHUB_CLUSTERIZED")) {
-			
+			if (SimulationParameters.gitHubClusterizedDistribution
+					.toUpperCase().equals("clusters")) {
+
+			} else if (SimulationParameters.gitHubClusterizedDistribution
+					.toUpperCase().equals("distribute")) {
+
+			}
 		}
 	}
 

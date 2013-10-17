@@ -31,12 +31,10 @@ public abstract class TaskSkillsPool {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet 
-		= new LinkedHashMap<String, Skill>();
-	
-	private static LinkedHashMap<String, HashMap<Skill, Double>> skillSetMatrix 
-		= new LinkedHashMap<String, HashMap<Skill, Double>>();
-	
+	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
+
+	private static LinkedHashMap<String, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<String, HashMap<Skill, Double>>();
+
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -103,21 +101,21 @@ public abstract class TaskSkillsPool {
 
 	private static void parseCsvGoogle() throws IOException,
 			FileNotFoundException {
-		//TODO: uncomment and finish
-//		CSVReader reader = new CSVReader(
-//				new FileReader(filenameGoogleSkills), ',',
-//				CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
-//		String[] nextLine;
-//		long count = 0;
-//		while ((nextLine = reader.readNext()) != null) {
-//			Skill skill = skillFactory.getSkill(nextLine[1]);
-//			skill.setCardinalProbability(Integer.parseInt(nextLine[0]));
-//			count += skill.getCardinalProbability();
-//			skillSet.put(skill.getName(), skill);
-//		}
-//		for (Skill skill : skillSet.values()) {
-//			skill.setProbability(skill.getCardinalProbability() / count);
-//		}
+		// TODO: uncomment and finish
+		// CSVReader reader = new CSVReader(
+		// new FileReader(filenameGoogleSkills), ',',
+		// CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
+		// String[] nextLine;
+		// long count = 0;
+		// while ((nextLine = reader.readNext()) != null) {
+		// Skill skill = skillFactory.getSkill(nextLine[1]);
+		// skill.setCardinalProbability(Integer.parseInt(nextLine[0]));
+		// count += skill.getCardinalProbability();
+		// skillSet.put(skill.getName(), skill);
+		// }
+		// for (Skill skill : skillSet.values()) {
+		// skill.setProbability(skill.getCardinalProbability() / count);
+		// }
 	}
 
 	private static void parseCsvCluster() throws IOException,
@@ -127,24 +125,25 @@ public abstract class TaskSkillsPool {
 				CSVReader.DEFAULT_QUOTE_CHARACTER);
 		String[] nextLine;
 		nextLine = reader.readNext();
-				
-		LinkedList <Skill> shs = new LinkedList <Skill>();
-		
-		for(int i = 0 ; i < 10 ; i++ ){
-			shs.add(skillFactory.getSkill(nextLine[i].replace("sc_", "").trim()));
+
+		LinkedList<Skill> shs = new LinkedList<Skill>();
+
+		for (int i = 0; i < 10; i++) {
+			shs.add(skillFactory
+					.getSkill(nextLine[i].replace("sc_", "").trim()));
 		}
-		
+
 		while ((nextLine = reader.readNext()) != null) {
 			String repo = nextLine[11];
 			HashMap<Skill, Double> hmp = new HashMap<Skill, Double>();
-			for(int i = 0 ; i < 10 ; i++){
+			for (int i = 0; i < 10; i++) {
 				hmp.put(shs.get(i), Double.parseDouble(nextLine[i]));
 			}
 			skillSetMatrix.put(repo, hmp);
 		}
-//		for (Skill skill : skillSet.values()) {
-//			skill.setProbability(skill.getCardinalProbability() / count);
-//		}
+		// for (Skill skill : skillSet.values()) {
+		// skill.setProbability(skill.getCardinalProbability() / count);
+		// }
 	}
 
 	// private static void parse_top_1000_csv() throws IOException,
@@ -169,21 +168,27 @@ public abstract class TaskSkillsPool {
 	}
 
 	public static void fillWithSkills(Task task) {
-		Skill skill = choseRandomSkill();
-		Random generator = new Random();
-		WorkUnit w1 = new WorkUnit(
-				generator.nextInt(SimulationParameters.maxWorkRequired));
-		WorkUnit w2 = new WorkUnit(0);
-		TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
-		task.addSkill(skill.getName(), taskInternals);
-		say("Task " + task + " filled with skills");
+		if (SimulationParameters.taskSkillPoolDataset
+				.equals("STATIC_FREQUENCY_TABLE")) {
+			Skill skill = choseRandomSkill();
+			Random generator = new Random();
+			WorkUnit w1 = new WorkUnit(
+					generator.nextInt(SimulationParameters.maxWorkRequired));
+			WorkUnit w2 = new WorkUnit(0);
+			TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
+			task.addSkill(skill.getName(), taskInternals);
+			say("Task " + task + " filled with skills");
+		} else if (SimulationParameters.taskSkillPoolDataset
+				.equals("GITHUB_CLUSTERIZED")) {
+			
+		}
 	}
 
-	public int getSkillSetMatrixCount(){
+	public int getSkillSetMatrixCount() {
 		return skillSetMatrix.size();
 	}
-	
-	public int getSingleSkillSet(){
+
+	public int getSingleSkillSet() {
 		return singleSkillSet.size();
 	}
 

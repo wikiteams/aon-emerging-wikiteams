@@ -23,6 +23,14 @@ import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
 
+/**
+ * COIN network emergence simulator
+ * 
+ * @version 1.2 "fruit loops"
+ * @since 1.0
+ * @author Oskar Jarczyk
+ *
+ */
 public class InternetzCtx extends DefaultContext<Object> {
 
 	private StrategyDistribution strategyDistribution;

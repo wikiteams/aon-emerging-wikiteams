@@ -25,20 +25,24 @@ import constants.ModelFactory;
 
 public class InternetzCtx extends DefaultContext<Object> {
 
-	private SimulationParameters simulationParameters;
 	private StrategyDistribution strategyDistribution;
 
 	private ModelFactory modelFactory = new ModelFactory();
 	private SkillFactory skillFactory = null;
 
 	private TaskPool taskPool = new TaskPool();
+	private AgentPool agentPool = new AgentPool();
+
 	private List<Agent> listAgent = null;
+
+	// private Network<Agent> agents = null;
+	// private Network<Task> tasks = null;
+	// private Projection<?> agentsProjected = null;
 
 	@SuppressWarnings("unchecked")
 	public InternetzCtx() {
 		super("InternetzCtx");
 
-		simulationParameters = new SimulationParameters();
 		strategyDistribution = new StrategyDistribution();
 
 		try {
@@ -46,18 +50,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOGGER_INITIALIZED);
 			SanityLogger.init();
 			sanity(Constraints.LOGGER_INITIALIZED);
-			
+
 			say("Super object InternetzCtx loaded");
 			say("Starting simulation with model: " + modelFactory.toString());
 			// getting parameters of simulation
 			say(Constraints.LOADING_PARAMETERS);
-			
-			simulationParameters.init();
-			
+
+			SimulationParameters.init();
+
 			// initialize skill pools
 			skillFactory = new SkillFactory();
 			skillFactory.buildSkillsLibrary();
-			
+
 			say("SkillFactory parsed all skills from CSV file");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -65,24 +69,39 @@ public class InternetzCtx extends DefaultContext<Object> {
 		} catch (Exception exc) {
 			say(Constraints.ERROR_INITIALIZING_PJIITLOGGER_AO_PARAMETERS);
 		}
-		
+
 		try {
-			AgentSkillsPool.instantiate();
+			AgentSkillsPool
+					.instantiate(SimulationParameters.agentSkillPoolDataset);
 			say("Instatiated AgentSkillsPool");
-			TaskSkillsPool.instantiate();
+			TaskSkillsPool
+					.instantiate(SimulationParameters.taskSkillPoolDataset);
 			say("Instatied TaskSkillsPool");
 
-			strategyDistribution.setType(SimulationParameters.strategyDistribution);
-			strategyDistribution.setSkillChoice(SimulationParameters.skillChoiceAlgorithm);
-			strategyDistribution.setTaskChoice(SimulationParameters.taskChoiceAlgorithm);
+			strategyDistribution
+					.setType(SimulationParameters.strategyDistribution);
+			strategyDistribution
+					.setSkillChoice(SimulationParameters.skillChoiceAlgorithm);
+			strategyDistribution
+					.setTaskChoice(SimulationParameters.taskChoiceAlgorithm);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			say(Constraints.UNKNOWN_EXCEPTION);
 		}
 
-		NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
-				"agents", (Context<Object>) this, true);
-		netBuilder.buildNetwork();
+		this.addSubContext(agentPool);
+		this.addSubContext(taskPool);
+
+		// NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
+		// "agents", (Context<Object>) this, false);
+		// netBuilder.buildNetwork();
+
+		// agents = (Network<Agent>) this.getProjection("agents");
+		// say("Projection agents (" + agents.getName() +
+		// ") exists and is size: "
+		// + agents.size());
+		// agentsProjected = this.getProjection("agents");
+		// agentsProjected.
 
 		for (int i = 0; i < SimulationParameters.taskCount; i++) {
 			Task task = new Task();
@@ -90,13 +109,17 @@ public class InternetzCtx extends DefaultContext<Object> {
 			taskPool.addTask(task.getName(), task);
 			say("Initializing task..");
 			task.initialize();
+			taskPool.add(task);
+			agentPool.add(task);
 		}
 
-		Network<Agent> agents = (Network<Agent>) this.getProjection("agents");
-		say("Projection agents (" + agents.getName() + ") exists and is size: "
-				+ agents.size());
-
 		addAgent(SimulationParameters.agentCount);
+
+		// Network<Agent> agents = (Network<Agent>)
+		// this.getProjection("agents");
+		// say("Projection agents (" + agents.getName() +
+		// ") exists and is size: "
+		// + agents.size());
 
 		say("Task choice algorithm is "
 				+ SimulationParameters.taskChoiceAlgorithm);
@@ -113,7 +136,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.IO_EXCEPTION);
 			e.printStackTrace();
 		}
-		
+
 		RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
 
 	}
@@ -145,7 +168,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 			agent.setStrategy(strategy);
 			say(agent.toString());
 			say("in add aggent i: " + i);
-			this.add(agent);
+			// Required adding agent to context
+			// this.add(agent);
+			agentPool.add(agent);
+			//
 		}
 	}
 
@@ -159,30 +185,31 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 	}
 
-//	private boolean moreThanBasic() {
-//		return modelFactory.getComplexity() > 0;
-//	}
+	// private boolean moreThanBasic() {
+	// return modelFactory.getComplexity() > 0;
+	// }
 
 	@ScheduledMethod(start = 2000, priority = 0)
 	private void outputSNSData() throws IOException {
 		outputAgentNetworkData();
 	}
-	
+
 	@ScheduledMethod(start = 1, interval = 100, priority = 0)
-	private void finishSimulation(){
+	private void finishSimulation() {
 		say("finishSimulation() check launched");
-//		double time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-//		if (time >= SimulationParameters.numSteps){
-//			RunEnvironment.getInstance().getCurrentSchedule().setFinishing(true);
-//			RunEnvironment.getInstance().endRun();
-//		}
+		// double time =
+		// RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
+		// if (time >= SimulationParameters.numSteps){
+		// RunEnvironment.getInstance().getCurrentSchedule().setFinishing(true);
+		// RunEnvironment.getInstance().endRun();
+		// }
 	}
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}
-	
-	private void sanity(String s){
+
+	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}
 

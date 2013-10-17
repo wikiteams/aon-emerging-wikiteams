@@ -7,11 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import logger.PjiitOutputter;
+import repast.simphony.annotate.AgentAnnot;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import strategies.Strategy;
 import argonauts.PersistJobDone;
 
+@AgentAnnot(displayName="Agent")
 public class Agent {
 
 	SimulationParameters Sims = new SimulationParameters();

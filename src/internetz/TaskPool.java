@@ -6,13 +6,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import repast.simphony.context.DefaultContext;
 import strategies.Strategy;
 
 import logger.PjiitOutputter;
 
-public class TaskPool {
+public class TaskPool extends DefaultContext<Task> {
 
 	private static Map<String, Task> tasks = new HashMap<String, Task>();
+	
+	public TaskPool(){
+		super("Tasks");
+	}
 
 	public void addTask(String key, Task task) {
 		tasks.put(key, task);

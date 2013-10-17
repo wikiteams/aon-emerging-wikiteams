@@ -6,6 +6,12 @@
 	<parameter name="skillChoiceAlgorithm" displayName="skillChoiceAlgorithm"
 		type="java.lang.String" defaultValue="proportional" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+	<parameter name="taskSkillPoolDataset" displayName="taskSkillPoolDataset"
+		type="java.lang.String" defaultValue="GITHUB_CLUSTERIZED" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"
+		type="java.lang.String" defaultValue="STATIC_TABLE" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="allowMultiMembership" displayName="allowMultiMembership"
 		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />

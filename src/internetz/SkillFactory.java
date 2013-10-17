@@ -30,7 +30,7 @@ public class SkillFactory {
 	 * 
 	 * circa 200 entries
 	 */
-	private static String filename = "all-languages.csv";
+	private static String filename = "data\\all-languages.csv";
 	public static ArrayList<Skill> skills = new ArrayList<Skill>();
 
 	public SkillFactory() {

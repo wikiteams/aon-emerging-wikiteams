@@ -17,6 +17,11 @@ public class SocialVector {
 		return attributeList.get(position);
 	}
 
+	/**
+	 * Magnitude is a square of a sum of values raised to power of 2
+	 * 
+	 * @return sqrv((E{Vi^2}))
+	 */
 	public double getMagnitude() {
 		double f = 0;
 		for (int i = 0; i < getSize(); i++) {

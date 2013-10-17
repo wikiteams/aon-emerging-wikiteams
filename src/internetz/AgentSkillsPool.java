@@ -20,7 +20,7 @@ public abstract class AgentSkillsPool {
 	 * 
 	 * i.e. 'fabpot', 'PHP', 'Shell', 'JavaScript'
 	 */
-	private static String filename = "top-users-final.csv";
+	private static String filename = "data\\top-users-final.csv";
 
 	private enum Method {
 		STATIC_TABLE, MUTATE_STATIC_TABLE, RANDOM;
@@ -32,8 +32,9 @@ public abstract class AgentSkillsPool {
 	private static LinkedHashMap<String, ArrayList> skillSet = new LinkedHashMap<String, ArrayList>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
-	public static void instantiate() {
-		instantiate(Method.STATIC_TABLE);
+	public static void instantiate(String method) {
+		if (method.toUpperCase().equals("STATIC_TABLE"))
+			instantiate(Method.STATIC_TABLE);
 	}
 
 	public static void instantiate(Method method) {

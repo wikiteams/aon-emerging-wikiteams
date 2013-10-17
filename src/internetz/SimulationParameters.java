@@ -22,6 +22,9 @@ public class SimulationParameters {
 	public static int strategyDistribution = 0;
 
 	public static int randomSeed = 0;
+	
+	public static String taskSkillPoolDataset = "";
+	public static String agentSkillPoolDataset = "";
 
 	public static int agentSkillsPoolRandomize1 = 0;
 	public static int agentSkillsMaximumExperience = 0;
@@ -30,7 +33,7 @@ public class SimulationParameters {
 	public static boolean fullyLearnedAgentsLeave = false;
 	public static int maxWorkRequired = 0;
 
-	public void init() {
+	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
 
 		agentCount = (Integer) param.getValue("agentCount");
@@ -42,6 +45,9 @@ public class SimulationParameters {
 		taskChoiceAlgorithm = (String) param.getValue("taskChoiceAlgorithm");
 		skillChoiceAlgorithm = (String) param.getValue("skillChoiceAlgorithm");
 		strategyDistribution = (Integer) param.getValue("strategyDistribution");
+		
+		taskSkillPoolDataset = (String) param.getValue("taskSkillPoolDataset");
+		agentSkillPoolDataset = (String) param.getValue("agentSkillPoolDataset");
 
 		randomSeed = (Integer) param.getValue("randomSeed");
 

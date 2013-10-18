@@ -7,6 +7,7 @@ import github.TaskSkillsPool;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,10 +97,10 @@ public class Task {
 	}
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
+		Collection<TaskInternals> intersection = computeIntersection(agent, skills.values());
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
-			Collection<TaskInternals> intersection = computeIntersection(agent, skills.values());
 			for (TaskInternals singleTaskInternal : intersection) {
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
@@ -119,7 +120,7 @@ public class Task {
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
 			TaskInternals singleTaskInternal = null;
 			double highest = -1;
-			for (TaskInternals searchTaskInternal : skills.values()) {
+			for (TaskInternals searchTaskInternal : intersection) {
 				if (searchTaskInternal.getWorkDone().d > highest) {
 					highest = searchTaskInternal.getWorkDone().d;
 					singleTaskInternal = searchTaskInternal;
@@ -129,7 +130,7 @@ public class Task {
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
-				int n = skills.size();
+				// int n = skills.size();
 				// double alpha = 1 / n;
 				Experience experience = agent.getAgentInternals(
 						singleTaskInternal.getSkill().getName())
@@ -144,15 +145,17 @@ public class Task {
 			break;
 		case RANDOM:
 			say(Constraints.INSIDE_RANDOM);
-			Random generator = new Random();
-			List<String> keys = new ArrayList<String>(skills.keySet());
-			String randomKey = keys.get(generator.nextInt(keys.size()));
-			TaskInternals randomTaskInternal = skills.get(randomKey);
+			Collections.shuffle((ArrayList<TaskInternals>)intersection);
+			TaskInternals randomTaskInternal = ((ArrayList<TaskInternals>)intersection).get(0);
+//			Random generator = new Random();
+//			List<String> keys = new ArrayList<String>(skills.keySet());
+//			String randomKey = keys.get(generator.nextInt(keys.size()));
+//			TaskInternals randomTaskInternal = skills.get(randomKey);
 			{
 				sanity("Choosing Si:{"
 						+ randomTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + randomTaskInternal.toString() + "}");
-				int n = skills.size();
+				// int n = skills.size();
 				// double alpha = 1 / n;
 				Experience experience = agent.getAgentInternals(
 						randomTaskInternal.getSkill().getName())

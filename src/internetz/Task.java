@@ -6,6 +6,7 @@ package internetz;
 import github.TaskSkillsPool;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,16 +82,29 @@ public class Task {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	private Collection<TaskInternals> computeIntersection(
+			Agent agent, Collection<TaskInternals> skillsValues){
+		Collection<TaskInternals> returnCollection = new ArrayList<TaskInternals>();
+		for (TaskInternals singleTaskInternal : skillsValues){
+			if (agent.getAgentInternals(
+					singleTaskInternal.getSkill().getName()) != null){
+				returnCollection.add(singleTaskInternal);
+			}
+		}
+		return returnCollection;
+	}
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
-			for (TaskInternals singleTaskInternal : skills.values()) {
+			Collection<TaskInternals> intersection = computeIntersection(agent, skills.values());
+			for (TaskInternals singleTaskInternal : intersection) {
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
-				int n = skills.size();
+				int n = intersection.size();
 				double alpha = 1 / n;
 				Experience experience = agent.getAgentInternals(
 						singleTaskInternal.getSkill().getName())

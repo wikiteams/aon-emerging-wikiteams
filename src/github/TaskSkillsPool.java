@@ -41,8 +41,10 @@ public abstract class TaskSkillsPool {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
-	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, Skill> singleSkillSet = 
+			new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
+			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -170,6 +172,9 @@ public abstract class TaskSkillsPool {
 	public static void fillWithSkills(Task task) {
 		if (SimulationParameters.taskSkillPoolDataset
 				.equals("STATIC_FREQUENCY_TABLE")) {
+			int x = ( (int) (new Random().nextDouble() * 
+					SimulationParameters.staticFrequencyTableSc) ) + 1;
+			for (int i = 0 ; i < x ; i++){
 			Skill skill = choseRandomSkill();
 			Random generator = new Random();
 			WorkUnit w1 = new WorkUnit(
@@ -178,6 +183,7 @@ public abstract class TaskSkillsPool {
 			TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
 			task.addSkill(skill.getName(), taskInternals);
 			say("Task " + task + " filled with skills");
+			}
 		} else if (SimulationParameters.taskSkillPoolDataset
 				.equals("GITHUB_CLUSTERIZED")) {
 			if (SimulationParameters.gitHubClusterizedDistribution

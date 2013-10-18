@@ -30,4 +30,9 @@ public class TaskInternals {
 	public void setWorkDone(WorkUnit workDone) {
 		this.workDone = workDone;
 	}
+	
+	@Override
+	public String toString(){
+		return this.skill.getName() + " " + workDone.d + "/" + workRequired.d;
+	}
 }

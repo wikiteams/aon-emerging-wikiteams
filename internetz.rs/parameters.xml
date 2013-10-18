@@ -7,8 +7,11 @@
 		type="java.lang.String" defaultValue="proportional" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="taskSkillPoolDataset" displayName="taskSkillPoolDataset"
-		type="java.lang.String" defaultValue="GITHUB_CLUSTERIZED" isReadOnly="false"
+		type="java.lang.String" defaultValue="STATIC_FREQUENCY_TABLE" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+	<parameter name="staticFrequencyTableSc" displayName="staticFrequencyTableSc"
+		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"
 		type="java.lang.String" defaultValue="STATIC_TABLE" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />

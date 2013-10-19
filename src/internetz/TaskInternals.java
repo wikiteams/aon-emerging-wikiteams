@@ -31,6 +31,10 @@ public class TaskInternals {
 		this.workDone = workDone;
 	}
 	
+	public boolean isWorkDone(){
+		return (this.getWorkDone().d >= this.getWorkRequired().d);
+	}
+	
 	@Override
 	public String toString(){
 		return this.skill.getName() + " " + workDone.d + "/" + workRequired.d;

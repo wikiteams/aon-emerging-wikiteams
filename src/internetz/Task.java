@@ -45,13 +45,17 @@ public class Task {
 	public void addSkill(String key, TaskInternals taskInternals) {
 		skills.put(key, taskInternals);
 	}
+	
+	public void removeSkill(String key){
+		skills.remove(key);
+	}
 
 	public TaskInternals getTaskInternals(String key) {
 		return skills.get(key);
 	}
 
 	public synchronized void initialize() {
-		//setId(++COUNT);
+		// setId(++COUNT);
 		TaskSkillsPool.fillWithSkills(this);
 		say("Task object initialized with id: " + this.id);
 	}
@@ -63,8 +67,8 @@ public class Task {
 	public void setTaskInternals(Map<String, TaskInternals> skills) {
 		this.skills = skills;
 	}
-	
-	public int countTaskInternals(){
+
+	public int countTaskInternals() {
 		return skills.size();
 	}
 
@@ -83,13 +87,13 @@ public class Task {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	private Collection<TaskInternals> computeIntersection(
-			Agent agent, Collection<TaskInternals> skillsValues){
+
+	private Collection<TaskInternals> computeIntersection(Agent agent,
+			Collection<TaskInternals> skillsValues) {
 		Collection<TaskInternals> returnCollection = new ArrayList<TaskInternals>();
-		for (TaskInternals singleTaskInternal : skillsValues){
-			if (agent.getAgentInternals(
-					singleTaskInternal.getSkill().getName()) != null){
+		for (TaskInternals singleTaskInternal : skillsValues) {
+			if (agent
+					.getAgentInternals(singleTaskInternal.getSkill().getName()) != null) {
 				returnCollection.add(singleTaskInternal);
 			}
 		}
@@ -97,10 +101,14 @@ public class Task {
 	}
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
-		Collection<TaskInternals> intersection = computeIntersection(agent, skills.values());
+		Collection<TaskInternals> intersection = computeIntersection(agent,
+				skills.values());
+		GreedyAssignmentTask greedyAssignmentTask = new GreedyAssignmentTask();
+		
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
+			ProportionalTimeDivision proportionalTimeDivision = new ProportionalTimeDivision();
 			for (TaskInternals singleTaskInternal : intersection) {
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
@@ -111,7 +119,7 @@ public class Task {
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				ProportionalTimeDivision.increment(singleTaskInternal, 1,
+				proportionalTimeDivision.increment(this, singleTaskInternal, 1,
 						alpha, delta);
 				experience.increment(alpha);
 			}
@@ -136,7 +144,7 @@ public class Task {
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				GreedyAssignmentTask.increment(singleTaskInternal, 1, delta);
+				greedyAssignmentTask.increment(this, singleTaskInternal, 1, delta);
 				experience.increment(1);
 			}
 			break;
@@ -145,12 +153,13 @@ public class Task {
 			break;
 		case RANDOM:
 			say(Constraints.INSIDE_RANDOM);
-			Collections.shuffle((ArrayList<TaskInternals>)intersection);
-			TaskInternals randomTaskInternal = ((ArrayList<TaskInternals>)intersection).get(0);
-//			Random generator = new Random();
-//			List<String> keys = new ArrayList<String>(skills.keySet());
-//			String randomKey = keys.get(generator.nextInt(keys.size()));
-//			TaskInternals randomTaskInternal = skills.get(randomKey);
+			Collections.shuffle((ArrayList<TaskInternals>) intersection);
+			TaskInternals randomTaskInternal = ((ArrayList<TaskInternals>) intersection)
+					.get(0);
+			// Random generator = new Random();
+			// List<String> keys = new ArrayList<String>(skills.keySet());
+			// String randomKey = keys.get(generator.nextInt(keys.size()));
+			// TaskInternals randomTaskInternal = skills.get(randomKey);
 			{
 				sanity("Choosing Si:{"
 						+ randomTaskInternal.getSkill().getName()
@@ -161,7 +170,7 @@ public class Task {
 						randomTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				GreedyAssignmentTask.increment(randomTaskInternal, 1, delta);
+				greedyAssignmentTask.increment(this, randomTaskInternal, 1, delta);
 				experience.increment(1);
 			}
 			break;
@@ -171,6 +180,17 @@ public class Task {
 		}
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
+	}
+
+	public boolean isClosed() {
+		boolean result = true;
+		for (TaskInternals taskInternals : skills.values()) {
+			if (taskInternals.getWorkDone().d < taskInternals.getWorkRequired().d) {
+				result = false;
+				break;
+			}
+		}
+		return result;
 	}
 
 	@Override

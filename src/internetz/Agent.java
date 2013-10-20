@@ -159,7 +159,7 @@ public class Agent {
 	}
 	
 	protected boolean wasWorkingOnAnything(){
-		return PersistJobDone.contributions.containsKey(this.getNick());
+		return PersistJobDone.getJobDone().containsKey(this.getNick());
 	}
 
 	private void say(String s) {

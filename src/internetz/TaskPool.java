@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import argonauts.PersistJobDone;
+
 import repast.simphony.context.DefaultContext;
 import strategies.Strategy;
 
@@ -40,7 +42,7 @@ public class TaskPool extends DefaultContext<Task> {
 		case HETEROPHYLY:
 			if (agent.wasWorkingOnAnything()){
 				// describe what he was working on..
-				;
+				Map<Integer, Task> desc = PersistJobDone.getContributions(agent.getNick());
 			} else {
 				// he wasn't working on anything, take skill matrix
 				;
@@ -49,7 +51,7 @@ public class TaskPool extends DefaultContext<Task> {
 		case HOMOPHYLY:
 			if (agent.wasWorkingOnAnything()){
 				// describe what he was working on..
-				;
+				Map<Integer, Task> desc = PersistJobDone.getContributions(agent.getNick());
 			} else {
 				// he wasn't working on anything, take skill matrix
 				// and negate..

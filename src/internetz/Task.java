@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import argonauts.PersistJobDone;
+
 import logger.PjiitOutputter;
 import strategies.GreedyAssignmentTask;
 import strategies.ProportionalTimeDivision;
@@ -178,8 +180,11 @@ public class Task {
 			assert false; // there is no default method, so please never happen
 			break;
 		}
+		
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
+		
+		PersistJobDone.addContribution(agent.getNick(), this);
 	}
 
 	public boolean isClosed() {

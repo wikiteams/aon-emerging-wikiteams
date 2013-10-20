@@ -5,12 +5,36 @@ import internetz.Task;
 import java.util.HashMap;
 import java.util.Map;
 
+import repast.simphony.engine.environment.RunEnvironment;
+
 public class PersistJobDone {
 
 	/**
 	 * <Ai.name : <iterationNu : Task>>
+	 * Agent nick - key
+	 * value - iteration number, Task
 	 */
-	public static Map<String, Map<Integer, Task>> contributions = 
+	private static Map<String, Map<Integer, Task>> jobDone = 
 			new HashMap<String, Map<Integer, Task>>();
+	
+	public static void addContribution(String key, Task task){
+		int iteration = (int) RunEnvironment.getInstance().
+				getCurrentSchedule().getTickCount();
+		Map<Integer, Task> value = jobDone.get(key);
+		value.put(iteration, task);
+		jobDone.put(key, value);
+	}
+	
+	public static Map<Integer, Task> getContributions(String agentNick) {
+		return jobDone.get(agentNick);
+	}
+
+	public static Map<String, Map<Integer, Task>> getJobDone() {
+		return jobDone;
+	}
+
+	public static void setJobDone(Map<String, Map<Integer, Task>> contributions) {
+		PersistJobDone.jobDone = contributions;
+	}
 
 }

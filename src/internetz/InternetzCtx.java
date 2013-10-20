@@ -11,10 +11,11 @@ import java.util.List;
 import logger.PjiitLogger;
 import logger.PjiitOutputter;
 import logger.SanityLogger;
-import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
-import repast.simphony.context.space.graph.NetworkBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.schedule.ISchedulableAction;
+import repast.simphony.engine.schedule.Schedule;
+import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
@@ -37,13 +38,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private StrategyDistribution strategyDistribution;
 
-	private ModelFactory modelFactory = new ModelFactory();
-	private SkillFactory skillFactory = null;
+	private ModelFactory modelFactory;
+	private SkillFactory skillFactory;
+	private Schedule schedule = new Schedule();
 
 	private TaskPool taskPool = new TaskPool();
 	private AgentPool agentPool = new AgentPool();
 
-	private List<Agent> listAgent = null;
+	private List<Agent> listAgent;
 
 	// private Network<Agent> agents = null;
 	// private Network<Task> tasks = null;
@@ -53,6 +55,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public InternetzCtx() {
 		super("InternetzCtx");
 
+		modelFactory = new ModelFactory();
 		strategyDistribution = new StrategyDistribution();
 
 		try {
@@ -147,8 +150,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			e.printStackTrace();
 		}
 
-		RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
-
+		if (SimulationParameters.forceStop)
+			RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
+		
+		List<ISchedulableAction> actions = schedule.schedule(this);
+		say(actions.toString());
 	}
 
 	private void outputAgentSkillMatrix() throws IOException {
@@ -200,19 +206,26 @@ public class InternetzCtx extends DefaultContext<Object> {
 	// }
 
 	@ScheduledMethod(start = 2000, priority = 0)
-	private void outputSNSData() throws IOException {
-		outputAgentNetworkData();
+	public void outputSNSData() throws IOException {
+		say("outputSNSData() check launched");
+		//outputAgentNetworkData();
 	}
 
-	@ScheduledMethod(start = 1, interval = 100, priority = 0)
-	private void finishSimulation() {
+	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.FIRST_PRIORITY)
+	public void finishSimulation() {
 		say("finishSimulation() check launched");
-		// double time =
-		// RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
-		// if (time >= SimulationParameters.numSteps){
-		// RunEnvironment.getInstance().getCurrentSchedule().setFinishing(true);
-		// RunEnvironment.getInstance().endRun();
-		// }
+		EnvironmentEquilibrium.setActivity(false);
+		if (taskPool.getCount() < 1){
+			RunEnvironment.getInstance().endRun();
+		}
+	}
+	
+	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
+	public void checkForActivity() {
+		say("checkForActivity() check launched");
+		if (EnvironmentEquilibrium.getActivity() == false){
+			RunEnvironment.getInstance().endRun();
+		}
 	}
 
 	private void say(String s) {

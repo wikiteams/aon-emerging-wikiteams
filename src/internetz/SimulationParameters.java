@@ -34,6 +34,8 @@ public class SimulationParameters {
 	
 	public static boolean deployedTasksLeave = false;
 	public static boolean fullyLearnedAgentsLeave = false;
+	public static boolean forceStop = false;
+	
 	public static int maxWorkRequired = 0;
 
 	public static void init() {
@@ -69,5 +71,7 @@ public class SimulationParameters {
 				.getValue("deployedTasksLeave");
 		fullyLearnedAgentsLeave = (Boolean) param
 				.getValue("fullyLearnedAgentsLeave");
+		forceStop = (Boolean) param
+				.getValue("forceStop");
 	}
 }

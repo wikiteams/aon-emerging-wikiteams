@@ -16,8 +16,6 @@ import argonauts.PersistJobDone;
 @AgentAnnot(displayName="Agent")
 public class Agent {
 
-	SimulationParameters Sims = new SimulationParameters();
-
 	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
 	private Strategy strategy;
 
@@ -99,6 +97,7 @@ public class Agent {
 		if (taskToWork != null) {
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
 			taskToWork.workOnTask(this, this.strategy.skillChoice);
+			EnvironmentEquilibrium.setActivity(true);
 		} else {
 			say("Agent " + this.id + " didn't work on anything");
 			sanity("Agent " + this.id + " don't have a task to work on in step " + time);
@@ -170,4 +169,18 @@ public class Agent {
 	private void sanity(String s){
 		PjiitOutputter.sanity(s);
 	}
+}
+
+class EnvironmentEquilibrium {
+	
+    private static boolean activity = false;
+
+    public static synchronized boolean getActivity() {
+        return activity;
+    }
+
+    public static synchronized void setActivity(boolean defineActivity) {
+        activity = defineActivity;
+    }
+
 }

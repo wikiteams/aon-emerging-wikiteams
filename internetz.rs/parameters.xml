@@ -54,6 +54,10 @@
 	<parameter name="fullyLearnedAgentsLeave" displayName="fullyLearnedAgentsLeave"
 		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+		
+	<parameter name="forceStop" displayName="forceStop"
+		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
 </parameters>
 
 

@@ -4,12 +4,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
 import logger.PjiitOutputter;
-
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 
 public abstract class AgentSkillsPool {
 
@@ -22,25 +23,45 @@ public abstract class AgentSkillsPool {
 	 */
 	private static String filename = "data\\top-users-final.csv";
 
+	private static String filename_ext = "data\\users-and-their-pull-requests.csv";
+
+	private enum DataSet {
+		STATIC_TOP1000_3SKILLS, STATIC_PULL_REQUESTS;
+	}
+
 	private enum Method {
-		STATIC_TABLE, MUTATE_STATIC_TABLE, RANDOM;
+		TOP_ACTIVE, RANDOM_FROM_GENERAL_POOL, RANDOM;
 	}
 
 	/***
-	 * <String:user, <skill1, skill2, skill3>>
+	 * <String:user, {<skill, intensivity>}>
 	 */
-	private static LinkedHashMap<String, ArrayList> skillSet = new LinkedHashMap<String, ArrayList>();
+	private static LinkedHashMap<String, HashMap<Skill, Double>> skillSet = 
+			new LinkedHashMap<String, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
 		if (method.toUpperCase().equals("STATIC_TABLE"))
-			instantiate(Method.STATIC_TABLE);
+			instantiate(DataSet.STATIC_TOP1000_3SKILLS);
+		else if (method.toUpperCase().equals("STATIC_PULL_REQUESTS"))
+			instantiate(DataSet.STATIC_PULL_REQUESTS);
 	}
 
-	public static void instantiate(Method method) {
-		if (method == Method.STATIC_TABLE) {
+	public static void instantiate(DataSet method) {
+		if (method == DataSet.STATIC_TOP1000_3SKILLS) {
 			try {
-				parse_csv();
+				parse_csv(false);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} else if (method == DataSet.STATIC_PULL_REQUESTS) {
+			try {
+				parse_csv(true);
+				parse_csv_ext();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -58,36 +79,96 @@ public abstract class AgentSkillsPool {
 	 * 
 	 * @since 1.1
 	 */
-	private static void parse_csv() throws IOException, FileNotFoundException {
-		CSVReader reader = new CSVReader(new FileReader(filename), ',', '\'', 1);
+	private static void parse_csv(boolean nickOnly) throws IOException,
+			FileNotFoundException {
+		CSVReader reader = new CSVReader(new FileReader(filename), ',', '\'');
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
-			ArrayList<Skill> l = new ArrayList<Skill>();
-			for (int i = 1; i < nextLine.length; i++) {
-				l.add(skillFactory.getSkill(nextLine[i]));
-				say("Parsed from CSV: " + nextLine[i]);
+			if (nickOnly) {
+				skillSet.put(nextLine[0], new HashMap<Skill, Double>());
+			} else {
+				HashMap<Skill, Double> l = new HashMap<Skill, Double>();
+				for (int i = 1; i < nextLine.length; i++) {
+					l.put(skillFactory.getSkill(nextLine[i]), null);
+					say("Parsed from CSV: " + nextLine[i]);
+				}
+				skillSet.put(nextLine[0], l);
 			}
-			skillSet.put(nextLine[0], l);
 		}
 	}
 
-	public static ArrayList choseRandom() {
+	/*
+	 * Here is parsing real data - pull requests of top active 960 GitHub users
+	 * and their used skills [1..n]
+	 * 
+	 * @since 1.2
+	 */
+	private static void parse_csv_ext() throws IOException,
+			FileNotFoundException {
+		CSVReader reader = new CSVReader(new FileReader(filename_ext), ',',
+				CSVWriter.NO_QUOTE_CHARACTER, 1);
+		String[] nextLine;
+		while ((nextLine = reader.readNext()) != null) {
+			String user = nextLine[3];
+			if (nextLine[2].trim().equals("null"))
+				continue;
+			Skill s = skillFactory.getSkill(nextLine[2]);
+			Double value = Double.parseDouble(nextLine[1]);
+			say("user:" + user + " skill:" + s + " value:" + value);
+			addExtSkill(user, s, value);
+		}
+	}
+
+	private static void addExtSkill(String user, Skill skill, Double value) {
+		HashMap<Skill, Double> h = skillSet.get(user);
+		if (h == null){
+			skillSet.put(user, new HashMap<Skill, Double>());
+			h = skillSet.get(user);
+		}
+		Double x = h.get(skill);
+		if (x == null){
+			h.put(skill, value);
+		} else{
+			x += value;
+			h.put(skill, x);
+		}
+		skillSet.put(user, h);
+	}
+
+	public static HashMap<Skill, Double> choseRandom() {
 		Random generator = new Random();
 		int i = generator.nextInt(skillSet.size());
 		return getByIndex(skillSet, i);
 	}
 
-	public static ArrayList getByIndex(LinkedHashMap<String, ArrayList> hMap,
-			int index) {
-		return (ArrayList) hMap.values().toArray()[index];
+	public static HashMap<Skill, Double> getByIndex(
+			LinkedHashMap<String, HashMap<Skill, Double>> hMap, int index) {
+		return (HashMap<Skill, Double>) hMap.values().toArray()[index];
 	}
 
 	public static void fillWithSkills(Agent agent) {
-		fillWithSkills(agent, Method.RANDOM);
+		if (SimulationParameters.fillAgentSkillsMethod.toUpperCase().equals(
+				"RANDOM"))
+			fillWithSkills(agent, Method.RANDOM);
+		else if (SimulationParameters.fillAgentSkillsMethod.toUpperCase()
+				.equals("RANDOM_FROM_GENERAL_POOL"))
+			fillWithSkills(agent, Method.RANDOM_FROM_GENERAL_POOL);
+		else if (SimulationParameters.fillAgentSkillsMethod.toUpperCase()
+				.equals("TOP_ACTIVE"))
+			fillWithSkills(agent, Method.TOP_ACTIVE);
 	}
 
 	public static void fillWithSkills(Agent agent, Method method) {
 		if (method == Method.RANDOM) {
+
+		} else if (method == Method.TOP_ACTIVE) {
+			HashMap<Skill, Double> iterationSkills = getByIndex(skillSet, agent.getId());
+			for(Skill iterationSkill : iterationSkills.keySet()){
+				AgentInternals builtAgentInternals = new AgentInternals(iterationSkill,
+						new Experience(iterationSkills.get(iterationSkill), 8500));
+				agent.addSkill(iterationSkill.getName(), builtAgentInternals);
+			}
+		} else if (method == Method.RANDOM_FROM_GENERAL_POOL) {
 			// randomize HOW MANY SKILLS
 			Random generator = new Random();
 			int how_many = generator

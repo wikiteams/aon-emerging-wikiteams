@@ -21,6 +21,10 @@ public class PersistJobDone {
 		int iteration = (int) RunEnvironment.getInstance().
 				getCurrentSchedule().getTickCount();
 		Map<Integer, Task> value = jobDone.get(key);
+		if (value == null){
+			jobDone.put(key, new HashMap<Integer, Task>());
+			value = jobDone.get(key);
+		}
 		value.put(iteration, task);
 		jobDone.put(key, value);
 	}

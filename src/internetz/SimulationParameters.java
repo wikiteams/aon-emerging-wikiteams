@@ -26,6 +26,7 @@ public class SimulationParameters {
 	public static String taskSkillPoolDataset = "";
 	public static String agentSkillPoolDataset = "";
 	public static int staticFrequencyTableSc = 0;
+	public static String fillAgentSkillsMethod = "";
 	
 	public static String gitHubClusterizedDistribution = "";
 
@@ -54,6 +55,8 @@ public class SimulationParameters {
 		taskSkillPoolDataset = (String) param.getValue("taskSkillPoolDataset");
 		agentSkillPoolDataset = (String) param.getValue("agentSkillPoolDataset");
 		staticFrequencyTableSc = (Integer) param.getValue("staticFrequencyTableSc");
+		
+		fillAgentSkillsMethod = (String) param.getValue("fillAgentSkillsMethod");
 		
 		gitHubClusterizedDistribution = (String) param.getValue("gitHubClusterizedDistribution");
 

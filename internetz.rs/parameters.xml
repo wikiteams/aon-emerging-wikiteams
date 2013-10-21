@@ -6,15 +6,20 @@
 	<parameter name="skillChoiceAlgorithm" displayName="skillChoiceAlgorithm"
 		type="java.lang.String" defaultValue="proportional" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+		
+	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"
+		type="java.lang.String" defaultValue="STATIC_PULL_REQUESTS" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+	<parameter name="fillAgentSkillsMethod" displayName="fillAgentSkillsMethod"
+		type="java.lang.String" defaultValue="TOP_ACTIVE" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+		
 	<parameter name="taskSkillPoolDataset" displayName="taskSkillPoolDataset"
 		type="java.lang.String" defaultValue="STATIC_FREQUENCY_TABLE" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="staticFrequencyTableSc" displayName="staticFrequencyTableSc"
 		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"
-		type="java.lang.String" defaultValue="STATIC_TABLE" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="allowMultiMembership" displayName="allowMultiMembership"
 		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />

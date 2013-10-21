@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import logger.EndRunLogger;
 import logger.PjiitLogger;
 import logger.PjiitOutputter;
 import logger.SanityLogger;
@@ -22,6 +23,7 @@ import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
 import utils.NamesGenerator;
+import EDU.oswego.cs.dl.util.concurrent.Takable;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
@@ -63,6 +65,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOGGER_INITIALIZED);
 			SanityLogger.init();
 			sanity(Constraints.LOGGER_INITIALIZED);
+			EndRunLogger.init();
 
 			say("Super object InternetzCtx loaded");
 			say("Starting simulation with model: " + modelFactory.toString());
@@ -216,6 +219,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("finishSimulation() check launched");
 		EnvironmentEquilibrium.setActivity(false);
 		if (taskPool.getCount() < 1){
+			finalMessage(
+					RunEnvironment.getInstance().getCurrentSchedule().getTickCount() 
+					+ "," + 
+					SimulationParameters.taskChoiceAlgorithm 
+					+ "," + 
+					SimulationParameters.fillAgentSkillsMethod 
+					+ "," + 
+					SimulationParameters.agentSkillPoolDataset
+					+ "," + 
+					SimulationParameters.taskSkillPoolDataset
+					+ "," + 
+					SimulationParameters.skillChoiceAlgorithm);
 			RunEnvironment.getInstance().endRun();
 		}
 	}
@@ -224,6 +239,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void checkForActivity() {
 		say("checkForActivity() check launched");
 		if (EnvironmentEquilibrium.getActivity() == false){
+			finalMessage(
+					RunEnvironment.getInstance().getCurrentSchedule().getTickCount() 
+					+ "," + 
+					SimulationParameters.taskChoiceAlgorithm 
+					+ "," + 
+					SimulationParameters.fillAgentSkillsMethod 
+					+ "," + 
+					SimulationParameters.agentSkillPoolDataset
+					+ "," + 
+					SimulationParameters.taskSkillPoolDataset
+					+ "," + 
+					SimulationParameters.skillChoiceAlgorithm);
 			RunEnvironment.getInstance().endRun();
 		}
 	}
@@ -234,6 +261,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
+	}
+	
+	private void finalMessage(String s) {
+		EndRunLogger.finalMessage(s);
 	}
 
 }

@@ -219,7 +219,7 @@ public class Task {
 
 	@Override
 	public boolean equals(Object obj) {
-		if ((this.name.toLowerCase().equals(((Task) obj).name))
+		if ((this.name.toLowerCase().equals(((Task) obj).name.toLowerCase()))
 				&& (this.id == ((Task) obj).id))
 			return true;
 		else

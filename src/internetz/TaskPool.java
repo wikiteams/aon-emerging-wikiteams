@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
@@ -34,23 +35,33 @@ public class TaskPool extends DefaultContext<Task> {
 	public int getCount() {
 		return tasks.size();
 	}
-
+	
 	public static synchronized Task chooseTask(Agent agent,
 			Strategy.TaskChoice strategy) {
 
 		Task chosen = null;
+		
 		switch (strategy) {
 		case HOMOPHYLY:
 			
-			Collection<Skill> c;
+			Collection<Skill> c = null;
 			
 			if (agent.wasWorkingOnAnything()){
 				// describe what he was working on..
 				Map<Integer, Task> desc = PersistJobDone.getContributions(agent.getNick());
 				
-				Integer maxJobDone = Collections.max( desc.keySet() );
+				int highest = 0;
+				Task mostOften = null;
 				
-				Task mostOften = desc.get(maxJobDone);
+				ArrayList<Task> shuffled = new ArrayList<Task>(desc.values());
+				Collections.shuffle( shuffled );
+				
+				for( Task __task : shuffled ){
+					int __t = Collections.frequency(desc.values(), __task);
+					if (__t > highest) {
+						mostOften = __task;
+					}
+				}
 				
 				c = mostOften.getSkills();
 			}  else {
@@ -65,6 +76,11 @@ public class TaskPool extends DefaultContext<Task> {
 				
 				HashMap<Task, Integer> inters = searchForIntersection(h);
 				// search for intersections of n-size
+				
+				if (inters == null || inters.size() == 0){
+					say("Didn't found task with such skills which agent have!");
+					break;
+				}
 				
 				Collection<Integer> ci = inters.values();
 				Integer maximum = Collections.max(ci);

@@ -41,15 +41,25 @@ public class TaskPool extends DefaultContext<Task> {
 		Task chosen = null;
 		switch (strategy) {
 		case HOMOPHYLY:
+			
+			Collection<Skill> c;
+			
 			if (agent.wasWorkingOnAnything()){
 				// describe what he was working on..
 				Map<Integer, Task> desc = PersistJobDone.getContributions(agent.getNick());
-			} else {
+				
+				Integer maxJobDone = Collections.max( desc.keySet() );
+				
+				Task mostOften = desc.get(maxJobDone);
+				
+				c = mostOften.getSkills();
+			}  else {
 				// he wasn't working on anything, take skill matrix
 				
-				Collection<Skill> c = agent.getSkills();
+				c = agent.getSkills();
 				// take all the skills
-				
+			}
+			
 				HashMap<Skill, ArrayList<Task>> h = getTasksPerSkills(c);
 				// create list of tasks per a skill
 				
@@ -58,12 +68,20 @@ public class TaskPool extends DefaultContext<Task> {
 				
 				Collection<Integer> ci = inters.values();
 				Integer maximum = Collections.max(ci);
-				//ArrayList<Task> 
+				
+				ArrayList<Task> intersection = new ArrayList<Task>();
+				for(Task task__ : inters.keySet()){
+					if (inters.get(task__) == maximum){
+						intersection.add(task__);
+					}
+				}
 				// take biggest intersection set possible
 				
+				chosen = intersection.get( (int) 
+						( ( new Random().nextDouble() ) * intersection.size() ) );
 				// random
 				
-			}
+			
 			break;
 		case HETEROPHYLY:
 			// it will be basicly negation of homophyly

@@ -16,7 +16,7 @@ public class StrategyDistribution {
 	public TaskChoice getTaskStrategy(Agent agent){
 		if (type == 0){
 			if (taskChoice.equals("preferential")){
-				return Strategy.TaskChoice.RANDOM;
+				return Strategy.TaskChoice.HOMOPHYLY;
 			}
 			if (taskChoice.equals("random")){
 				return Strategy.TaskChoice.RANDOM;

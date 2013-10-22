@@ -100,7 +100,7 @@ public class Skill {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this.name.toLowerCase().equals(((Skill) obj).name))
+		if (this.name.toLowerCase().equals(((Skill) obj).name.toLowerCase()))
 			return true;
 		else
 			return false;

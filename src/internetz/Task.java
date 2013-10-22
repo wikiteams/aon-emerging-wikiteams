@@ -197,6 +197,15 @@ public class Task {
 		}
 		return result;
 	}
+	
+	public Collection<Skill> getSkills() {
+		ArrayList<Skill> skillCollection = new ArrayList<Skill>();
+		Collection<TaskInternals> internals = this.getTaskInternals().values();
+		for (TaskInternals ti : internals) {
+			skillCollection.add(ti.getSkill());
+		}
+		return skillCollection;
+	}
 
 	@Override
 	public String toString() {

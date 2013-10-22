@@ -35,6 +35,8 @@ public class StrategyDistribution {
 		if (type == 0){
 			if (skillChoice.equals("proportional")){
 				return Strategy.SkillChoice.PROPORTIONAL_TIME_DIVISION;
+			} else if (skillChoice.equals("greedy")){
+				return Strategy.SkillChoice.GREEDY_ASSIGNMENT_BY_TASK;
 			}
 		}
 		return null;

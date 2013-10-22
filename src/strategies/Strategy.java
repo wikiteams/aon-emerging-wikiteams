@@ -23,7 +23,7 @@ public class Strategy {
 		 * odpowiadalo elementom w naszej macierzy. I agent caly czas stara sie
 		 * szukac podobnych taskow.
 		 */
-		HETEROPHYLY,
+		HOMOPHYLY,
 		/**
 		 * Tutaj przeciwienstwo tego co wyzej, agent stara sie znalezc zupelnie
 		 * inne taski niz te nad ktorym dotychczas pracowal. Jest to strategia
@@ -31,7 +31,7 @@ public class Strategy {
 		 * to szuka takiego taska ktory zupelnie nie odpowiada macierzy jego
 		 * umiejetnosci.
 		 */
-		HOMOPHYLY,
+		HETEROPHYLY,
 		/**
 		 * Social vector - znajdowanie mozliwie najblizszego wektora umiejetnosci.
 		 * Umiejetnosci niesie ze soba dodatkowe informacje - kategoria umiejetnosci

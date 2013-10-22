@@ -115,8 +115,8 @@ public class Task {
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
-				int n = intersection.size();
-				double alpha = 1 / n;
+				double n = intersection.size();
+				double alpha = 1d / n;
 				Experience experience = agent.getAgentInternals(
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
@@ -151,7 +151,7 @@ public class Task {
 			}
 			break;
 		case CHOICE_OF_AGENT:
-			;
+			say(Constraints.INSIDE_CHOICE_OF_AGENT);
 			break;
 		case RANDOM:
 			say(Constraints.INSIDE_RANDOM);

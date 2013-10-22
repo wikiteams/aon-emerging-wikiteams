@@ -20,6 +20,7 @@
 	<parameter name="staticFrequencyTableSc" displayName="staticFrequencyTableSc"
 		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+		
 	<parameter name="allowMultiMembership" displayName="allowMultiMembership"
 		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
@@ -32,6 +33,7 @@
 	<parameter name="taskChoiceAlgorithm" displayName="taskChoiceAlgorithm"
 		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+		
 	<parameter name="gitHubClusterizedDistribution" displayName="gitHubClusterizedDistribution"
 		type="java.lang.String" defaultValue="distribute" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />

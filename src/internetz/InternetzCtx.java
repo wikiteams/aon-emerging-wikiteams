@@ -14,6 +14,7 @@ import logger.PjiitOutputter;
 import logger.SanityLogger;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.environment.RunEnvironment;
+import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
@@ -220,6 +221,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		EnvironmentEquilibrium.setActivity(false);
 		if (taskPool.getCount() < 1){
 			finalMessage(
+					RunState.getInstance().getRunInfo().getBatchNumber()
+					+ "," +
+					RunState.getInstance().getRunInfo().getRunNumber()
+					+ "," +
 					RunEnvironment.getInstance().getCurrentSchedule().getTickCount() 
 					+ "," + 
 					SimulationParameters.taskChoiceAlgorithm 
@@ -240,6 +245,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("checkForActivity() check launched");
 		if (EnvironmentEquilibrium.getActivity() == false){
 			finalMessage(
+					RunState.getInstance().getRunInfo().getBatchNumber()
+					+ "," +
+					RunState.getInstance().getRunInfo().getRunNumber()
+					+ "," +
 					RunEnvironment.getInstance().getCurrentSchedule().getTickCount() 
 					+ "," + 
 					SimulationParameters.taskChoiceAlgorithm 

@@ -24,5 +24,7 @@ public class Constraints {
 			"Inside switch - GREEDY_ASSIGNMENT_BY_TASK";
 	public static final String INSIDE_RANDOM = 
 			"Inside switch - RANDOM";
+	public static final String INSIDE_CHOICE_OF_AGENT = 
+			"Inside switch - CHOICE_OF_AGENT";
 
 }

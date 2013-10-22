@@ -26,7 +26,7 @@ import constants.Constraints;
  * and work done.
  * 
  * @since 1.0
- * @version 1.0
+ * @version 1.2
  * @author Oskar Jarczyk
  */
 public class Task {
@@ -128,6 +128,7 @@ public class Task {
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
+			
 			TaskInternals singleTaskInternal = null;
 			double highest = -1;
 			for (TaskInternals searchTaskInternal : intersection) {

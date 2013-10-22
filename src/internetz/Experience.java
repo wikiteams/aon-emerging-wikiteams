@@ -58,20 +58,20 @@ public class Experience {
 		cern.jet.random.ChiSquare chi = null;
 		// cern.jet.random.ChiSquare zeta = null;
 
-		int freedom = 15; // osi x
-		int k = 6;
+		double xLearningAxis = 15; // osi x
+		int freedom = 6;
 
 		LearningCurve() {
 			// chi = RandomHelper.getChiSquare();
-			chi = new ChiSquare(k,
+			chi = new ChiSquare(freedom,
 					cern.jet.random.ChiSquare.makeDefaultGenerator());
 		}
 
 		private double getDelta(double k) {
-			double x = chi.cdf(k * freedom);
+			double x = chi.cdf(k * xLearningAxis);
 			DecimalFormat df = new DecimalFormat("#.######");
 			// NOTE: freedom (x axis of CDF) should be between 0 and 4
-			say("getDelta for k: " + df.format(k) + "returned x:"
+			say("getDelta for k: " + df.format(k) + " returned x:"
 					+ df.format(x));
 			return x;
 		}

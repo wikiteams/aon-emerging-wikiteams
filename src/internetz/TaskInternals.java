@@ -1,5 +1,7 @@
 package internetz;
 
+import java.text.DecimalFormat;
+
 public class TaskInternals {
 	
 	private Skill skill;
@@ -37,6 +39,8 @@ public class TaskInternals {
 	
 	@Override
 	public String toString(){
-		return this.skill.getName() + " " + workDone.d + "/" + workRequired.d;
+		DecimalFormat df = new DecimalFormat("#.######");
+		return this.skill.getName() + " " + 
+				df.format(workDone.d) + "/" + df.format(workRequired.d);
 	}
 }

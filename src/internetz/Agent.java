@@ -82,7 +82,7 @@ public class Agent {
 	public void step() {
 
 		say("Step(" + time + ") of Agent " + this.id
-				+ "scheduled method launched.");
+				+ " scheduled method launched.");
 
 		//Context context = (Context) ContextUtils.getContext(this);
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
@@ -95,6 +95,7 @@ public class Agent {
 
 		// Agent Aj works on Ti
 		if (taskToWork != null) {
+			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
 			taskToWork.workOnTask(this, this.strategy.skillChoice);
 			EnvironmentEquilibrium.setActivity(true);
@@ -152,7 +153,7 @@ public class Agent {
 	@Override
 	public boolean equals(Object obj) {
 		if ((this.id == ((Agent) obj).id)
-				&& (this.nick.toLowerCase().equals((((Agent) obj).nick))))
+				&& (this.nick.toLowerCase().equals((((Agent) obj).nick.toLowerCase()))))
 			return true;
 		else
 			return false;

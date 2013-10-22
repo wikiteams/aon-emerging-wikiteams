@@ -103,9 +103,15 @@ public class Task {
 	}
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
+		// the intersection is always non-empty because we call
+		// "workOnTask" after picking a task with witch we have
+		// in common at least one skill...
 		Collection<TaskInternals> intersection = computeIntersection(agent,
 				skills.values());
 		GreedyAssignmentTask greedyAssignmentTask = new GreedyAssignmentTask();
+		
+		assert intersection != null;
+		assert intersection.size() > 0;
 		
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
@@ -130,13 +136,31 @@ public class Task {
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
 			
 			TaskInternals singleTaskInternal = null;
-			double highest = -1;
+			double highest = -1.;
+			
+			/**
+			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano
+			 * w tym tasku, i bierzemy wlasnie te najbardziej rozpoczete.
+			 * Jezeli zaden nie jest rozpoczety, to bierzemy ten
+			 * w ktorym mamy najwieksze doswiadczenie
+			 */
 			for (TaskInternals searchTaskInternal : intersection) {
 				if (searchTaskInternal.getWorkDone().d > highest) {
 					highest = searchTaskInternal.getWorkDone().d;
 					singleTaskInternal = searchTaskInternal;
 				}
 			}
+			
+			/**
+			 * zmienna highest zawsze jest w przedziale od [0..*]
+			 */
+			assert highest != -1.;
+			/**
+			 * musimy miec jakis pojedynczy task internal (skill)
+			 * nad ktorym bedziemy pracowac..
+			 */
+			assert singleTaskInternal != null;
+			
 			{
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()

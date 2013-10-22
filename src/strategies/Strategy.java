@@ -16,7 +16,7 @@ public class Strategy {
 	
 	public enum TaskChoice {
 		/**
-		 * Heterofilia - milosc do tego samego - szukamy takiego taska maksymalnie 
+		 * Homofilia - milosc do tego samego - szukamy takiego taska maksymalnie 
 		 * podobnego nad ktorym ju¿ pracowalismy. Jezeli jeszcze nie pracowalismy
 		 * nad zadnym to szukamy pierwszego mozliwie odpowiadajacego naszej
 		 * macierzy umiejetnosci. Wtedy budowanie doswiadczenia bedzie w miare

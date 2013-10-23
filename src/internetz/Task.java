@@ -223,6 +223,11 @@ public class Task {
 		return result;
 	}
 	
+	/**
+	 * Returns a collection of skills inside internals
+	 * of current task
+	 * @return Collection of skills inside all TaskInternals
+	 */
 	public Collection<Skill> getSkills() {
 		ArrayList<Skill> skillCollection = new ArrayList<Skill>();
 		Collection<TaskInternals> internals = this.getTaskInternals().values();

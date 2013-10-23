@@ -17,16 +17,26 @@ public class PersistJobDone {
 	private static Map<String, Map<Integer, Task>> jobDone = 
 			new HashMap<String, Map<Integer, Task>>();
 	
-	public static void addContribution(String key, Task task){
+	/**
+	 * Tutaj dodaje fakt, ze agent pracowal na taskiem taki i takim
+	 * w danym ticku symulacji
+	 * @param agentNick
+	 * Nick of agent (result of aget.getNick()) used to literally identity
+	 * agent by his nick
+	 * @param task
+	 * Task object on which agent was working
+	 */
+	public static void addContribution(String agentNick, Task task){
 		int iteration = (int) RunEnvironment.getInstance().
 				getCurrentSchedule().getTickCount();
-		Map<Integer, Task> value = jobDone.get(key);
+		
+		Map<Integer, Task> value = jobDone.get(agentNick);
 		if (value == null){
-			jobDone.put(key, new HashMap<Integer, Task>());
-			value = jobDone.get(key);
+			jobDone.put(agentNick, new HashMap<Integer, Task>());
+			value = jobDone.get(agentNick);
 		}
 		value.put(iteration, task);
-		jobDone.put(key, value);
+		jobDone.put(agentNick, value);
 	}
 	
 	public static Map<Integer, Task> getContributions(String agentNick) {

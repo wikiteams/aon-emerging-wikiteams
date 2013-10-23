@@ -44,6 +44,79 @@ public class TaskPool extends DefaultContext<Task> {
 		switch (strategy) {
 		case HOMOPHYLY:
 
+			Collection<Skill> skillsByExperienceHmphly = null;
+
+			if (agent.wasWorkingOnAnything()) {
+				// describe what he was working on..
+				Map<Integer, Task> desc = PersistJobDone.getContributions(agent
+						.getNick());
+				assert desc.size() > 0;
+				
+				int highest = 0;
+				Task mostOften = null;
+
+				ArrayList<Task> shuffled = new ArrayList<Task>(desc.values());
+				Collections.shuffle(shuffled);
+				assert shuffled.size() > 0;
+
+				for (Task oneOfTheShuffled : shuffled) {
+					int taskFruequency = Collections.frequency(
+							desc.values(), oneOfTheShuffled);
+					if (taskFruequency > highest) {
+						mostOften = oneOfTheShuffled;
+					}
+				}
+				
+				assert mostOften != null;
+
+				skillsByExperienceHmphly = mostOften.getSkills();
+			} else {
+				// he wasn't working on anything, take skill matrix
+				skillsByExperienceHmphly = agent.getSkills();
+				// take all the skills
+			}
+			assert skillsByExperienceHmphly.size() > 0;
+			
+			// create list of tasks per a skill
+			HashMap<Skill, ArrayList<Task>> tasksPerSkillsHmphly = 
+					getTasksPerSkills(skillsByExperienceHmphly);
+			// there are no tasks left with such experience ?
+			// try again but now with agent skills
+			if (tasksPerSkillsHmphly.size() < 1){
+				tasksPerSkillsHmphly = getTasksPerSkills(agent.getSkills());
+			}
+
+			HashMap<Task, Integer> intersectionHomophyly = null;
+			
+			if (tasksPerSkillsHmphly != null)
+				intersectionHomophyly = searchForIntersection(tasksPerSkillsHmphly);
+				// search for intersections of n-size
+
+			if (intersectionHomophyly == null || intersectionHomophyly.size() == 0) {
+				say("Didn't found task with such skills which agent have!");
+				break;
+			}
+
+			Collection<Integer> collectionIntersection = intersectionHomophyly.values();
+			Integer maximumFromIntersect = Collections.max(collectionIntersection);
+
+			ArrayList<Task> tasksWithMaxHomophyly = new ArrayList<Task>();
+			for (Task commonTask : intersectionHomophyly.keySet()) {
+				if (intersectionHomophyly.get(commonTask) == maximumFromIntersect) {
+					tasksWithMaxHomophyly.add(commonTask);
+				}
+			}
+			// take biggest intersection set possible
+
+			chosen = tasksWithMaxHomophyly
+					.get((int) ((new Random().nextDouble()) * tasksWithMaxHomophyly
+							.size()));
+			// random
+
+			break;
+		case HETEROPHYLY:
+			// it will be basically negation of homophyly
+			
 			Collection<Skill> c = null;
 
 			if (agent.wasWorkingOnAnything()) {
@@ -51,6 +124,7 @@ public class TaskPool extends DefaultContext<Task> {
 				Map<Integer, Task> desc = PersistJobDone.getContributions(agent
 						.getNick());
 				assert desc.size() > 0;
+				
 				int highest = 0;
 				Task mostOften = null;
 
@@ -76,14 +150,19 @@ public class TaskPool extends DefaultContext<Task> {
 			}
 			assert c.size() > 0;
 			
-			HashMap<Skill, ArrayList<Task>> h = getTasksPerSkills(c);
 			// create list of tasks per a skill
+			HashMap<Skill, ArrayList<Task>> h = getTasksPerSkills(c);
+			// there are no tasks left with such experience ?
+			// try again but now with agent skills
 			if (h.size() < 1){
 				h = getTasksPerSkills(agent.getSkills());
 			}
 
-			HashMap<Task, Integer> inters = searchForIntersection(h);
-			// search for intersections of n-size
+			HashMap<Task, Integer> inters = null;
+			
+			if (h != null)
+				inters = searchForIntersection(h);
+				// search for intersections of n-size
 
 			if (inters == null || inters.size() == 0) {
 				say("Didn't found task with such skills which agent have!");
@@ -105,19 +184,6 @@ public class TaskPool extends DefaultContext<Task> {
 					.get((int) ((new Random().nextDouble()) * intersection
 							.size()));
 			// random
-
-			break;
-		case HETEROPHYLY:
-			// it will be basicly negation of homophyly
-			if (agent.wasWorkingOnAnything()) {
-				// describe what he was working on..
-				Map<Integer, Task> desc = PersistJobDone.getContributions(agent
-						.getNick());
-			} else {
-				// he wasn't working on anything, take skill matrix
-				// and negate..
-				;
-			}
 			break;
 		case SOCIAL_VECTOR:
 			// TODO: check if you added "category" attribute to Skills

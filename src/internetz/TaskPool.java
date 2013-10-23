@@ -229,9 +229,15 @@ public class TaskPool extends DefaultContext<Task> {
 		return chosen;
 	}
 
+	/**
+	 * This method counts the frequency of a 'Task' in HashMap<Skill, ArrayList<Task>>
+	 * and returns collection of tasks and their frequencies
+	 * @param h - HashMap of skills and tasks which require them
+	 * @return HashMap<Task, Integer>
+	 */
 	private static HashMap<Task, Integer> searchForIntersection(
 			HashMap<Skill, ArrayList<Task>> h) {
-		// TODO Auto-generated method stub
+
 		HashMap<Task, Integer> map = new HashMap<Task, Integer>();
 		for (Skill skill : h.keySet()) {
 			ArrayList<Task> t = h.get(skill);

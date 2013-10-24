@@ -140,6 +140,10 @@ public class Agent {
 		return deltaE.entrySet().toString();
 	}
 	
+	public double describeExperience(Skill skill){
+		return skills.get(skill.getName()).getExperience().getDelta();
+	}
+	
 	@Override
 	public String toString() {
 		return getNick();

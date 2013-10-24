@@ -73,7 +73,7 @@ public class Strategy {
 	     */
 	    GREEDY_ASSIGNMENT_BY_TASK,
 	    /**
-	     * Pracuj wylacznie nad ty skillem, w ktory masz najwiecej doswiadczenia
+	     * Pracuj wylacznie nad tym skillem, w ktory agent ma najwiecej doswiadczenia
 	     */
 	    CHOICE_OF_AGENT,
 	    /**

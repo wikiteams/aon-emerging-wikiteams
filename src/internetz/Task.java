@@ -117,6 +117,8 @@ public class Task {
 		Collection<TaskInternals> intersection = computeIntersection(agent,
 				skills.values());
 		GreedyAssignmentTask greedyAssignmentTask = new GreedyAssignmentTask();
+		TaskInternals singleTaskInternal = null;
+		double highest = -1.;
 		
 		assert intersection != null;
 		assert intersection.size() > 0;
@@ -125,17 +127,17 @@ public class Task {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
 			ProportionalTimeDivision proportionalTimeDivision = new ProportionalTimeDivision();
-			for (TaskInternals singleTaskInternal : intersection) {
+			for (TaskInternals singleTaskInternalFromIntersect : intersection) {
 				sanity("Choosing Si:{"
-						+ singleTaskInternal.getSkill().getName()
-						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
+						+ singleTaskInternalFromIntersect.getSkill().getName()
+						+ "} inside Ti:{" + singleTaskInternalFromIntersect.toString() + "}");
 				double n = intersection.size();
 				double alpha = 1d / n;
 				Experience experience = agent.getAgentInternals(
-						singleTaskInternal.getSkill().getName())
+						singleTaskInternalFromIntersect.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				proportionalTimeDivision.increment(this, singleTaskInternal, 1,
+				proportionalTimeDivision.increment(this, singleTaskInternalFromIntersect, 1,
 						alpha, delta);
 				experience.increment(alpha);
 			}
@@ -143,14 +145,10 @@ public class Task {
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
 			
-			TaskInternals singleTaskInternal = null;
-			double highest = -1.;
-			
 			/**
 			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano
 			 * w tym tasku, i bierzemy wlasnie te najbardziej rozpoczete.
-			 * Jezeli zaden nie jest rozpoczety, to bierzemy ten
-			 * w ktorym mamy najwieksze doswiadczenie
+			 * Jezeli zaden nie jest rozpoczety, to bierzemy losowy
 			 */
 			for (TaskInternals searchTaskInternal : intersection) {
 				if (searchTaskInternal.getWorkDone().d > highest) {
@@ -158,7 +156,6 @@ public class Task {
 					singleTaskInternal = searchTaskInternal;
 				}
 			}
-			
 			/**
 			 * zmienna highest zawsze jest w przedziale od [0..*]
 			 */
@@ -185,6 +182,37 @@ public class Task {
 			break;
 		case CHOICE_OF_AGENT:
 			say(Constraints.INSIDE_CHOICE_OF_AGENT);
+
+			/**
+			 * Pracuj wylacznie nad tym skillem, w ktorym agent ma najwiecej doswiadczenia
+			 */
+			for (TaskInternals searchTaskInternal : intersection) {
+				if (agent.describeExperience(searchTaskInternal.getSkill()) > highest) {
+					highest = agent.describeExperience(searchTaskInternal.getSkill());
+					singleTaskInternal = searchTaskInternal;
+				}
+			}
+			/**
+			 * zmienna highest zawsze jest w przedziale od [0..*]
+			 */
+			assert highest != -1.;
+			/**
+			 * musimy miec jakis pojedynczy task internal (skill)
+			 * nad ktorym bedziemy pracowac..
+			 */
+			assert singleTaskInternal != null;
+			
+			{
+				sanity("Choosing Si:{"
+						+ singleTaskInternal.getSkill().getName()
+						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
+				Experience experience = agent.getAgentInternals(
+						singleTaskInternal.getSkill().getName())
+						.getExperience();
+				double delta = experience.getDelta();
+				greedyAssignmentTask.increment(this, singleTaskInternal, 1, delta);
+				experience.increment(1);
+			}
 			break;
 		case RANDOM:
 			say(Constraints.INSIDE_RANDOM);

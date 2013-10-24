@@ -90,6 +90,14 @@ public class Task {
 		this.name = name;
 	}
 
+	/**
+	 * For an Agent, get skills common with argument Collection<TaskInternals> skillsValues
+	 * return intersection of agent skills and argument skillsValue
+	 * 
+	 * @param agent
+	 * @param skillsValues
+	 * @return return intersection of agent skills and argument skillsValue
+	 */
 	private Collection<TaskInternals> computeIntersection(Agent agent,
 			Collection<TaskInternals> skillsValues) {
 		Collection<TaskInternals> returnCollection = new ArrayList<TaskInternals>();

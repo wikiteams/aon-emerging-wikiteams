@@ -60,9 +60,25 @@ public class Strategy {
 	}
 	
 	public enum SkillChoice {
+		/**
+		 * Dla kazdego Sn pracuj rowno po czesci 1/n
+		 * jezeli parametr allowRookie wlaczony, to omijaj intersekcje
+		 * i pracuj nad wszystkim w danym tasku
+		 */
 	    PROPORTIONAL_TIME_DIVISION,
+	    /**
+	     * Pracuj dla wybranego Sn. Je¿eli postepy puste w kazdym ze skilli w tasku
+	     * to wybierz losowy. W przeciwnym razie pracuj tylko nad tym taskiem, ktory
+	     * jest najbardziej zaczety (najmniej mu do zamkniecia)
+	     */
 	    GREEDY_ASSIGNMENT_BY_TASK,
+	    /**
+	     * Pracuj wylacznie nad ty skillem, w ktory masz najwiecej doswiadczenia
+	     */
 	    CHOICE_OF_AGENT,
+	    /**
+	     * Pracuj zawsze nad losowo wybranym skillem
+	     */
 	    RANDOM
 	}
 	

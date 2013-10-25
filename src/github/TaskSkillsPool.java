@@ -17,6 +17,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Random;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
@@ -34,18 +36,19 @@ import cern.jet.random.Poisson;
  */
 public abstract class TaskSkillsPool {
 
-	private static String filenameFrequencySkills = "data\\50-skills.csv";
-	private static String filenameGoogleSkills = "data\\task-skills.csv";
-	private static String filenameGithubClusters = "data\\github_clusters.csv";
+	private static String filenameFrequencySkills = SystemUtils.IS_OS_LINUX ? "data/50-skills.csv"
+			: "data\\50-skills.csv";
+	private static String filenameGoogleSkills = SystemUtils.IS_OS_LINUX ? "data/task-skills.csv"
+			: "data\\task-skills.csv";
+	private static String filenameGithubClusters = SystemUtils.IS_OS_LINUX ? "data/github_clusters.csv"
+			: "data\\github_clusters.csv";
 
 	public enum Method {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = 
-			new LinkedHashMap<String, Skill>();
-	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
-			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -174,17 +177,16 @@ public abstract class TaskSkillsPool {
 	public static void fillWithSkills(Task task) {
 		if (SimulationParameters.taskSkillPoolDataset
 				.equals("STATIC_FREQUENCY_TABLE")) {
-			int x = ( (int) (new Random().nextDouble() * 
-					SimulationParameters.staticFrequencyTableSc) ) + 1;
-			for (int i = 0 ; i < x ; i++){
-			Skill skill = choseRandomSkill();
-			Random generator = new Random();
-			WorkUnit w1 = new WorkUnit(
-					generator.nextInt(SimulationParameters.maxWorkRequired));
-			WorkUnit w2 = new WorkUnit(0);
-			TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
-			task.addSkill(skill.getName(), taskInternals);
-			say("Task " + task + " filled with skills");
+			int x = ((int) (new Random().nextDouble() * SimulationParameters.staticFrequencyTableSc)) + 1;
+			for (int i = 0; i < x; i++) {
+				Skill skill = choseRandomSkill();
+				Random generator = new Random();
+				WorkUnit w1 = new WorkUnit(
+						generator.nextInt(SimulationParameters.maxWorkRequired));
+				WorkUnit w2 = new WorkUnit(0);
+				TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
+				task.addSkill(skill.getName(), taskInternals);
+				say("Task " + task + " filled with skills");
 			}
 		} else if (SimulationParameters.taskSkillPoolDataset
 				.equals("GITHUB_CLUSTERIZED")) {
@@ -193,24 +195,26 @@ public abstract class TaskSkillsPool {
 
 			} else if (SimulationParameters.gitHubClusterizedDistribution
 					.toLowerCase().equals("distribute")) {
-				Poisson poisson = new Poisson(10, Poisson.makeDefaultGenerator());
+				Poisson poisson = new Poisson(10,
+						Poisson.makeDefaultGenerator());
 				double d = poisson.nextDouble() / 20;
-				
-				HashMap<Skill, Double> skillSetG = 
-						getByIndex(skillSetMatrix, (int)(skillSetMatrix.size() * d) );
+
+				HashMap<Skill, Double> skillSetG = getByIndex(skillSetMatrix,
+						(int) (skillSetMatrix.size() * d));
 				Iterator it = skillSetG.entrySet().iterator();
-			    while (it.hasNext()) {
-			        Map.Entry pairs = (Map.Entry)it.next();
-			        Skill key = (Skill) pairs.getKey();
-			    	Double value = (Double) pairs.getValue();
-			    	if (value > 0.0){
-			    		WorkUnit w1 = new WorkUnit(value);
+				while (it.hasNext()) {
+					Map.Entry pairs = (Map.Entry) it.next();
+					Skill key = (Skill) pairs.getKey();
+					Double value = (Double) pairs.getValue();
+					if (value > 0.0) {
+						WorkUnit w1 = new WorkUnit(value);
 						WorkUnit w2 = new WorkUnit(0);
-						TaskInternals taskInternals = new TaskInternals(key, w1, w2);
+						TaskInternals taskInternals = new TaskInternals(key,
+								w1, w2);
 						task.addSkill(key.getName(), taskInternals);
-			    	}
-			        //it.remove(); // avoids a ConcurrentModificationException
-			    }
+					}
+					// it.remove(); // avoids a ConcurrentModificationException
+				}
 			}
 		}
 	}

@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import constants.RandomMethod;
-
 import logger.PjiitOutputter;
-
 import au.com.bytecode.opencsv.CSVReader;
 import cern.jet.random.BreitWigner;
 import cern.jet.random.Normal;
@@ -30,7 +30,8 @@ public class SkillFactory {
 	 * 
 	 * circa 200 entries
 	 */
-	private static String filename = "data\\all-languages.csv";
+	private static String filename = SystemUtils.IS_OS_LINUX ? 
+			"data/all-languages.csv" : "data\\all-languages.csv";
 	public static ArrayList<Skill> skills = new ArrayList<Skill>();
 
 	public SkillFactory() {

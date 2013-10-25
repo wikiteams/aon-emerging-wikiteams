@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Random;
 
+import org.apache.commons.lang3.SystemUtils;
+
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -21,9 +23,10 @@ public abstract class AgentSkillsPool {
 	 * 
 	 * i.e. 'fabpot', 'PHP', 'Shell', 'JavaScript'
 	 */
-	private static String filename = "data\\top-users-final.csv";
-
-	private static String filename_ext = "data\\users-and-their-pull-requests.csv";
+	private static String filename = SystemUtils.IS_OS_LINUX ? "data/top-users-final.csv" : 
+		"data\\top-users-final.csv";
+	private static String filename_ext = SystemUtils.IS_OS_LINUX ? "data/users-and-their-pull-requests.csv" : 
+		"data\\users-and-their-pull-requests.csv";
 
 	private enum DataSet {
 		STATIC_TOP1000_3SKILLS, STATIC_PULL_REQUESTS;

@@ -27,6 +27,7 @@ public class SimulationParameters {
 	public static String agentSkillPoolDataset = "";
 	public static int staticFrequencyTableSc = 0;
 	public static String fillAgentSkillsMethod = "";
+	public static String skillFactoryRandomMethod = "";
 	
 	public static String gitHubClusterizedDistribution = "";
 
@@ -57,6 +58,7 @@ public class SimulationParameters {
 		staticFrequencyTableSc = (Integer) param.getValue("staticFrequencyTableSc");
 		
 		fillAgentSkillsMethod = (String) param.getValue("fillAgentSkillsMethod");
+		skillFactoryRandomMethod = (String) param.getValue("skillFactoryRandomMethod");
 		
 		gitHubClusterizedDistribution = (String) param.getValue("gitHubClusterizedDistribution");
 

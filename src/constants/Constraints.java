@@ -26,5 +26,7 @@ public class Constraints {
 			"Inside switch - RANDOM";
 	public static final String INSIDE_CHOICE_OF_AGENT = 
 			"Inside switch - CHOICE_OF_AGENT";
+	public static final String DIDNT_FOUND_TASK = 
+			"Didn't found task with such skills and/or experience which agent have!";
 
 }

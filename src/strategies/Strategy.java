@@ -47,14 +47,16 @@ public class Strategy {
 		 */
 		RANDOM,
 		/**
-		 * Ta strategia polega na porownywaniu siebie do innych uzytownikow, agent
-		 * stara sie nasladowac innego mozliwie podobnego do siebie uzytkownika
-		 * sprawdza gdzie pracuje, i pracuje nad tym samym.
+		 * Ta strategia polega na porownywaniu siebie do innych uzytownikow, agent A
+		 * stara sie nasladowac innego mozliwie podobnego do siebie uzytkownika (agent B)
+		 * sprawdza gdzie pracuje agent B, i pracuje nad tym samym. Jezeli podobny do niego
+		 * uzytkownik jeszcze nad niczym nie pracowal, to sprawdza co on potrafi
+		 * najbardziej (to tez nasz skill - agenta A) i pracuje nad takim taskiem
+		 * co który owego skilla wymaga
 		 */
 		COMPARISION,
 		/**
-		 * To wymaga podlaczenia sie do jakiegos datasetu uczacego sie, narazie
-		 * low priority. ?
+		 * TO DO: uzupelnic opis
 		 */
 		MACHINE_LEARNED
 	}

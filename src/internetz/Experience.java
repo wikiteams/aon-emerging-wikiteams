@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 
 import logger.PjiitOutputter;
 import cern.jet.random.ChiSquare;
-import cern.jet.random.Zeta;
 
 public class Experience {
 

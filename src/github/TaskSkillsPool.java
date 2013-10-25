@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Random;
 
 import logger.PjiitOutputter;
+import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 import cern.jet.random.Poisson;
 
@@ -95,7 +96,7 @@ public abstract class TaskSkillsPool {
 			FileNotFoundException {
 		CSVReader reader = new CSVReader(
 				new FileReader(filenameFrequencySkills), ',',
-				CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
+				CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
 		String[] nextLine;
 		long count = 0;
 		while ((nextLine = reader.readNext()) != null) {
@@ -107,6 +108,7 @@ public abstract class TaskSkillsPool {
 		for (Skill skill : singleSkillSet.values()) {
 			skill.setProbability(skill.getCardinalProbability() / count);
 		}
+		reader.close();
 	}
 
 	private static void parseCsvGoogle() throws IOException,
@@ -132,7 +134,7 @@ public abstract class TaskSkillsPool {
 			FileNotFoundException {
 		CSVReader reader = new CSVReader(
 				new FileReader(filenameGithubClusters), ',',
-				CSVReader.DEFAULT_QUOTE_CHARACTER);
+				CSVParser.DEFAULT_QUOTE_CHARACTER);
 		String[] nextLine;
 		nextLine = reader.readNext();
 
@@ -151,7 +153,7 @@ public abstract class TaskSkillsPool {
 			}
 			skillSetMatrix.put(repo, hmp);
 		}
-
+		reader.close();
 	}
 
 	public static Skill choseRandomSkill() {

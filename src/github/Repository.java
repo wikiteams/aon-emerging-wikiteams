@@ -1,7 +1,5 @@
 package github;
 
-import internetz.Agent;
-
 public class Repository {
 	
 	private String name;

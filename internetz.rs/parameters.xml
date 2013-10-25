@@ -34,6 +34,10 @@
 		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 		
+	<parameter name="skillFactoryRandomMethod" displayName="skillFactoryRandomMethod"
+		type="java.lang.String" defaultValue="normal_distribution" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+		
 	<parameter name="gitHubClusterizedDistribution" displayName="gitHubClusterizedDistribution"
 		type="java.lang.String" defaultValue="distribute" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />

@@ -95,6 +95,7 @@ public abstract class AgentSkillsPool {
 				skillSet.put(nextLine[0], l);
 			}
 		}
+		reader.close();
 	}
 
 	/*
@@ -117,6 +118,7 @@ public abstract class AgentSkillsPool {
 			say("user:" + user + " skill:" + s + " value:" + value);
 			addExtSkill(user, s, value);
 		}
+		reader.close();
 	}
 
 	private static void addExtSkill(String user, Skill skill, Double value) {

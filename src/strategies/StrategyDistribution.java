@@ -17,14 +17,16 @@ public class StrategyDistribution {
 		if (type == 0) {
 			if (taskChoice.equals("preferential")) {
 				return Strategy.TaskChoice.HOMOPHYLY;
+			} else if (taskChoice.equals("heterophyly")) {
+				return Strategy.TaskChoice.HETEROPHYLY;
 			} else if (taskChoice.equals("random")) {
 				return Strategy.TaskChoice.RANDOM;
-			} else if (taskChoice.equals("comparision")) {
-				return Strategy.TaskChoice.RANDOM;
 			} else if (taskChoice.equals("social_vector")) {
-				return Strategy.TaskChoice.RANDOM;
+				return Strategy.TaskChoice.SOCIAL_VECTOR;
 			} else if (taskChoice.equals("machine_learned")) {
-				return Strategy.TaskChoice.RANDOM;
+				return Strategy.TaskChoice.MACHINE_LEARNED;
+			} else if (taskChoice.equals("comparision")) {
+				return Strategy.TaskChoice.COMPARISION;
 			}
 		}
 		return null;
@@ -38,7 +40,7 @@ public class StrategyDistribution {
 				return Strategy.SkillChoice.GREEDY_ASSIGNMENT_BY_TASK;
 			} else if (skillChoice.equals("choice")) {
 				return Strategy.SkillChoice.CHOICE_OF_AGENT;
-			} else if (skillChoice.equals("greedy")) {
+			} else if (skillChoice.equals("random")) {
 				return Strategy.SkillChoice.RANDOM;
 			}
 		}

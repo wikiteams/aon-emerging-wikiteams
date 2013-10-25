@@ -4,16 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 
-import argonauts.PersistJobDone;
-
+import constants.Constraints;
+import logger.PjiitOutputter;
 import repast.simphony.context.DefaultContext;
 import strategies.Strategy;
-
-import logger.PjiitOutputter;
+import argonauts.PersistJobDone;
 
 public class TaskPool extends DefaultContext<Task> {
 
@@ -38,20 +36,21 @@ public class TaskPool extends DefaultContext<Task> {
 
 	public static synchronized Task chooseTask(Agent agent,
 			Strategy.TaskChoice strategy) {
-
 		Task chosen = null;
-
+		assert strategy != null;
 		switch (strategy) {
 		case HOMOPHYLY:
-
+			assert agent != null;
 			Collection<Skill> skillsByExperienceHmphly = null;
-
+			say ("Starting chooseTask consideration inside homophyly for " 
+			+ agent.getNick());
 			if (agent.wasWorkingOnAnything()) {
 				// describe what he was working on..
 				Map<Integer, Task> desc = PersistJobDone.getContributions(agent
 						.getNick());
 				assert desc.size() > 0;
-				
+				say("Agent " + agent.getNick() + 
+						" already have experience in count of: " + desc.size());
 				int highest = 0;
 				Task mostOften = null;
 
@@ -81,9 +80,11 @@ public class TaskPool extends DefaultContext<Task> {
 			HashMap<Skill, ArrayList<Task>> tasksPerSkillsHmphly = 
 					getTasksPerSkills(skillsByExperienceHmphly);
 			// there are no tasks left with such experience ?
-			// try again but now with agent skills
+			// there is nothing to do
 			if (tasksPerSkillsHmphly.size() < 1){
-				tasksPerSkillsHmphly = getTasksPerSkills(agent.getSkills());
+				//tasksPerSkillsHmphly = getTasksPerSkills(agent.getSkills());
+				say(Constraints.DIDNT_FOUND_TASK);
+				break;
 			}
 
 			HashMap<Task, Integer> intersectionHomophyly = null;
@@ -93,7 +94,7 @@ public class TaskPool extends DefaultContext<Task> {
 				// search for intersections of n-size
 
 			if (intersectionHomophyly == null || intersectionHomophyly.size() == 0) {
-				say("Didn't found task with such skills which agent have!");
+				say(Constraints.DIDNT_FOUND_TASK);
 				break;
 			}
 

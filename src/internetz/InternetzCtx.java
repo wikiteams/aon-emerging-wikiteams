@@ -24,18 +24,18 @@ import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
 import utils.NamesGenerator;
-import EDU.oswego.cs.dl.util.concurrent.Takable;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
 
 /**
- * COIN network emergence simulator
+ * COIN network emergence simulator,
+ * Successfully moved to Repast Simphony 2.1 for better performance
  * 
  * @version 1.2 "fruit loops"
  * @since 1.0
  * @author Oskar Jarczyk
- *
+ * @see documentation on a way, meanwhile read github markdown
  */
 public class InternetzCtx extends DefaultContext<Object> {
 
@@ -54,7 +54,6 @@ public class InternetzCtx extends DefaultContext<Object> {
 	// private Network<Task> tasks = null;
 	// private Projection<?> agentsProjected = null;
 
-	@SuppressWarnings("unchecked")
 	public InternetzCtx() {
 		super("InternetzCtx");
 
@@ -84,6 +83,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			e.printStackTrace();
 			say(Constraints.ERROR_INITIALIZING_PJIITLOGGER);
 		} catch (Exception exc) {
+			say(exc.toString());
+			exc.printStackTrace();
 			say(Constraints.ERROR_INITIALIZING_PJIITLOGGER_AO_PARAMETERS);
 		}
 

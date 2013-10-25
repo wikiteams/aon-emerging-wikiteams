@@ -47,6 +47,16 @@ public class SkillFactory {
 	}
 
 	public Skill getRandomSkill() {
+		if (SimulationParameters.skillFactoryRandomMethod
+				.equals("normal_distribution")) {
+			return getRandomSkill(RandomMethod.NORMAL_DISTRIBUTION);
+		} else if (SimulationParameters.skillFactoryRandomMethod
+				.equals("breit_wigner")) {
+			return getRandomSkill(RandomMethod.BREIT_WIGNER);
+		} else if (SimulationParameters.skillFactoryRandomMethod
+				.equals("normal_distribution")) {
+			return getRandomSkill(RandomMethod.DEFAULT);
+		}
 		return getRandomSkill(RandomMethod.DEFAULT);
 	}
 
@@ -59,19 +69,18 @@ public class SkillFactory {
 		case NORMAL_DISTRIBUTION:
 			Normal normal = new Normal(0.0, 1.0,
 					cern.jet.random.Normal.makeDefaultGenerator());
-			return skills.get((int)(normal.nextDouble() * skills.size()));
+			return skills.get((int) (normal.nextDouble() * skills.size()));
 		case BREIT_WIGNER:
 			BreitWigner bw = new BreitWigner(1.0, 1.0, 1.0,
 					cern.jet.random.BreitWigner.makeDefaultGenerator());
-			return skills.get((int)(bw.nextDouble() * skills.size()));
+			return skills.get((int) (bw.nextDouble() * skills.size()));
 		default:
 			break;
 		}
 		return null;
 	}
 
-	public void buildSkillsLibrary() throws IOException,
-			FileNotFoundException {
+	public void buildSkillsLibrary() throws IOException, FileNotFoundException {
 		say("Searching for file in: " + new File(".").getAbsolutePath());
 		CSVReader reader = new CSVReader(new FileReader(filename));
 		String[] nextLine;
@@ -81,6 +90,7 @@ public class SkillFactory {
 			say("Skill " + skill.getId() + ": " + skill.getName()
 					+ " added to factory");
 		}
+		reader.close();
 	}
 
 	private static void say(String s) {

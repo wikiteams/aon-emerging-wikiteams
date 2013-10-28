@@ -19,7 +19,7 @@
 <parameter name="taskSkillPoolDataset" type="constant" constant_type="java.lang.String" value="STATIC_FREQUENCY_TABLE" />
 <parameter name="staticFrequencyTableSc" type="constant" constant_type="int" value="10" />
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
-
+<parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />
 <parameter name="allowRookieForSkills" type="constant" constant_type="java.lang.Boolean" value="false" />
 
 </sweep>

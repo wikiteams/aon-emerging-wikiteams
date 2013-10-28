@@ -4,7 +4,7 @@
 		type="int" defaultValue="__NULL__" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="skillChoiceAlgorithm" displayName="skillChoiceAlgorithm"
-		type="java.lang.String" defaultValue="proportional" isReadOnly="false"
+		type="java.lang.String" defaultValue="greedy" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 		
 	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"

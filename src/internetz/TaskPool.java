@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -68,12 +69,18 @@ public class TaskPool extends DefaultContext<Task> {
 				
 				assert mostOften != null;
 
-				skillsByExperienceHmphly = mostOften.getSkills();
+				skillsByExperienceHmphly = intersectWithAgentSkills( 
+						agent, mostOften.getSkills() );
 			} else {
 				// he wasn't working on anything, take skill matrix
 				skillsByExperienceHmphly = agent.getSkills();
 				// take all the skills
 			}
+			
+			if (skillsByExperienceHmphly.size() < 1){
+				skillsByExperienceHmphly = agent.getSkills();
+			}
+			
 			assert skillsByExperienceHmphly.size() > 0;
 			
 			// create list of tasks per a skill
@@ -108,7 +115,6 @@ public class TaskPool extends DefaultContext<Task> {
 				}
 			}
 			// take biggest intersection set possible
-
 			chosen = tasksWithMaxHomophyly
 					.get((int) ((new Random().nextDouble()) * tasksWithMaxHomophyly
 							.size()));
@@ -143,18 +149,27 @@ public class TaskPool extends DefaultContext<Task> {
 				
 				assert mostOften != null;
 
-				c = mostOften.getSkills();
+				c = intersectWithAgentSkills(agent, mostOften.getSkills() );
 			} else {
 				// he wasn't working on anything, take skill matrix
 				c = agent.getSkills();
 				// take all the skills
 			}
+			if (c.size() < 1){
+				c = agent.getSkills();
+			}
+			
 			assert c.size() > 0;
 			
 			// create list of tasks per a skill
-			HashMap<Skill, ArrayList<Task>> h = getTasksPerSkills(c);
-			// there are no tasks left with such experience ?
+			HashMap<Skill, ArrayList<Task>> h = getTasksWithoutSkills(c);
+			// there are no tasks left with such conditions ?
 			// try again but now with agent skills
+			if (h.size() < 1){
+				h = getTasksWithoutSkills(agent.getSkills());
+			}
+			// there are no tasks left with such conditions ?
+			// try again but now with homophyly acceptance
 			if (h.size() < 1){
 				h = getTasksPerSkills(agent.getSkills());
 			}
@@ -163,10 +178,10 @@ public class TaskPool extends DefaultContext<Task> {
 			
 			if (h != null)
 				inters = searchForIntersection(h);
-				// search for intersections of n-size
+				// Rewrite the collection to hashed by tasks
 
 			if (inters == null || inters.size() == 0) {
-				say("Didn't found task with such skills which agent have!");
+				say("Didn't found task with such skills which agent don't have!");
 				break;
 			}
 
@@ -230,6 +245,17 @@ public class TaskPool extends DefaultContext<Task> {
 		return chosen;
 	}
 
+	private static Collection<Skill> intersectWithAgentSkills(Agent agent,
+			Collection<Skill> skills) {
+		List<Skill> result = new ArrayList<Skill>();
+		for(Skill skill : skills){
+			if (agent.getSkills().contains(skill)){
+				result.add(skill);
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * This method counts the frequency of a 'Task' in HashMap<Skill, ArrayList<Task>>
 	 * and returns collection of tasks and their frequencies
@@ -255,14 +281,33 @@ public class TaskPool extends DefaultContext<Task> {
 
 	private static HashMap<Skill, ArrayList<Task>> getTasksPerSkills(
 			Collection<Skill> c) {
-
 		HashMap<Skill, ArrayList<Task>> result = new HashMap<Skill, ArrayList<Task>>();
-
 		for (Skill skill : c) {
 			for (Task task : tasks.values()) {
 
 				Collection<Skill> ts = task.getSkills();
 				if (ts.contains(skill)) {
+					ArrayList<Task> value = result.get(skill);
+					if (value == null) {
+						result.put(skill, new ArrayList<Task>());
+						value = result.get(skill);
+					}
+					value.add(task);
+					result.put(skill, value);
+				}
+			}
+		}
+		return result;
+	}
+	
+	private static HashMap<Skill, ArrayList<Task>> getTasksWithoutSkills(
+			Collection<Skill> c) {
+		HashMap<Skill, ArrayList<Task>> result = new HashMap<Skill, ArrayList<Task>>();
+		for (Skill skill : c) {
+			for (Task task : tasks.values()) {
+
+				Collection<Skill> ts = task.getSkills();
+				if (! ts.contains(skill)) {
 					ArrayList<Task> value = result.get(skill);
 					if (value == null) {
 						result.put(skill, new ArrayList<Task>());

@@ -44,8 +44,8 @@ public class Task {
 	public void addSkill(String key, TaskInternals taskInternals) {
 		skills.put(key, taskInternals);
 	}
-	
-	public void removeSkill(String key){
+
+	public void removeSkill(String key) {
 		skills.remove(key);
 	}
 
@@ -88,8 +88,8 @@ public class Task {
 	}
 
 	/**
-	 * For an Agent, get skills common with argument Collection<TaskInternals> skillsValues
-	 * return intersection of agent skills and argument skillsValue
+	 * For an Agent, get skills common with argument Collection<TaskInternals>
+	 * skillsValues return intersection of agent skills and argument skillsValue
 	 * 
 	 * @param agent
 	 * @param skillsValues
@@ -108,18 +108,25 @@ public class Task {
 	}
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
-		// the intersection is always non-empty because we call
-		// "workOnTask" after picking a task with witch we have
-		// in common at least one skill...
-		Collection<TaskInternals> intersection = computeIntersection(agent,
-				skills.values());
+		Collection<TaskInternals> intersection;
+		if (agent.getStrategy().taskChoice
+				.equals(Strategy.TaskChoice.HETEROPHYLY)) {
+			// heterophyly is an experience-genesis strategy
+			intersection = skills.values();
+		} else {
+			// the intersection is always non-empty because we call
+			// "workOnTask" after picking a task with witch we have
+			// in common at least one skill...
+			intersection = computeIntersection(agent, skills.values());
+		}
+
 		GreedyAssignmentTask greedyAssignmentTask = new GreedyAssignmentTask();
 		TaskInternals singleTaskInternal = null;
 		double highest = -1.;
-		
+
 		assert intersection != null;
 		assert intersection.size() > 0;
-		
+
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
@@ -127,25 +134,26 @@ public class Task {
 			for (TaskInternals singleTaskInternalFromIntersect : intersection) {
 				sanity("Choosing Si:{"
 						+ singleTaskInternalFromIntersect.getSkill().getName()
-						+ "} inside Ti:{" + singleTaskInternalFromIntersect.toString() + "}");
+						+ "} inside Ti:{"
+						+ singleTaskInternalFromIntersect.toString() + "}");
 				double n = intersection.size();
 				double alpha = 1d / n;
 				Experience experience = agent.getAgentInternals(
 						singleTaskInternalFromIntersect.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				proportionalTimeDivision.increment(this, singleTaskInternalFromIntersect, 1,
-						alpha, delta);
+				proportionalTimeDivision.increment(this,
+						singleTaskInternalFromIntersect, 1, alpha, delta);
 				experience.increment(alpha);
 			}
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
-			
+
 			/**
-			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano
-			 * w tym tasku, i bierzemy wlasnie te najbardziej rozpoczete.
-			 * Jezeli zaden nie jest rozpoczety, to bierzemy losowy
+			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano w tym tasku, i
+			 * bierzemy wlasnie te najbardziej rozpoczete. Jezeli zaden nie jest
+			 * rozpoczety, to bierzemy losowy
 			 */
 			for (TaskInternals searchTaskInternal : intersection) {
 				if (searchTaskInternal.getWorkDone().d > highest) {
@@ -158,11 +166,11 @@ public class Task {
 			 */
 			assert highest != -1.;
 			/**
-			 * musimy miec jakis pojedynczy task internal (skill)
-			 * nad ktorym bedziemy pracowac..
+			 * musimy miec jakis pojedynczy task internal (skill) nad ktorym
+			 * bedziemy pracowac..
 			 */
 			assert singleTaskInternal != null;
-			
+
 			{
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
@@ -173,7 +181,8 @@ public class Task {
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				greedyAssignmentTask.increment(this, singleTaskInternal, 1, delta);
+				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
+						delta);
 				experience.increment(1);
 			}
 			break;
@@ -181,11 +190,13 @@ public class Task {
 			say(Constraints.INSIDE_CHOICE_OF_AGENT);
 
 			/**
-			 * Pracuj wylacznie nad tym skillem, w ktorym agent ma najwiecej doswiadczenia
+			 * Pracuj wylacznie nad tym skillem, w ktorym agent ma najwiecej
+			 * doswiadczenia
 			 */
 			for (TaskInternals searchTaskInternal : intersection) {
 				if (agent.describeExperience(searchTaskInternal.getSkill()) > highest) {
-					highest = agent.describeExperience(searchTaskInternal.getSkill());
+					highest = agent.describeExperience(searchTaskInternal
+							.getSkill());
 					singleTaskInternal = searchTaskInternal;
 				}
 			}
@@ -194,11 +205,11 @@ public class Task {
 			 */
 			assert highest != -1.;
 			/**
-			 * musimy miec jakis pojedynczy task internal (skill)
-			 * nad ktorym bedziemy pracowac..
+			 * musimy miec jakis pojedynczy task internal (skill) nad ktorym
+			 * bedziemy pracowac..
 			 */
 			assert singleTaskInternal != null;
-			
+
 			{
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
@@ -207,7 +218,8 @@ public class Task {
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				greedyAssignmentTask.increment(this, singleTaskInternal, 1, delta);
+				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
+						delta);
 				experience.increment(1);
 			}
 			break;
@@ -230,7 +242,8 @@ public class Task {
 						randomTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
-				greedyAssignmentTask.increment(this, randomTaskInternal, 1, delta);
+				greedyAssignmentTask.increment(this, randomTaskInternal, 1,
+						delta);
 				experience.increment(1);
 			}
 			break;
@@ -238,10 +251,10 @@ public class Task {
 			assert false; // there is no default method, so please never happen
 			break;
 		}
-		
+
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
-		
+
 		PersistJobDone.addContribution(agent.getNick(), this);
 	}
 
@@ -255,10 +268,10 @@ public class Task {
 		}
 		return result;
 	}
-	
+
 	/**
-	 * Returns a collection of skills inside internals
-	 * of current task
+	 * Returns a collection of skills inside internals of current task
+	 * 
 	 * @return Collection of skills inside all TaskInternals
 	 */
 	public Collection<Skill> getSkills() {

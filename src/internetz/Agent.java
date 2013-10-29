@@ -18,6 +18,8 @@ public class Agent {
 
 	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
 	private Strategy strategy;
+	
+	private static final SkillFactory skillFactory = new SkillFactory();
 
 	public static int totalAgents = 0;
 	static double time = 0;
@@ -42,6 +44,14 @@ public class Agent {
 	}
 
 	public AgentInternals getAgentInternals(String key) {
+		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY)){
+			AgentInternals result = skills.get(key) == null ? (
+					new AgentInternals(
+							skillFactory.getSkill(key), 
+							new Experience(true))
+					) : skills.get(key);
+			skills.put(key, result);
+		}
 		return skills.get(key);
 	}
 

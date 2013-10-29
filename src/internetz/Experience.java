@@ -11,18 +11,40 @@ public class Experience {
 	public double value; // aktualne "plain" doswiadczenie
 	public int top; // hipotetyczne przeuczenie
 
+	private static final double expStub = 0.03;
+
 	protected final static ExperienceSanityCheck esc = new ExperienceSanityCheck();
 
 	public Experience() {
-		new Experience(0d, 0);
+		this(0d, 0, false);
 	}
 
-	public Experience(double value, int top) {
-		lc = new LearningCurve();
-		say("Creating Experience object with value: " + value + " and top: "
-				+ top);
-		this.value = value;
-		this.top = top;
+	public Experience(boolean passionStub) {
+		this(0d, 0, passionStub);
+//		if (passionStub) {
+//			int maxx = SimulationParameters.agentSkillsMaximumExperience;
+//			this(maxx * expStub, maxx);
+//		} else {
+//			this(0d, 0);
+//		}
+	}
+	
+	public Experience(double value, int top){
+		this(value, top, false);
+	}
+
+	public Experience(double value, int top, boolean passionStub) {
+		if (passionStub){
+			int maxx = SimulationParameters.agentSkillsMaximumExperience;
+			this.value = maxx * expStub;
+			this.top = maxx;
+		} else {
+			this.value = value;
+			this.top = top;
+		}
+		this.lc = new LearningCurve();
+		say("Creating Experience object with value: " + this.value + " and top: "
+				+ this.top);
 	}
 
 	public double getDelta() {
@@ -106,24 +128,26 @@ public class Experience {
 }
 
 class ExperienceSanityCheck {
-	
+
 	ChiSquare chi;
-	//Zeta zeta;
+	// Zeta zeta;
 	int freedom;
 	int k;
-	
+
 	public static double EpsilonCutValue;
 
 	ExperienceSanityCheck() {
 		freedom = 6; // osi x
 		k = 15;
 
-		chi = new ChiSquare(freedom, cern.jet.random.ChiSquare.makeDefaultGenerator());
-		//zeta = new Zeta(freedom, k, cern.jet.random.Zeta.makeDefaultGenerator());
-		
+		chi = new ChiSquare(freedom,
+				cern.jet.random.ChiSquare.makeDefaultGenerator());
+		// zeta = new Zeta(freedom, k,
+		// cern.jet.random.Zeta.makeDefaultGenerator());
+
 		checkChi();
-		//checkZeta();
-		
+		// checkZeta();
+
 		EpsilonCutValue = checkEpsilonFromChi();
 	}
 
@@ -138,18 +162,18 @@ class ExperienceSanityCheck {
 		say("chi.cdf(0.9): " + chi.cdf(0.999 * k));
 		say("chi.nextDouble(): " + chi.nextDouble());
 	}
-	
-	public double checkEpsilonFromChi(){
+
+	public double checkEpsilonFromChi() {
 		double e = chi.cdf(1 * k);
 		say("chi.cdf(1): " + e);
-		return 1-e;
+		return 1 - e;
 	}
 
-//	public void checkZeta() {
-//		say("zeta.nextInt(): " + zeta.nextInt());
-//		say("zeta.nextDouble()): " + zeta.nextDouble());
-//	}
-	
+	// public void checkZeta() {
+	// say("zeta.nextInt(): " + zeta.nextInt());
+	// say("zeta.nextDouble()): " + zeta.nextDouble());
+	// }
+
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}

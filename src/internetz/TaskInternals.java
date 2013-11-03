@@ -17,24 +17,33 @@ public class TaskInternals {
 	public Skill getSkill() {
 		return skill;
 	}
+	
 	public void setSkill(Skill skill) {
 		this.skill = skill;
 	}
+	
 	public WorkUnit getWorkRequired() {
 		return workRequired;
 	}
+	
 	public void setWorkRequired(WorkUnit workRequired) {
 		this.workRequired = workRequired;
 	}
+	
 	public WorkUnit getWorkDone() {
 		return workDone;
 	}
+	
 	public void setWorkDone(WorkUnit workDone) {
 		this.workDone = workDone;
 	}
 	
 	public boolean isWorkDone(){
 		return (this.getWorkDone().d >= this.getWorkRequired().d);
+	}
+	
+	public double getProgress(){
+		return Math.abs(this.workDone.d / this.workRequired.d);
 	}
 	
 	@Override

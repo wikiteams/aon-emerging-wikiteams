@@ -29,8 +29,8 @@ import constants.Constraints;
 import constants.ModelFactory;
 
 /**
- * COIN network emergence simulator,
- * Successfully moved to Repast Simphony 2.1 for better performance
+ * COIN network emergence simulator, Successfully moved to Repast Simphony 2.1
+ * for better performance
  * 
  * @version 1.2 "fruit loops"
  * @since 1.0
@@ -102,6 +102,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 					.setSkillChoice(SimulationParameters.skillChoiceAlgorithm);
 			strategyDistribution
 					.setTaskChoice(SimulationParameters.taskChoiceAlgorithm);
+
+			strategyDistribution
+					.setTaskMinMaxChoice(SimulationParameters.taskMinMaxChoiceAlgorithm);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			say(Constraints.UNKNOWN_EXCEPTION);
@@ -157,7 +160,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		if (SimulationParameters.forceStop)
 			RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
-		
+
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
 	}
@@ -183,12 +186,16 @@ public class InternetzCtx extends DefaultContext<Object> {
 		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
-			Strategy strategy = new Strategy();
-			strategy.skillChoice = strategyDistribution.getSkillStrategy(agent);
-			strategy.taskChoice = strategyDistribution.getTaskStrategy(agent);
+
+			Strategy strategy = new Strategy(
+					strategyDistribution.getTaskStrategy(agent),
+					strategyDistribution.getTaskMaxMinStrategy(agent),
+					strategyDistribution.getSkillStrategy(agent));
+
 			agent.setStrategy(strategy);
 			say(agent.toString());
 			say("in add aggent i: " + i);
+
 			// Required adding agent to context
 			// this.add(agent);
 			agentPool.add(agent);
@@ -213,54 +220,45 @@ public class InternetzCtx extends DefaultContext<Object> {
 	@ScheduledMethod(start = 2000, priority = 0)
 	public void outputSNSData() throws IOException {
 		say("outputSNSData() check launched");
-		//outputAgentNetworkData();
+		// outputAgentNetworkData();
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.FIRST_PRIORITY)
 	public void finishSimulation() {
 		say("finishSimulation() check launched");
 		EnvironmentEquilibrium.setActivity(false);
-		if (taskPool.getCount() < 1){
-			finalMessage(
-					RunState.getInstance().getRunInfo().getBatchNumber()
-					+ "," +
-					RunState.getInstance().getRunInfo().getRunNumber()
-					+ "," +
-					RunEnvironment.getInstance().getCurrentSchedule().getTickCount() 
-					+ "," + 
-					SimulationParameters.taskChoiceAlgorithm 
-					+ "," + 
-					SimulationParameters.fillAgentSkillsMethod 
-					+ "," + 
-					SimulationParameters.agentSkillPoolDataset
-					+ "," + 
-					SimulationParameters.taskSkillPoolDataset
-					+ "," + 
-					SimulationParameters.skillChoiceAlgorithm);
+		if (taskPool.getCount() < 1) {
+			finalMessage(RunState.getInstance().getRunInfo().getBatchNumber()
+					+ ","
+					+ RunState.getInstance().getRunInfo().getRunNumber()
+					+ ","
+					+ RunEnvironment.getInstance().getCurrentSchedule()
+							.getTickCount() + ","
+					+ SimulationParameters.taskChoiceAlgorithm + ","
+					+ SimulationParameters.fillAgentSkillsMethod + ","
+					+ SimulationParameters.agentSkillPoolDataset + ","
+					+ SimulationParameters.taskSkillPoolDataset + ","
+					+ SimulationParameters.skillChoiceAlgorithm);
 			RunEnvironment.getInstance().endRun();
 		}
 	}
-	
+
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
 	public void checkForActivity() {
 		say("checkForActivity() check launched");
-		if (EnvironmentEquilibrium.getActivity() == false){
-			finalMessage(
-					RunState.getInstance().getRunInfo().getBatchNumber()
-					+ "," +
-					RunState.getInstance().getRunInfo().getRunNumber()
-					+ "," +
-					RunEnvironment.getInstance().getCurrentSchedule().getTickCount() 
-					+ "," + 
-					SimulationParameters.taskChoiceAlgorithm 
-					+ "," + 
-					SimulationParameters.fillAgentSkillsMethod 
-					+ "," + 
-					SimulationParameters.agentSkillPoolDataset
-					+ "," + 
-					SimulationParameters.taskSkillPoolDataset
-					+ "," + 
-					SimulationParameters.skillChoiceAlgorithm);
+		if (EnvironmentEquilibrium.getActivity() == false) {
+			finalMessage(RunState.getInstance().getRunInfo().getBatchNumber()
+					+ ","
+					+ RunState.getInstance().getRunInfo().getRunNumber()
+					+ ","
+					+ RunEnvironment.getInstance().getCurrentSchedule()
+							.getTickCount() + ","
+					+ SimulationParameters.taskChoiceAlgorithm + ","
+					+ SimulationParameters.fillAgentSkillsMethod + ","
+					+ SimulationParameters.agentSkillPoolDataset + ","
+					+ SimulationParameters.taskSkillPoolDataset + ","
+					+ SimulationParameters.skillChoiceAlgorithm + ","
+					+ SimulationParameters.taskMinMaxChoiceAlgorithm);
 			RunEnvironment.getInstance().endRun();
 		}
 	}
@@ -272,7 +270,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}
-	
+
 	private void finalMessage(String s) {
 		EndRunLogger.finalMessage(s);
 	}

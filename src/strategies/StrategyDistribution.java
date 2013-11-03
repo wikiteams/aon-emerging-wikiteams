@@ -2,6 +2,7 @@ package strategies;
 
 import strategies.Strategy.SkillChoice;
 import strategies.Strategy.TaskChoice;
+import strategies.Strategy.TaskMinMaxChoice;
 import internetz.Agent;
 
 public class StrategyDistribution {
@@ -10,8 +11,10 @@ public class StrategyDistribution {
 	public static final int MULTIPLE = 1;
 
 	private int type;
+	
 	private String skillChoice;
 	private String taskChoice;
+	private String taskMinMaxChoice;
 
 	public TaskChoice getTaskStrategy(Agent agent) {
 		if (type == 0) {
@@ -27,6 +30,8 @@ public class StrategyDistribution {
 				return Strategy.TaskChoice.MACHINE_LEARNED;
 			} else if (taskChoice.equals("comparision")) {
 				return Strategy.TaskChoice.COMPARISION;
+			} else if (taskChoice.equals("minmax")) {
+				return Strategy.TaskChoice.ARG_MIN_MAX;
 			}
 		}
 		return null;
@@ -69,6 +74,29 @@ public class StrategyDistribution {
 
 	public void setType(int type) {
 		this.type = type;
+	}
+
+	public TaskMinMaxChoice getTaskMaxMinStrategy(Agent agent) {
+		if (type == 0) {
+			if (taskMinMaxChoice.equals("maxmax")) {
+				return Strategy.TaskMinMaxChoice.ARGMAX_ARGMAX;
+			} else if (taskMinMaxChoice.equals("maxmin")) {
+				return Strategy.TaskMinMaxChoice.ARGMAX_ARGMIN;
+			} else if (taskMinMaxChoice.equals("minmax")) {
+				return Strategy.TaskMinMaxChoice.ARGMIN_ARGMAX;
+			} else if (taskMinMaxChoice.equals("minmin")) {
+				return Strategy.TaskMinMaxChoice.ARGMIN_ARGMIN;
+			}
+		}
+		return null;
+	}
+
+	public String getTaskMinMaxChoice() {
+		return taskMinMaxChoice;
+	}
+
+	public void setTaskMinMaxChoice(String taskMinMaxChoice) {
+		this.taskMinMaxChoice = taskMinMaxChoice;
 	}
 
 }

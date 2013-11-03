@@ -145,12 +145,21 @@ public class Agent {
 		Collection<AgentInternals> internals = this.getAgentInternals();
 		Map<String, String> deltaE = new HashMap<String, String>();
 		for (AgentInternals ai : internals) {
-			deltaE.put( ai.getSkill().getName() , (new DecimalFormat("#.######")).format(ai.getExperience().getDelta()) );
+			deltaE.put( ai.getSkill().getName() , 
+					(new DecimalFormat("#.######")).format(ai.getExperience().getDelta()) );
 		}
 		return deltaE.entrySet().toString();
 	}
 	
 	public double describeExperience(Skill skill){
+		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY)){
+			AgentInternals result = skills.get(skill.getName()) == null ? (
+					new AgentInternals(
+							skillFactory.getSkill(skill.getName()), 
+							new Experience(true))
+					) : skills.get(skill.getName());
+			skills.put(skill.getName(), result);
+		}
 		return skills.get(skill.getName()).getExperience().getDelta();
 	}
 	

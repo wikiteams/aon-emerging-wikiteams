@@ -1,10 +1,10 @@
 <?xml version="1.0"?><sweep runs="20">
 <parameter name="randomSeed" type="constant" constant_type="int" value="985924735" />
-<parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="greedy" />
+<parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="proportional" />
 <parameter name="allowMultiMembership" type="constant" constant_type="java.lang.Boolean" value="true" />
 <parameter name="deployedTasksLeave" type="constant" constant_type="java.lang.Boolean" value="true" />
 <parameter name="strategyDistribution" type="constant" constant_type="int" value="0" />
-<parameter name="taskChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="heterophyly" />
+<parameter name="taskChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="minmax" />
 <parameter name="agentCount" type="constant" constant_type="int" value="50" />
 <parameter name="numSteps" type="constant" constant_type="int" value="5000" />
 <parameter name="maxWorkRequired" type="constant" constant_type="int" value="20" />
@@ -20,5 +20,5 @@
 <parameter name="staticFrequencyTableSc" type="constant" constant_type="int" value="10" />
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />
-
+<parameter name="taskMinMaxChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="minmin" />
 </sweep>

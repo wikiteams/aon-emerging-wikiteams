@@ -19,6 +19,8 @@ public class SimulationParameters {
 	
 	public static String taskChoiceAlgorithm = "";
 	public static String skillChoiceAlgorithm = "";
+	public static String taskMinMaxChoiceAlgorithm = "";
+	
 	public static int strategyDistribution = 0;
 
 	public static int randomSeed = 0;
@@ -51,6 +53,7 @@ public class SimulationParameters {
 
 		taskChoiceAlgorithm = (String) param.getValue("taskChoiceAlgorithm");
 		skillChoiceAlgorithm = (String) param.getValue("skillChoiceAlgorithm");
+		taskMinMaxChoiceAlgorithm = (String) param.getValue("taskMinMaxChoiceAlgorithm");
 		strategyDistribution = (Integer) param.getValue("strategyDistribution");
 		
 		taskSkillPoolDataset = (String) param.getValue("taskSkillPoolDataset");

@@ -6,13 +6,20 @@ package strategies;
  * 
  * @author Oskar Jarczyk
  * @since 1.0
- * @version 1.1
+ * @version 1.2
  *
  */
 public class Strategy {
 	
 	public TaskChoice taskChoice;
+	public TaskMinMaxChoice taskMinMaxChoice;
 	public SkillChoice skillChoice;
+	
+	public Strategy(TaskChoice taskChoice, TaskMinMaxChoice taskMinMaxChoice, SkillChoice skillChoice){
+		this.taskChoice = taskChoice;
+		this.taskMinMaxChoice = taskMinMaxChoice;
+		this.skillChoice = skillChoice;
+	}
 	
 	public enum TaskChoice {
 		/**
@@ -58,7 +65,18 @@ public class Strategy {
 		/**
 		 * TO DO: uzupelnic opis
 		 */
-		MACHINE_LEARNED
+		MACHINE_LEARNED,
+		/**
+		 * TO DO: UZUPELNIC OPIS
+		 */
+		ARG_MIN_MAX
+	}
+	
+	public enum TaskMinMaxChoice {
+		ARGMAX_ARGMAX,
+		ARGMIN_ARGMAX,
+		ARGMAX_ARGMIN,
+		ARGMIN_ARGMIN
 	}
 	
 	public enum SkillChoice {

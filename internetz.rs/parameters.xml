@@ -31,7 +31,11 @@
 		type="java.lang.Integer" defaultValue="0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="taskChoiceAlgorithm" displayName="taskChoiceAlgorithm"
-		type="java.lang.String" defaultValue="preferential" isReadOnly="false"
+		type="java.lang.String" defaultValue="minmax" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+		
+	<parameter name="taskMinMaxChoiceAlgorithm" displayName="taskMinMaxChoiceAlgorithm"
+		type="java.lang.String" defaultValue="maxmax" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 		
 	<parameter name="skillFactoryRandomMethod" displayName="skillFactoryRandomMethod"

@@ -10,8 +10,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import logger.PjiitOutputter;
+import strategies.Aggregate;
 import strategies.GreedyAssignmentTask;
 import strategies.ProportionalTimeDivision;
 import strategies.Strategy;
@@ -29,6 +31,9 @@ import constants.Constraints;
 public class Task {
 
 	private static int idIncrementalCounter = 0;
+	
+	public static double START_ARG_MIN = 1.002;
+	public static double START_ARG_MAX = -0.002;
 
 	private String name;
 	private int id;
@@ -86,6 +91,43 @@ public class Task {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public double argmax(){
+		double argmax = START_ARG_MAX;
+		for(TaskInternals skill : skills.values()){
+			double p = skill.getProgress();
+			if (p > argmax)
+				argmax = skill.getProgress();
+		}
+		return argmax;
+	}
+	
+	/**
+	 * Less CPU ticks to get both of them
+	 * @return Aggregate - argmax and argmin for all taskinternals
+	 * {argmax, argmin}
+	 */
+	public Aggregate argmaxmin(){
+		Aggregate arg = new Aggregate( START_ARG_MAX , START_ARG_MIN );
+		for(TaskInternals skill : skills.values()){
+			double p = skill.getProgress();
+			if (p < arg.argmin)
+				arg.argmin = skill.getProgress();
+			if (p > arg.argmax)
+				arg.argmax = skill.getProgress();
+		}
+		return arg;
+	}
+	
+	public double argmin(){
+		double argmin = START_ARG_MIN;
+		for(TaskInternals skill : skills.values()){
+			double p = skill.getProgress();
+			if (p < argmin)
+				argmin = skill.getProgress();
+		}
+		return argmin;
+	}
 
 	/**
 	 * For an Agent, get skills common with argument Collection<TaskInternals>
@@ -131,7 +173,7 @@ public class Task {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
 			ProportionalTimeDivision proportionalTimeDivision = new ProportionalTimeDivision();
-			for (TaskInternals singleTaskInternalFromIntersect : intersection) {
+			for (TaskInternals singleTaskInternalFromIntersect : new CopyOnWriteArrayList<TaskInternals>(intersection) ) {
 				sanity("Choosing Si:{"
 						+ singleTaskInternalFromIntersect.getSkill().getName()
 						+ "} inside Ti:{"
@@ -155,7 +197,7 @@ public class Task {
 			 * bierzemy wlasnie te najbardziej rozpoczete. Jezeli zaden nie jest
 			 * rozpoczety, to bierzemy losowy
 			 */
-			for (TaskInternals searchTaskInternal : intersection) {
+			for (TaskInternals searchTaskInternal : new CopyOnWriteArrayList<TaskInternals>(intersection)) {
 				if (searchTaskInternal.getWorkDone().d > highest) {
 					highest = searchTaskInternal.getWorkDone().d;
 					singleTaskInternal = searchTaskInternal;
@@ -193,7 +235,7 @@ public class Task {
 			 * Pracuj wylacznie nad tym skillem, w ktorym agent ma najwiecej
 			 * doswiadczenia
 			 */
-			for (TaskInternals searchTaskInternal : intersection) {
+			for (TaskInternals searchTaskInternal : new CopyOnWriteArrayList<TaskInternals>(intersection)) {
 				if (agent.describeExperience(searchTaskInternal.getSkill()) > highest) {
 					highest = agent.describeExperience(searchTaskInternal
 							.getSkill());

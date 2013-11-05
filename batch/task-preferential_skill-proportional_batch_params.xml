@@ -1,4 +1,4 @@
-<?xml version="1.0"?><sweep runs="10">
+<?xml version="1.0"?><sweep runs="20">
 <parameter name="randomSeed" type="constant" constant_type="int" value="985924735" />
 <parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="proportional" />
 <parameter name="allowMultiMembership" type="constant" constant_type="java.lang.Boolean" value="true" />
@@ -20,5 +20,6 @@
 <parameter name="staticFrequencyTableSc" type="constant" constant_type="int" value="10" />
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />
+<parameter name="taskMinMaxChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="none" />
 
 </sweep>

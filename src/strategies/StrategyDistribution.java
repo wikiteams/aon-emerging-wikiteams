@@ -18,8 +18,14 @@ public class StrategyDistribution {
 
 	public TaskChoice getTaskStrategy(Agent agent) {
 		if (type == 0) {
-			if (taskChoice.equals("preferential")) {
+			if (taskChoice.equals("homophyly")) {
 				return Strategy.TaskChoice.HOMOPHYLY;
+			} else if (taskChoice.equals("homophyly_classic")) {
+				return Strategy.TaskChoice.HOMOPHYLY_CLASSIC;
+			} else if (taskChoice.equals("heterophyly_classic")) {
+				return Strategy.TaskChoice.HETEROPHYLY_CLASSIC;
+			} else if (taskChoice.equals("preferential")) {
+				return Strategy.TaskChoice.PREFERENTIAL;
 			} else if (taskChoice.equals("heterophyly")) {
 				return Strategy.TaskChoice.HETEROPHYLY;
 			} else if (taskChoice.equals("random")) {

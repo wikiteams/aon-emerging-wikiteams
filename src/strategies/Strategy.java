@@ -67,9 +67,24 @@ public class Strategy {
 		 */
 		MACHINE_LEARNED,
 		/**
-		 * TO DO: UZUPELNIC OPIS
+		 * Algorytm segreguje pierw skilly wewnatz kazdego taska (max lub min) pod wzglede zaawansowania,
+		 * nastepnie algorytm segreguje taski wg wartosci max inside skill (lub min inside skill)
 		 */
-		ARG_MIN_MAX
+		ARG_MIN_MAX,
+		/**
+		 * Celem jest wybór najbardziej zaawansowanego taska
+		 * liczymy to w ten sposob - avg(sigma(W/G)) czyli 
+		 * srednia arytmetyczna zaawansowania wszystkich skilli
+		 */
+		PREFERENTIAL,
+		/**
+		 * 
+		 */
+		HOMOPHYLY_CLASSIC,
+		/**
+		 * 
+		 */
+		HETEROPHYLY_CLASSIC
 	}
 	
 	public enum TaskMinMaxChoice {

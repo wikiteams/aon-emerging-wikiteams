@@ -128,6 +128,15 @@ public class Task {
 		}
 		return argmin;
 	}
+	
+	public double getGeneralAdvance(){
+		double result = 0;
+		for(TaskInternals skill : skills.values()){
+			result += skill.getProgress();
+		}
+		result = result / skills.size();
+		return result;
+	}
 
 	/**
 	 * For an Agent, get skills common with argument Collection<TaskInternals>
@@ -151,8 +160,9 @@ public class Task {
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		Collection<TaskInternals> intersection;
-		if (agent.getStrategy().taskChoice
-				.equals(Strategy.TaskChoice.HETEROPHYLY)) {
+		if ( agent.getStrategy().taskChoice
+				.equals(Strategy.TaskChoice.HETEROPHYLY) || agent.getStrategy().taskChoice
+				.equals(Strategy.TaskChoice.PREFERENTIAL) ) {
 			// heterophyly is an experience-genesis strategy
 			intersection = skills.values();
 		} else {

@@ -28,5 +28,9 @@ public class Constraints {
 			"Inside switch - CHOICE_OF_AGENT";
 	public static final String DIDNT_FOUND_TASK = 
 			"Didn't found task with such skills and/or experience which agent have!";
+	public static final String DIDNT_FOUND_TASK_W_SUCH_SKILLS = 
+			"Didn't found task with such skills which agent have!";
+	public static final String DIDNT_FOUND_TASK_TO_WORK_ON = 
+			"Didn't found task to work on!";
 
 }

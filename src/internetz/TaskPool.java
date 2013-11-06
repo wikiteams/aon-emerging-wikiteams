@@ -41,6 +41,7 @@ public class TaskPool extends DefaultContext<Task> {
 		Task chosen = null;
 		assert strategy != null;
 		switch (strategy) {
+		// *******************************************************************************
 		case HOMOPHYLY:
 			assert agent != null;
 			Collection<Skill> skillsByExperienceHmphly = null;
@@ -124,6 +125,7 @@ public class TaskPool extends DefaultContext<Task> {
 			// random
 
 			break;
+		// *******************************************************************************
 		case HETEROPHYLY:
 			// it will be basically negation of homophyly
 
@@ -204,10 +206,129 @@ public class TaskPool extends DefaultContext<Task> {
 							.size()));
 			// random
 			break;
+		case HOMOPHYLY_CLASSIC:
+			Task taskWithHighestSG = null;
+			double found_sigma_delta = 0;
+			//ArrayList<Task> tasksWithMatchingSkillsHomCl = new ArrayList<Task>();
+			Collection<Skill> allAgentSkillsHomCl = agent.getSkills();
+			for (Task singleTaskFromPool : tasks.values()) {
+				double sigma_delta = 0;
+				boolean consider = false;
+				for (Skill singleSkill : allAgentSkillsHomCl) {
+					if (singleTaskFromPool.getTaskInternals().containsKey(
+							singleSkill.toString())) {
+						consider = true;
+						sigma_delta += singleTaskFromPool.
+								getTaskInternals(singleSkill.getName()).getProgress();
+					}
+				}
+				if (consider){
+					if (taskWithHighestSG == null) {
+						taskWithHighestSG = singleTaskFromPool;
+						found_sigma_delta = sigma_delta;
+					} else {
+						if (found_sigma_delta < sigma_delta) {
+							taskWithHighestSG = singleTaskFromPool;
+						}
+					}
+				}
+			}
+			if (taskWithHighestSG != null){
+				chosen = taskWithHighestSG;
+			} else {
+				// intersection is empty, chose random
+				if (tasks.size() > 0)
+					chosen = tasks.get(new Random().nextInt(tasks.size()));
+				else
+					chosen = null;
+			}
+			break;
+		case HETEROPHYLY_CLASSIC:
+			Task taskWithLowestSG = null;
+			double found_sigma_delta_hetero = 0;
+			//ArrayList<Task> tasksWithMatchingSkillsHomCl = new ArrayList<Task>();
+			Collection<Skill> allAgentSkillsHetCl = agent.getSkills();
+			for (Task singleTaskFromPool : tasks.values()) {
+				double sigma_delta = 0;
+				boolean consider = false;
+				for (Skill singleSkill : allAgentSkillsHetCl) {
+					if (singleTaskFromPool.getTaskInternals().containsKey(
+							singleSkill.toString())) {
+						consider = true;
+						sigma_delta += singleTaskFromPool.
+								getTaskInternals(singleSkill.getName()).getProgress();
+					}
+				}
+				if (consider){
+					if (taskWithLowestSG == null) {
+						taskWithLowestSG = singleTaskFromPool;
+						found_sigma_delta = sigma_delta;
+					} else {
+						if (found_sigma_delta_hetero < sigma_delta) {
+							taskWithLowestSG = singleTaskFromPool;
+						}
+					}
+				}
+			}
+			if (taskWithLowestSG != null){
+				chosen = taskWithLowestSG;
+			} else {
+				// intersection is empty, chose random
+				if (tasks.size() > 0)
+					chosen = tasks.get(new Random().nextInt(tasks.size()));
+				else
+					chosen = null;
+			}
+			break;
 		case SOCIAL_VECTOR:
 			// TODO: check if you added "category" attribute to Skills
 			;
 			break;
+		case PREFERENTIAL:
+			Task mostAdvanced = null;
+			ArrayList<Task> tasksWithMatchingSkillsPref = new ArrayList<Task>();
+			Collection<Skill> allAgentSkillsPref = agent.getSkills();
+			for (Task singleTaskFromPool : tasks.values()) {
+				internal:for (Skill singleSkill : allAgentSkillsPref) {
+					if (singleTaskFromPool.getTaskInternals().containsKey(
+							singleSkill.toString())) {
+						tasksWithMatchingSkillsPref.add(singleTaskFromPool);
+						if (mostAdvanced == null) {
+							mostAdvanced = singleTaskFromPool;
+						} else {
+							if (mostAdvanced.getGeneralAdvance() < singleTaskFromPool
+									.getGeneralAdvance()) {
+								mostAdvanced = singleTaskFromPool;
+							}
+						}
+						break internal;
+					}
+				}
+			}
+
+			if ( (tasksWithMatchingSkillsPref.size() < 1) || (mostAdvanced == null) ) {
+				//mostAdvanced = null;
+				for (Task singleTaskFromPool : tasks.values()) {
+					if (mostAdvanced == null) {
+						mostAdvanced = singleTaskFromPool;
+					} else {
+						if (mostAdvanced.getGeneralAdvance() < singleTaskFromPool
+								.getGeneralAdvance()) {
+							mostAdvanced = singleTaskFromPool;
+						}
+					}
+				}
+			}
+			
+			//assert mostAdvanced != null;
+
+			if (mostAdvanced != null) {
+				chosen = mostAdvanced;
+			} else {
+				say(Constraints.DIDNT_FOUND_TASK_TO_WORK_ON);
+			}
+			break;
+		// *******************************************************************************
 		case RANDOM:
 			ArrayList<Task> tasksWithMatchingSkills = new ArrayList<Task>();
 			Collection<Skill> allAgentSkills = agent.getSkills();
@@ -232,8 +353,9 @@ public class TaskPool extends DefaultContext<Task> {
 		case MACHINE_LEARNED:
 			;
 			break;
+		// *******************************************************************************
 		case ARG_MIN_MAX:
-			
+
 			ArrayList<Task> tasksWithMatchingSkillsMinMax = new ArrayList<Task>();
 			Collection<Skill> allAgentSkillsPreMinMax = agent.getSkills();
 			for (Task singleTaskFromPool : tasks.values()) {
@@ -244,24 +366,23 @@ public class TaskPool extends DefaultContext<Task> {
 					}
 				}
 			}
-			
-			if (tasksWithMatchingSkillsMinMax.size() < 1){
+
+			if (tasksWithMatchingSkillsMinMax.size() < 1) {
 				say("Didn't found task with such skills which agent have!");
 				break;
 			}
-			
+
 			Collection<Skill> allAgentSkillsMinMax = agent.getSkills();
-			
+
 			Random generator = new Random();
-			Task randomValue = 
-					tasksWithMatchingSkillsMinMax.get(
-							generator.nextInt(tasksWithMatchingSkillsMinMax.size()));
-			
+			Task randomValue = tasksWithMatchingSkillsMinMax.get(generator
+					.nextInt(tasksWithMatchingSkillsMinMax.size()));
+
 			Task argMaxMax = randomValue;
 			Task argMaxMin = randomValue;
 			Task argMinMax = randomValue;
 			Task argMinMin = randomValue;
-			
+
 			for (Task singleTaskFromPool : tasks.values()) {
 				boolean consider = false;
 				for (Skill singleSkill : allAgentSkillsMinMax) {
@@ -275,37 +396,37 @@ public class TaskPool extends DefaultContext<Task> {
 					Aggregate aggregate = singleTaskFromPool.argmaxmin();
 					assert aggregate != null;
 					switch (agent.getStrategy().taskMinMaxChoice) {
-						case ARGMAX_ARGMAX:
-							if (aggregate.argmax > argMaxMax.argmax()){
-								argMaxMax = singleTaskFromPool;
-								
-							}
-							chosen = argMaxMax;
-							break;
-						case ARGMAX_ARGMIN:
-							if (aggregate.argmin > argMaxMax.argmin()){
-								argMaxMin = singleTaskFromPool;
-								
-							}
-							chosen = argMaxMin;
-							break;
-						case ARGMIN_ARGMAX:
-							if (aggregate.argmax < argMaxMax.argmax()){
-								argMinMax = singleTaskFromPool;
-								
-							}
-							chosen = argMinMax;
-							break;
-						case ARGMIN_ARGMIN:
-							if (aggregate.argmin < argMaxMax.argmin()){
-								argMinMin = singleTaskFromPool;
-								
-							}
-							chosen = argMinMin;
-							break;
-						default:
-							assert false; // should never happen
-							break;
+					case ARGMAX_ARGMAX:
+						if (aggregate.argmax > argMaxMax.argmax()) {
+							argMaxMax = singleTaskFromPool;
+
+						}
+						chosen = argMaxMax;
+						break;
+					case ARGMAX_ARGMIN:
+						if (aggregate.argmin > argMaxMax.argmin()) {
+							argMaxMin = singleTaskFromPool;
+
+						}
+						chosen = argMaxMin;
+						break;
+					case ARGMIN_ARGMAX:
+						if (aggregate.argmax < argMaxMax.argmax()) {
+							argMinMax = singleTaskFromPool;
+
+						}
+						chosen = argMinMax;
+						break;
+					case ARGMIN_ARGMIN:
+						if (aggregate.argmin < argMaxMax.argmin()) {
+							argMinMin = singleTaskFromPool;
+
+						}
+						chosen = argMinMin;
+						break;
+					default:
+						assert false; // should never happen
+						break;
 					}
 				}
 			}

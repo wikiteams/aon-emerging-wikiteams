@@ -44,15 +44,28 @@ public class Agent {
 	}
 
 	public AgentInternals getAgentInternals(String key) {
-		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY)){
-			AgentInternals result = skills.get(key) == null ? (
+//		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY)){
+//			AgentInternals result = skills.get(key) == null ? (
+//					new AgentInternals(
+//							skillFactory.getSkill(key), 
+//							new Experience(true))
+//					) : skills.get(key);
+//			skills.put(key, result);
+//		}
+//		return skills.get(key); ---- THIS WAS SAFE, bet rewritten below to skip unnecessary if
+		AgentInternals result = null;
+		if (skills.get(key) == null){
+			result = (
 					new AgentInternals(
 							skillFactory.getSkill(key), 
 							new Experience(true))
-					) : skills.get(key);
+					);
 			skills.put(key, result);
+			result = skills.get(key);
+		} else {
+			result = skills.get(key);
 		}
-		return skills.get(key);
+		return result;
 	}
 
 	public Collection<Skill> getSkills() {

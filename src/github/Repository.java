@@ -4,10 +4,17 @@ public class Repository {
 	
 	private String name;
 	private String cluster;
+	
+	public static final String NO_CLUSTER = "none";
 
 	public Repository(String name, String cluster) {
 		this.name = name;
 		this.cluster = cluster;
+	}
+	
+	public Repository(String name) {
+		this.name = name;
+		this.cluster = NO_CLUSTER;
 	}
 
 	public String getName() {
@@ -38,7 +45,7 @@ public class Repository {
 
 	@Override
 	public boolean equals(Object obj) {
-		if ((this.name == ((Repository) obj).name)
+		if ((this.name.toLowerCase() == ((Repository) obj).name.toLowerCase())
 				&& (this.cluster.equals((((Repository) obj).cluster))))
 			return true;
 		else

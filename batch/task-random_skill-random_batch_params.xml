@@ -21,5 +21,6 @@
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />
 <parameter name="allowRookieForSkills" type="constant" constant_type="java.lang.Boolean" value="false" />
+<parameter name="taskMinMaxChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="none" />
 
 </sweep>

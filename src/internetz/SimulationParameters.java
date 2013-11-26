@@ -2,15 +2,21 @@ package internetz;
 
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
+import test.Model;
 
 /**
- * Basicly stores parameters from repast file to a factory
+ * Basically stores parameters from repast file to a holder
+ * Simulation Parameters holds static all execution parameters in memory
+ * for more convenient access to them
  * 
- * @author Oskar
- * @since 1.0
+ * @author Oskar Jarczyk
+ * @since 1.3
  */
 public class SimulationParameters {
 
+	public static Model model_type = null;
+	public static String location = "";
+	
 	public static int agentCount = 0;
 	public static int taskCount = 0;
 	public static int percStartMembership = 0;
@@ -44,6 +50,9 @@ public class SimulationParameters {
 
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
+		
+		model_type = (Model) param.getValue("model_type");
+		location = (String) param.getValue("location");
 
 		agentCount = (Integer) param.getValue("agentCount");
 		taskCount = (Integer) param.getValue("numTasks");

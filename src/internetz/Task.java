@@ -201,13 +201,15 @@ public class Task {
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
-
+			CopyOnWriteArrayList<TaskInternals> copyIntersection = 
+					new CopyOnWriteArrayList<TaskInternals>(
+					intersection);
 			/**
 			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano w tym tasku, i
 			 * bierzemy wlasnie te najbardziej rozpoczete. Jezeli zaden nie jest
 			 * rozpoczety, to bierzemy losowy
 			 */
-			for (TaskInternals searchTaskInternal : new CopyOnWriteArrayList<TaskInternals>(intersection)) {
+			for (TaskInternals searchTaskInternal : copyIntersection) {
 				if (searchTaskInternal.getWorkDone().d > highest) {
 					highest = searchTaskInternal.getWorkDone().d;
 					singleTaskInternal = searchTaskInternal;
@@ -216,7 +218,7 @@ public class Task {
 			/**
 			 * zmienna highest zawsze jest w przedziale od [0..*]
 			 */
-			assert highest != -1.;
+			assert highest > -1.;
 			/**
 			 * musimy miec jakis pojedynczy task internal (skill) nad ktorym
 			 * bedziemy pracowac..

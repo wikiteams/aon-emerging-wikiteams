@@ -6,6 +6,7 @@ debug_log*
 debug.log
 
 /bin
+/output
 
 # Package Files #
 *.jar

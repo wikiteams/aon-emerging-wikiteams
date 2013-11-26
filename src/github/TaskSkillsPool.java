@@ -22,6 +22,7 @@ import org.apache.commons.lang3.SystemUtils;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import cern.jet.random.Poisson;
 
 /**
@@ -38,7 +39,7 @@ public abstract class TaskSkillsPool {
 
 	private static String filenameFrequencySkills = SystemUtils.IS_OS_LINUX ? "data/50-skills.csv"
 			: "data\\50-skills.csv";
-	private static String filenameGoogleSkills = SystemUtils.IS_OS_LINUX ? "data/task-skills.csv"
+	private static String filenameGoogleSkills = SystemUtils.IS_OS_LINUX ? "data/tasks-skills.csv"
 			: "data\\task-skills.csv";
 	private static String filenameGithubClusters = SystemUtils.IS_OS_LINUX ? "data/github_clusters.csv"
 			: "data\\github_clusters.csv";
@@ -47,8 +48,10 @@ public abstract class TaskSkillsPool {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
-	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, Skill> singleSkillSet = 
+			new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
+			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -70,17 +73,17 @@ public abstract class TaskSkillsPool {
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
-		} else if (method == Method.GOOGLE_BIGQUERY_MINED) {
-			try {
-				parseCsvGoogle();
-			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} 
+//		} else if (method == Method.GOOGLE_BIGQUERY_MINED) {
+//			try {
+//				//parseCsvGoogle();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 		} else if (method == Method.GITHUB_CLUSTERIZED) {
 			try {
 				parseCsvCluster();
@@ -114,24 +117,31 @@ public abstract class TaskSkillsPool {
 		reader.close();
 	}
 
-	private static void parseCsvGoogle() throws IOException,
-			FileNotFoundException {
-		// TODO: uncomment and finish
-		// CSVReader reader = new CSVReader(
-		// new FileReader(filenameGoogleSkills), ',',
-		// CSVReader.DEFAULT_QUOTE_CHARACTER, 1);
-		// String[] nextLine;
-		// long count = 0;
-		// while ((nextLine = reader.readNext()) != null) {
-		// Skill skill = skillFactory.getSkill(nextLine[1]);
-		// skill.setCardinalProbability(Integer.parseInt(nextLine[0]));
-		// count += skill.getCardinalProbability();
-		// skillSet.put(skill.getName(), skill);
-		// }
-		// for (Skill skill : skillSet.values()) {
-		// skill.setProbability(skill.getCardinalProbability() / count);
-		// }
-	}
+//	private static void parseCsvGoogle() throws IOException,
+//			FileNotFoundException {
+//		CSVReader reader = new CSVReader(new FileReader(filenameGoogleSkills), ',',
+//				CSVWriter.NO_QUOTE_CHARACTER, 1);
+//		String[] nextLine;
+//		while ((nextLine = reader.readNext()) != null) {
+//			String repo = nextLine[0];
+//			if (nextLine[2].trim().equals("null"))
+//				continue;
+//			Skill s = skillFactory.getSkill(nextLine[2]);
+//			Double value = Double.parseDouble(nextLine[1]);
+//			say("repo:" + repo + " skill:" + s + " value:" + value);
+//			addRepoSkill(repo, s, value);
+//		}
+//		reader.close();
+//	}
+	
+//	private static void addRepoSkill(String repo, Skill skill, Double value){
+//		Repository r = new Repository(repo);
+//		if (skillSetMatrix.containsKey(r)){
+//			
+//		} else {
+//			skillSetMatrix.put(r, value)
+//		}
+//	}
 
 	private static void parseCsvCluster() throws IOException,
 			FileNotFoundException {

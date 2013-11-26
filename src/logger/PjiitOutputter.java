@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class PjiitOutputter {
 
-	private static boolean __DONT__FORCE__SKIP = false;
+	private static boolean __DONT__FORCE__SKIP = true;
 
 	public static void say(String s) {
 		if (__DONT__FORCE__SKIP) {

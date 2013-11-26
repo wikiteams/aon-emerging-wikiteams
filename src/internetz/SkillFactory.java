@@ -14,9 +14,12 @@ import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVReader;
 import cern.jet.random.BreitWigner;
 import cern.jet.random.Normal;
+import cern.jet.random.Poisson;
 
 /***
- * Here ALL skills from GitHub are read and hold in ArrayList
+ * Here are all skills known to GitHub read and hold in ArrayList for more info,
+ * please visit:
+ * https://github.com/github/linguist/blob/master/lib/linguist/languages.yml
  * 
  * @author Oskar Jarczyk
  * @since 1.0
@@ -26,12 +29,12 @@ public class SkillFactory {
 	/**
 	 * File format:
 	 * 
-	 * language1\r\n language2\r\n
+	 * language1,type\r\n language2,type\r\n ... langauage{i},type
 	 * 
 	 * circa 200 entries
 	 */
-	private static String filename = SystemUtils.IS_OS_LINUX ? 
-			"data/all-languages.csv" : "data\\all-languages.csv";
+	private static String filename = SystemUtils.IS_OS_LINUX ? "data/all-languages.csv"
+			: "data\\all-languages.csv";
 	public static ArrayList<Skill> skills = new ArrayList<Skill>();
 
 	public SkillFactory() {
@@ -56,27 +59,38 @@ public class SkillFactory {
 			return getRandomSkill(RandomMethod.BREIT_WIGNER);
 		} else if (SimulationParameters.skillFactoryRandomMethod
 				.equals("normal_distribution")) {
-			return getRandomSkill(RandomMethod.DEFAULT);
+			return getRandomSkill(RandomMethod.POISSON_DISTRIBUTION);
 		}
-		return getRandomSkill(RandomMethod.DEFAULT);
+		return getRandomSkill(RandomMethod.RANDOM_GENERATOR);
 	}
 
 	public Skill getRandomSkill(RandomMethod method) {
+		double randomized;
 		switch (method) {
-		case DEFAULT:
-			Random generator = new Random();
-			int i = generator.nextInt(skills.size());
-			return skills.get(i);
-		case NORMAL_DISTRIBUTION:
-			Normal normal = new Normal(0.0, 1.0,
-					cern.jet.random.Normal.makeDefaultGenerator());
-			return skills.get((int) (normal.nextDouble() * skills.size()));
-		case BREIT_WIGNER:
-			BreitWigner bw = new BreitWigner(1.0, 1.0, 1.0,
-					cern.jet.random.BreitWigner.makeDefaultGenerator());
-			return skills.get((int) (bw.nextDouble() * skills.size()));
-		default:
-			break;
+			case POISSON_DISTRIBUTION:
+				Poisson poisson = new Poisson(0.0,
+						cern.jet.random.Poisson.makeDefaultGenerator());
+				randomized = poisson.nextDouble();
+				assert (randomized >= 0.) && (randomized <= 1.);
+				return skills.get((int) (randomized * skills.size()));
+			case RANDOM_GENERATOR:
+				Random generator = new Random();
+				int i = generator.nextInt(skills.size());
+				return skills.get(i);
+			case NORMAL_DISTRIBUTION:
+				Normal normal = new Normal(0.0, 1.0,
+						cern.jet.random.Normal.makeDefaultGenerator());
+				randomized = normal.nextDouble();
+				assert (randomized >= 0.) && (randomized <= 1.);
+				return skills.get((int) (randomized * skills.size()));
+			case BREIT_WIGNER:
+				BreitWigner bw = new BreitWigner(1.0, 1.0, 1.0,
+						cern.jet.random.BreitWigner.makeDefaultGenerator());
+				randomized = bw.nextDouble();
+				assert (randomized >= 0.) && (randomized <= 1.);
+				return skills.get((int) (randomized * skills.size()));
+			default:
+				break;
 		}
 		return null;
 	}
@@ -86,7 +100,7 @@ public class SkillFactory {
 		CSVReader reader = new CSVReader(new FileReader(filename));
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
-			Skill skill = new Skill(nextLine[0], skills.size() + 1);
+			Skill skill = new Skill(nextLine[0], nextLine[1], skills.size() + 1);
 			skills.add(skill);
 			say("Skill " + skill.getId() + ": " + skill.getName()
 					+ " added to factory");

@@ -17,6 +17,7 @@ import argonauts.PersistJobDone;
 public class Agent {
 
 	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
+	
 	private Strategy strategy;
 	
 	private static final SkillFactory skillFactory = new SkillFactory();

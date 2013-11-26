@@ -40,6 +40,7 @@ public class TaskPool extends DefaultContext<Task> {
 			Strategy.TaskChoice strategy) {
 		Task chosen = null;
 		assert strategy != null;
+		
 		switch (strategy) {
 		// *******************************************************************************
 		case HOMOPHYLY:

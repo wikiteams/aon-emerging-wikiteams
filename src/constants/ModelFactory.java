@@ -1,41 +1,49 @@
 package constants;
 
+/**
+ * Tells whether we want to make model validations or just move to main
+ * execution of simulation universe
+ * 
+ * @author Oskar Jarczyk
+ * @since 1.3
+ * 
+ */
 public class ModelFactory {
 
 	public enum model {
-		BASIC, EXTENDED, EXTRA_EXTENDED
+		NORMAL, VALIDATION, NORMAL_AND_VALIDATION
 	};
-	
-	private static final int DEFAULT = 0;
 
-	private int complexity;
+	private static final int DEFAULT = 0;
+	private int functionality;
 
 	public ModelFactory() {
 		this(DEFAULT);
 	}
-	
+
 	public ModelFactory(int model) {
-		this.complexity = model;
+		this.functionality = model;
 	}
 
-	public int getComplexity() {
-		return complexity;
+	public int getFunctionality() {
+		return functionality;
 	}
 
-	public void setComplexity(int complexity) {
-		this.complexity = complexity;
+	public void setFunctionality(int functionality) {
+		this.functionality = functionality;
 	}
 
+	@Override
 	public String toString() {
-		switch (complexity) {
+		switch (functionality) {
 		case 0: {
-			return "Basic";
+			return "Normal";
 		}
 		case 1: {
-			return "Extended";
+			return "Validation";
 		}
 		case 2: {
-			return "Extra extended";
+			return "Normal+Validation";
 		}
 		}
 		return "ERR";

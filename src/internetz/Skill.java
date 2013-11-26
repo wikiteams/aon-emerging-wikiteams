@@ -15,6 +15,7 @@ public class Skill {
 	
 	private int id;
 	private Category category;
+	
 	private int strength;
 	private double probability;
 	private int cardinalProbability;
@@ -39,10 +40,11 @@ public class Skill {
 		PjiitOutputter.say(s);
 	}
 
-	public Skill(String name, int id) {
+	public Skill(String name, String type, int id) {
 		this.name = name;
 		this.id = id;
-		say("Skill created");
+		this.category = new Category(type);
+		say("Skill created with name=" + name + " type=" + type);
 	}
 
 	public String getName() {

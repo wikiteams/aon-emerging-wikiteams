@@ -19,6 +19,7 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.scenario.data.AttributeContainer;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
@@ -29,13 +30,14 @@ import constants.Constraints;
 import constants.ModelFactory;
 
 /**
- * COIN network emergence simulator, Successfully moved to Repast Simphony 2.1
+ * COIN network emergence simulator, successfully moved to Repast Simphony 2.1
  * for better performance
  * 
- * @version 1.2 "fruit loops"
+ * @version 1.3 "Bobo bear"
  * @since 1.0
- * @author Oskar Jarczyk
- * @see documentation on a way, meanwhile read github markdown
+ * @author Oskar Jarczyk (since 1.0+)
+ * @see 1) github markdown
+ * 		2) "On the effectiveness of emergent task allocation"
  */
 public class InternetzCtx extends DefaultContext<Object> {
 
@@ -57,9 +59,6 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public InternetzCtx() {
 		super("InternetzCtx");
 
-		modelFactory = new ModelFactory();
-		strategyDistribution = new StrategyDistribution();
-
 		try {
 			PjiitLogger.init();
 			say(Constraints.LOGGER_INITIALIZED);
@@ -73,6 +72,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
+			modelFactory = new ModelFactory();
+			strategyDistribution = new StrategyDistribution();
 
 			// initialize skill pools
 			skillFactory = new SkillFactory();
@@ -102,7 +103,6 @@ public class InternetzCtx extends DefaultContext<Object> {
 					.setSkillChoice(SimulationParameters.skillChoiceAlgorithm);
 			strategyDistribution
 					.setTaskChoice(SimulationParameters.taskChoiceAlgorithm);
-
 			strategyDistribution
 					.setTaskMinMaxChoice(SimulationParameters.taskMinMaxChoiceAlgorithm);
 		} catch (Exception exc) {

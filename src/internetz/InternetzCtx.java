@@ -24,6 +24,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
+import test.TaskTestUniverse;
 import utils.NamesGenerator;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
@@ -73,6 +74,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 			SimulationParameters.init();
 			modelFactory = new ModelFactory();
+			
+			//TO DO:
+			//
 			strategyDistribution = new StrategyDistribution();
 
 			// initialize skill pools
@@ -124,15 +128,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		// agentsProjected = this.getProjection("agents");
 		// agentsProjected.
 
-		for (int i = 0; i < SimulationParameters.taskCount; i++) {
-			Task task = new Task();
-			say("Creating task..");
-			taskPool.addTask(task.getName(), task);
-			say("Initializing task..");
-			task.initialize();
-			taskPool.add(task);
-			agentPool.add(task);
-		}
+		initializeTasks();
 
 		addAgent(SimulationParameters.agentCount);
 
@@ -163,6 +159,41 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
+	}
+
+	protected void initializeTasks() {
+		switch(modelFactory.getFunctionality()){
+		case NORMAL:
+			initializeTasksNormally();
+			break;
+		case VALIDATION:
+			initalizeValidationTasks();
+			break;
+		case NORMAL_AND_VALIDATION:
+			//TODO implement it later...
+			break;
+		}
+	}
+	
+	private void initalizeValidationTasks(){
+		for (Task task : TaskTestUniverse.DATASET) {
+			say("Adding validation task to pool..");
+			taskPool.addTask(task.getName(), task);
+			taskPool.add(task);
+			agentPool.add(task);
+		}
+	}
+	
+	private void initializeTasksNormally(){
+		for (int i = 0; i < SimulationParameters.taskCount; i++) {
+			Task task = new Task();
+			say("Creating task..");
+			taskPool.addTask(task.getName(), task);
+			say("Initializing task..");
+			task.initialize();
+			taskPool.add(task);
+			agentPool.add(task);
+		}
 	}
 
 	private void outputAgentSkillMatrix() throws IOException {

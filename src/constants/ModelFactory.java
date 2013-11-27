@@ -10,39 +10,39 @@ package constants;
  */
 public class ModelFactory {
 
-	public enum model {
+	public enum ModelEnum {
 		NORMAL, VALIDATION, NORMAL_AND_VALIDATION
 	};
 
-	private static final int DEFAULT = 0;
-	private int functionality;
+	private static final ModelEnum DEFAULT = ModelEnum.NORMAL;
+	private ModelEnum functionality;
 
 	public ModelFactory() {
 		this(DEFAULT);
 	}
 
-	public ModelFactory(int model) {
+	public ModelFactory(ModelEnum model) {
 		this.functionality = model;
 	}
 
-	public int getFunctionality() {
+	public ModelEnum getFunctionality() {
 		return functionality;
 	}
 
-	public void setFunctionality(int functionality) {
+	public void setFunctionality(ModelEnum functionality) {
 		this.functionality = functionality;
 	}
 
 	@Override
 	public String toString() {
 		switch (functionality) {
-		case 0: {
+		case NORMAL: {
 			return "Normal";
 		}
-		case 1: {
+		case VALIDATION: {
 			return "Validation";
 		}
-		case 2: {
+		case NORMAL_AND_VALIDATION: {
 			return "Normal+Validation";
 		}
 		}

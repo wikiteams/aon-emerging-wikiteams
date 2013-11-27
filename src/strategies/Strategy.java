@@ -30,7 +30,7 @@ public class Strategy {
 		 * odpowiadalo elementom w naszej macierzy. I agent caly czas stara sie
 		 * szukac podobnych taskow.
 		 */
-		HOMOPHYLY,
+		HOMOPHYLY_EXP_BASED,
 		/**
 		 * Tutaj przeciwienstwo tego co wyzej, agent stara sie znalezc zupelnie
 		 * inne taski niz te nad ktorym dotychczas pracowal. Jest to strategia
@@ -38,7 +38,7 @@ public class Strategy {
 		 * to szuka takiego taska ktory zupelnie nie odpowiada macierzy jego
 		 * umiejetnosci.
 		 */
-		HETEROPHYLY,
+		HETEROPHYLY_EXP_BASED,
 		/**
 		 * Social vector - znajdowanie mozliwie najblizszego wektora umiejetnosci.
 		 * Umiejetnosci niesie ze soba dodatkowe informacje - kategoria umiejetnosci
@@ -84,7 +84,11 @@ public class Strategy {
 		/**
 		 * 
 		 */
-		HETEROPHYLY_CLASSIC
+		HETEROPHYLY_CLASSIC,
+		/**
+		 * 
+		 */
+		CENTRAL_ASSIGNMENT
 	}
 	
 	public enum TaskMinMaxChoice {

@@ -161,7 +161,7 @@ public class Task {
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		Collection<TaskInternals> intersection;
 		if ( agent.getStrategy().taskChoice
-				.equals(Strategy.TaskChoice.HETEROPHYLY) || agent.getStrategy().taskChoice
+				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED) || agent.getStrategy().taskChoice
 				.equals(Strategy.TaskChoice.PREFERENTIAL) ) {
 			// heterophyly is an experience-genesis strategy
 			intersection = skills.values();

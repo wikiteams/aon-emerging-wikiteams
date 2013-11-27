@@ -166,7 +166,7 @@ public class Agent {
 	}
 	
 	public double describeExperience(Skill skill){
-		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY)){
+		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)){
 			AgentInternals result = skills.get(skill.getName()) == null ? (
 					new AgentInternals(
 							skillFactory.getSkill(skill.getName()), 

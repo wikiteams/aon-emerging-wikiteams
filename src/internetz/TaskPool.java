@@ -43,7 +43,7 @@ public class TaskPool extends DefaultContext<Task> {
 		
 		switch (strategy) {
 		// *******************************************************************************
-		case HOMOPHYLY:
+		case HOMOPHYLY_EXP_BASED:
 			assert agent != null;
 			Collection<Skill> skillsByExperienceHmphly = null;
 			say("Starting chooseTask consideration inside homophyly for "
@@ -127,7 +127,7 @@ public class TaskPool extends DefaultContext<Task> {
 
 			break;
 		// *******************************************************************************
-		case HETEROPHYLY:
+		case HETEROPHYLY_EXP_BASED:
 			// it will be basically negation of homophyly
 
 			Collection<Skill> c = null;

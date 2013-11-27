@@ -22,7 +22,6 @@ import org.apache.commons.lang3.SystemUtils;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
-import au.com.bytecode.opencsv.CSVWriter;
 import cern.jet.random.Poisson;
 
 /**

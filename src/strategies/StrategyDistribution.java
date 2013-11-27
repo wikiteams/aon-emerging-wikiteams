@@ -19,7 +19,7 @@ public class StrategyDistribution {
 	public TaskChoice getTaskStrategy(Agent agent) {
 		if (type == 0) {
 			if (taskChoice.equals("homophyly")) {
-				return Strategy.TaskChoice.HOMOPHYLY;
+				return Strategy.TaskChoice.HOMOPHYLY_EXP_BASED;
 			} else if (taskChoice.equals("homophyly_classic")) {
 				return Strategy.TaskChoice.HOMOPHYLY_CLASSIC;
 			} else if (taskChoice.equals("heterophyly_classic")) {
@@ -27,7 +27,7 @@ public class StrategyDistribution {
 			} else if (taskChoice.equals("preferential")) {
 				return Strategy.TaskChoice.PREFERENTIAL;
 			} else if (taskChoice.equals("heterophyly")) {
-				return Strategy.TaskChoice.HETEROPHYLY;
+				return Strategy.TaskChoice.HETEROPHYLY_EXP_BASED;
 			} else if (taskChoice.equals("random")) {
 				return Strategy.TaskChoice.RANDOM;
 			} else if (taskChoice.equals("social_vector")) {
@@ -38,6 +38,8 @@ public class StrategyDistribution {
 				return Strategy.TaskChoice.COMPARISION;
 			} else if (taskChoice.equals("minmax")) {
 				return Strategy.TaskChoice.ARG_MIN_MAX;
+			} else if (taskChoice.equals("central")) {
+				return Strategy.TaskChoice.CENTRAL_ASSIGNMENT;
 			}
 		}
 		return null;

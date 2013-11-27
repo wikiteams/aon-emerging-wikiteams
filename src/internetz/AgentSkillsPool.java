@@ -146,6 +146,7 @@ public abstract class AgentSkillsPool {
 		return getByIndex(skillSet, i);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static HashMap<Skill, Double> getByIndex(
 			LinkedHashMap<String, HashMap<Skill, Double>> hMap, int index) {
 		return (HashMap<Skill, Double>) hMap.values().toArray()[index];

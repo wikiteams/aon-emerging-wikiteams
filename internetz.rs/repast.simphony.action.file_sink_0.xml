@@ -1,0 +1,16 @@
+<repast.simphony.data2.engine.FileSinkDescriptor>
+  <name>TaskAndInternals File Sink</name>
+  <dataSet>TaskAndInternals</dataSet>
+  <delimiter>,</delimiter>
+  <format>TABULAR</format>
+  <sourceIds class="linked-hash-set">
+    <string>Id</string>
+    <string>countTaskInternals</string>
+    <string>Name</string>
+    <string>toString</string>
+    <string>tick</string>
+    <string>run</string>
+  </sourceIds>
+  <fileName>TaskAndInternals.txt</fileName>
+  <addTimeStamp>true</addTimeStamp>
+</repast.simphony.data2.engine.FileSinkDescriptor>

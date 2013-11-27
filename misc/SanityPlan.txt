@@ -1,0 +1,16 @@
+0. First time run (circa 3 times an getting rid of errors)
+a) without evolution model
+
+1. Integrate to CSV dump and Gephi visualization!
+
+2. First time run (circa 10 times)
+ a) 100 agents
+ b) all strategies separately
+ 
+ c) choosing best and worst strategies
+ 
+3. More runs
+ a) mixing best-best strategies
+ b) mixing best-medium strategies
+ 
+4. Implementing evolutionary model

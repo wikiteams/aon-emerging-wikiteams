@@ -1,0 +1,44 @@
+<repast.simphony.data2.engine.DataSetDescriptor>
+  <name>AgentExperience</name>
+  <type>NON_AGGREGATE</type>
+  <sourceType>internetz.Agent</sourceType>
+  <inclTick>true</inclTick>
+  <inclBatchRun>true</inclBatchRun>
+  <inclRandomSeed>false</inclRandomSeed>
+  <scheduleParams>
+    <start>1.0</start>
+    <interval>1.0</interval>
+    <priority>-Infinity</priority>
+    <duration>-1.0</duration>
+    <frequency>REPEAT</frequency>
+  </scheduleParams>
+  <methodDataSources class="linked-hash-map">
+    <entry>
+      <string>describeExperience</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>describeExperience</id>
+        <className>internetz.Agent</className>
+        <methodName>describeExperience</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Id</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Id</id>
+        <className>internetz.Agent</className>
+        <methodName>getId</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+    <entry>
+      <string>Nick</string>
+      <repast.simphony.data2.engine.MethodDataSourceDefinition>
+        <id>Nick</id>
+        <className>internetz.Agent</className>
+        <methodName>getNick</methodName>
+      </repast.simphony.data2.engine.MethodDataSourceDefinition>
+    </entry>
+  </methodDataSources>
+  <countSources class="linked-hash-map"/>
+  <customNADataSources class="linked-hash-map"/>
+  <customAggDataSources class="linked-hash-map"/>
+</repast.simphony.data2.engine.DataSetDescriptor>

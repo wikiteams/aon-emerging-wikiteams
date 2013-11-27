@@ -24,6 +24,7 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
+import test.AgentTestUniverse;
 import test.TaskTestUniverse;
 import utils.NamesGenerator;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -129,8 +130,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		// agentsProjected.
 
 		initializeTasks();
-
-		addAgent(SimulationParameters.agentCount);
+		initializeAgents();
 
 		// Network<Agent> agents = (Network<Agent>)
 		// this.getProjection("agents");
@@ -159,6 +159,36 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
+	}
+
+	private void initializeAgents() {
+		switch(modelFactory.getFunctionality()){
+		case NORMAL:
+			addAgents(SimulationParameters.agentCount);
+			break;
+		case VALIDATION:
+			initializeValidationAgents();
+			break;
+		case NORMAL_AND_VALIDATION:
+			//TODO implement it later...
+			break;
+		}
+	}
+	
+	private void initializeValidationAgents() {
+		for (Agent agent : AgentTestUniverse.DATASET) {
+			say("Adding validation task to pool..");
+			Strategy strategy = new Strategy(
+					strategyDistribution.getTaskStrategy(agent),
+					strategyDistribution.getTaskMaxMinStrategy(agent),
+					strategyDistribution.getSkillStrategy(agent));
+
+			agent.setStrategy(strategy);
+			say(agent.toString() + " added to pool.");
+			// Required adding agent to context
+			// this.add(agent);
+			agentPool.add(agent);
+		}
 	}
 
 	protected void initializeTasks() {
@@ -213,7 +243,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		writer.close();
 	}
 
-	private void addAgent(int agentCnt) {
+	private void addAgents(int agentCnt) {
 		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
@@ -226,11 +256,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 			agent.setStrategy(strategy);
 			say(agent.toString());
 			say("in add aggent i: " + i);
-
 			// Required adding agent to context
 			// this.add(agent);
 			agentPool.add(agent);
-			//
 		}
 	}
 

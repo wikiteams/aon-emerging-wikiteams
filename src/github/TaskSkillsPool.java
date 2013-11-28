@@ -19,6 +19,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import utils.CharacterConstants;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
@@ -36,8 +37,8 @@ import cern.jet.random.Poisson;
  */
 public abstract class TaskSkillsPool {
 
-	private static String filenameFrequencySkills = SystemUtils.IS_OS_LINUX ? "data/50-skills.csv"
-			: "data\\50-skills.csv";
+	private static String filenameFrequencySkills = SystemUtils.IS_OS_LINUX ? "data/skills-probability.csv"
+			: "data\\skills-probability.csv";
 	private static String filenameGoogleSkills = SystemUtils.IS_OS_LINUX ? "data/tasks-skills.csv"
 			: "data\\task-skills.csv";
 	private static String filenameGithubClusters = SystemUtils.IS_OS_LINUX ? "data/github_clusters.csv"
@@ -68,9 +69,11 @@ public abstract class TaskSkillsPool {
 				parseCsvStatic();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
+				say("File not found!");
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
+				say("Input / Output Exception!");
 				e.printStackTrace();
 			} 
 //		} else if (method == Method.GOOGLE_BIGQUERY_MINED) {
@@ -101,12 +104,14 @@ public abstract class TaskSkillsPool {
 			FileNotFoundException {
 		CSVReader reader = new CSVReader(
 				new FileReader(filenameFrequencySkills), ',',
-				CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
+				CharacterConstants.DEFAULT_EMPTY_CHARACTER, 1);
 		String[] nextLine;
 		long count = 0;
 		while ((nextLine = reader.readNext()) != null) {
-			Skill skill = skillFactory.getSkill(nextLine[1]);
-			skill.setCardinalProbability(Integer.parseInt(nextLine[0]));
+			Skill skill = skillFactory.getSkill(nextLine[0]);
+			say("Processing skill + " + nextLine[0]);
+			assert skill != null;
+			skill.setCardinalProbability(Integer.parseInt(nextLine[1]));
 			count += skill.getCardinalProbability();
 			singleSkillSet.put(skill.getName(), skill);
 		}

@@ -12,6 +12,7 @@ import logger.EndRunLogger;
 import logger.PjiitLogger;
 import logger.PjiitOutputter;
 import logger.SanityLogger;
+import logger.ValidationLogger;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
@@ -62,22 +63,20 @@ public class InternetzCtx extends DefaultContext<Object> {
 		super("InternetzCtx");
 
 		try {
-			PjiitLogger.init();
-			say(Constraints.LOGGER_INITIALIZED);
-			SanityLogger.init();
-			sanity(Constraints.LOGGER_INITIALIZED);
-			EndRunLogger.init();
+			initializeLoggers();
 
 			say("Super object InternetzCtx loaded");
-			say("Starting simulation with model: " + modelFactory.toString());
 			// getting parameters of simulation
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
-			modelFactory = new ModelFactory();
+			modelFactory = new ModelFactory(SimulationParameters.model_type);
+			say("Starting simulation with model: " + modelFactory.toString());
 			
-			//TO DO:
-			//
+			if (modelFactory.getFunctionality().ordinal() > 0)
+				initializeValidationLogger();
+			
+			// TODO: implement mixed strategy distribution
 			strategyDistribution = new StrategyDistribution();
 
 			// initialize skill pools
@@ -161,6 +160,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say(actions.toString());
 	}
 
+	private void initializeLoggers() throws IOException {
+		PjiitLogger.init();
+		say(Constraints.LOGGER_INITIALIZED);
+		SanityLogger.init();
+		sanity(Constraints.LOGGER_INITIALIZED);
+		EndRunLogger.init();
+	}
+
 	private void initializeAgents() {
 		switch(modelFactory.getFunctionality()){
 		case NORMAL:
@@ -224,6 +231,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			taskPool.add(task);
 			agentPool.add(task);
 		}
+	}
+	
+	private void initializeValidationLogger(){
+		ValidationLogger.init();
+		say(Constraints.VALIDATION_LOGGER_INITIALIZED);
 	}
 
 	private void outputAgentSkillMatrix() throws IOException {

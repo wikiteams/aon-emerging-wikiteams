@@ -1,5 +1,7 @@
 package constants;
 
+import test.Model;
+
 /**
  * Tells whether we want to make model validations or just move to main
  * execution of simulation universe
@@ -23,6 +25,17 @@ public class ModelFactory {
 
 	public ModelFactory(ModelEnum model) {
 		this.functionality = model;
+	}
+
+	public ModelFactory(Model model) {
+		String name = model.getName().toLowerCase();
+		if (name.equals("normal")) {
+			this.functionality = ModelEnum.NORMAL;
+		} else if (name.equals("validation")) {
+			this.functionality = ModelEnum.VALIDATION;
+		} else if (name.equals("normal+validation")) {
+			this.functionality = ModelEnum.NORMAL_AND_VALIDATION;
+		}
 	}
 
 	public ModelEnum getFunctionality() {

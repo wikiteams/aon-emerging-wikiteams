@@ -174,6 +174,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			addAgents(SimulationParameters.agentCount);
 			break;
 		case VALIDATION:
+			listAgent = new ArrayList<Agent>();
 			initializeValidationAgents();
 			break;
 		case NORMAL_AND_VALIDATION:
@@ -191,6 +192,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 					strategyDistribution.getSkillStrategy(agent));
 
 			agent.setStrategy(strategy);
+			listAgent.add(agent);
 			say(agent.toString() + " added to pool.");
 			// Required adding agent to context
 			// this.add(agent);

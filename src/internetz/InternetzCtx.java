@@ -175,6 +175,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			break;
 		case VALIDATION:
 			listAgent = new ArrayList<Agent>();
+			AgentTestUniverse.init();
 			initializeValidationAgents();
 			break;
 		case NORMAL_AND_VALIDATION:
@@ -185,7 +186,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	
 	private void initializeValidationAgents() {
 		for (Agent agent : AgentTestUniverse.DATASET) {
-			say("Adding validation task to pool..");
+			say("Adding validation agent to pool..");
 			Strategy strategy = new Strategy(
 					strategyDistribution.getTaskStrategy(agent),
 					strategyDistribution.getTaskMaxMinStrategy(agent),
@@ -206,6 +207,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			initializeTasksNormally();
 			break;
 		case VALIDATION:
+			TaskTestUniverse.init();
 			initalizeValidationTasks();
 			break;
 		case NORMAL_AND_VALIDATION:
@@ -301,6 +303,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("finishSimulation() check launched");
 		EnvironmentEquilibrium.setActivity(false);
 		if (taskPool.getCount() < 1) {
+			say("count of taskPool is < 1, finishing simulation");
 			finalMessage(RunState.getInstance().getRunInfo().getBatchNumber()
 					+ ","
 					+ RunState.getInstance().getRunInfo().getRunNumber()
@@ -320,6 +323,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void checkForActivity() {
 		say("checkForActivity() check launched");
 		if (EnvironmentEquilibrium.getActivity() == false) {
+			say("EnvironmentEquilibrium.getActivity() returns false!");
 			finalMessage(RunState.getInstance().getRunInfo().getBatchNumber()
 					+ ","
 					+ RunState.getInstance().getRunInfo().getRunNumber()

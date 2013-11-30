@@ -26,14 +26,21 @@ public class Agent {
 	static double time = 0;
 
 	private int id;
-	private String firstname;
-	private String lastname;
+	private String firstName;
+	private String lastName;
 	private String nick;
 
 	public Agent() {
+		new Agent("Undefined name", "Undefined", (totalAgents + 1) + "");
+	}
+	
+	public Agent(String firstName, String lastName, String nick) {
 		say("Agent constructor called");
 		this.id = ++totalAgents;
 		AgentSkillsPool.fillWithSkills(this);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.nick = nick;
 	}
 
 	public void addSkill(String key, AgentInternals agentInternals) {
@@ -86,20 +93,20 @@ public class Agent {
 		return this.id;
 	}
 
-	public String getFirstname() {
-		return firstname;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	@ScheduledMethod(start = 1, interval = 1)

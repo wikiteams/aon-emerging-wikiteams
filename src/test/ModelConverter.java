@@ -30,16 +30,17 @@ public class ModelConverter implements StringConverter<Model> {
 		Model model = new Model(strRep);
 		StringTokenizer st = new StringTokenizer(strRep, "+");
 		while (st.hasMoreElements()) {
-			if (((String) st.nextElement()).toLowerCase().equals("model")) {
+			Object element = st.nextElement();
+			if (((String) element).toLowerCase().equals("model")) {
 				model.setNormal(true);
 			}
-			if (((String) st.nextElement()).toLowerCase().equals("validation")) {
+			if (((String) element).toLowerCase().equals("validation")) {
 				model.setValidation(true);
 			}
-			if (((String) st.nextElement()).toLowerCase().equals("multiplevalidation")) {
+			if (((String) element).toLowerCase().equals("multiplevalidation")) {
 				model.setMultipleValidation(true);
 			}
-			if (((String) st.nextElement()).toLowerCase().equals("stress")) {
+			if (((String) element).toLowerCase().equals("stress")) {
 				model.setStress(true);
 			}
 		}

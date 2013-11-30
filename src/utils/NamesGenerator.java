@@ -22,7 +22,7 @@ public class NamesGenerator {
 						Name.Lastname, "lastname"), Agent.class);
 		
 		for(Agent agent : randomPersons){
-			String nick = agent.getFirstname() + "_" + agent.getLastname();
+			String nick = agent.getFirstName() + "_" + agent.getLastName();
 			if (! nicknames.contains(nick))
 				agent.setNick(nick);
 			else {

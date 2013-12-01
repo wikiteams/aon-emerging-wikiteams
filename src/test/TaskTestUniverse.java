@@ -15,6 +15,8 @@ public class TaskTestUniverse {
 	private static SkillFactory skillFactory = new SkillFactory();
 	
 	public static void init(){
+		DATASET.clear();
+		
 		Task task1 = new Task();
 		say("Initializing task..");
 		Skill skill11 = skillFactory.getSkill("Java");

@@ -14,6 +14,10 @@ public class NamesGenerator {
 	
 	static RandomDataGenerator rdg = new RandomDataGenerator();
 	private static ArrayList<String> nicknames = new ArrayList<String>();
+	
+	public static void clear(){
+		nicknames.clear();
+	}
 
 	public static List<Agent> getnames(int count) {
 		List<Agent> randomPersons = rdg.generateList(

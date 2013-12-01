@@ -17,6 +17,10 @@ public class PersistJobDone {
 	private static Map<String, Map<Integer, Task>> jobDone = 
 			new HashMap<String, Map<Integer, Task>>();
 	
+	public static void clear(){
+		jobDone.clear();
+	}
+	
 	/**
 	 * Tutaj dodaje fakt, ze agent pracowal na taskiem taki i takim
 	 * w danym ticku symulacji

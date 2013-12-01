@@ -26,7 +26,6 @@ import au.com.bytecode.opencsv.CSVReader;
 import cern.jet.random.Poisson;
 
 /**
- * 
  * A factory for creating of real skill data for COIN TASKS data taken mostly
  * from GitHub portal, possible randomization for bigger variation of results
  * 
@@ -46,6 +45,11 @@ public abstract class TaskSkillsPool {
 
 	public enum Method {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
+	}
+	
+	public static void clear(){
+		singleSkillSet.clear();
+		skillSetMatrix.clear();
 	}
 
 	private static LinkedHashMap<String, Skill> singleSkillSet = 

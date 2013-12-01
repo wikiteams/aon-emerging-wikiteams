@@ -29,6 +29,7 @@ import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
 import utils.NamesGenerator;
+import argonauts.PersistJobDone;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
@@ -55,15 +56,13 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private List<Agent> listAgent;
 
-	// private Network<Agent> agents = null;
-	// private Network<Task> tasks = null;
-	// private Projection<?> agentsProjected = null;
-
 	public InternetzCtx() {
 		super("InternetzCtx");
-
+		
 		try {
 			initializeLoggers();
+			
+			clearStaticHeap();
 
 			say("Super object InternetzCtx loaded");
 			// getting parameters of simulation
@@ -119,33 +118,16 @@ public class InternetzCtx extends DefaultContext<Object> {
 		this.addSubContext(agentPool);
 		this.addSubContext(taskPool);
 
-		// NetworkBuilder<Object> netBuilder = new NetworkBuilder<Object>(
-		// "agents", (Context<Object>) this, false);
-		// netBuilder.buildNetwork();
-
-		// agents = (Network<Agent>) this.getProjection("agents");
-		// say("Projection agents (" + agents.getName() +
-		// ") exists and is size: "
-		// + agents.size());
-		// agentsProjected = this.getProjection("agents");
-		// agentsProjected.
-
 		initializeTasks();
 		initializeAgents();
 
-		// Network<Agent> agents = (Network<Agent>)
-		// this.getProjection("agents");
-		// say("Projection agents (" + agents.getName() +
-		// ") exists and is size: "
-		// + agents.size());
-
 		say("Task choice algorithm is "
 				+ SimulationParameters.taskChoiceAlgorithm);
-		System.out.println("Number of teams created "
+		sanity("Number of teams created "
 				+ this.getObjects(Task.class).size());
-		System.out.println("Number of agents created "
+		sanity("Number of agents created "
 				+ this.getObjects(Agent.class).size());
-		System.out.println("Algorithm tested: "
+		sanity("Algorithm tested: "
 				+ SimulationParameters.taskChoiceAlgorithm);
 
 		try {
@@ -173,15 +155,17 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private void initializeAgents() {
 		Model model = modelFactory.getFunctionality();
 		if (model.isNormal() && model.isValidation()) {
-			//
+			throw new UnsupportedOperationException();
 		} else if (model.isNormal()) {
 			addAgents(SimulationParameters.agentCount);
 		} else if (model.isSingleValidation()) {
 			listAgent = new ArrayList<Agent>();
 			AgentTestUniverse.init();
 			initializeValidationAgents();
-		} else if (model.isMultipleValidation()) {
-			//
+		} else if (model.isValidation()) {
+			listAgent = new ArrayList<Agent>();
+			AgentTestUniverse.init();
+			initializeValidationAgents();
 		}
 	}
 
@@ -205,10 +189,13 @@ public class InternetzCtx extends DefaultContext<Object> {
 	protected void initializeTasks() {
 		Model model = modelFactory.getFunctionality();
 		if (model.isNormal() && model.isValidation()) {
-			//
+			throw new UnsupportedOperationException();
 		} else if (model.isNormal()) {
 			initializeTasksNormally();
 		} else if (model.isSingleValidation()) {
+			TaskTestUniverse.init();
+			initalizeValidationTasks();
+		} else if (model.isValidation()) {
 			TaskTestUniverse.init();
 			initalizeValidationTasks();
 		}
@@ -287,14 +274,21 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 	}
 
-	// private boolean moreThanBasic() {
-	// return modelFactory.getComplexity() > 0;
-	// }
-
 	@ScheduledMethod(start = 2000, priority = 0)
 	public void outputSNSData() throws IOException {
 		say("outputSNSData() check launched");
 		// outputAgentNetworkData();
+	}
+	
+	public void clearStaticHeap() {
+		say("Clearing static data from previous simulation");
+		PersistJobDone.clear();
+		TaskSkillsPool.clear();
+		SkillFactory.skills.clear();
+		NamesGenerator.clear();
+		TaskPool.clearTasks();
+		AgentSkillsPool.clear();
+		Agent.totalAgents = 0;
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.FIRST_PRIORITY)
@@ -303,19 +297,23 @@ public class InternetzCtx extends DefaultContext<Object> {
 		EnvironmentEquilibrium.setActivity(false);
 		if (taskPool.getCount() < 1) {
 			say("count of taskPool is < 1, finishing simulation");
-			finalMessage(RunState.getInstance().getRunInfo().getBatchNumber()
-					+ ","
-					+ RunState.getInstance().getRunInfo().getRunNumber()
-					+ ","
-					+ RunEnvironment.getInstance().getCurrentSchedule()
-							.getTickCount() + ","
-					+ SimulationParameters.taskChoiceAlgorithm + ","
-					+ SimulationParameters.fillAgentSkillsMethod + ","
-					+ SimulationParameters.agentSkillPoolDataset + ","
-					+ SimulationParameters.taskSkillPoolDataset + ","
-					+ SimulationParameters.skillChoiceAlgorithm);
+			finalMessage(buildFinalMessage());
 			RunEnvironment.getInstance().endRun();
 		}
+	}
+	
+	private String buildFinalMessage(){
+		return RunState.getInstance().getRunInfo().getBatchNumber()
+				+ ","
+				+ RunState.getInstance().getRunInfo().getRunNumber()
+				+ ","
+				+ RunEnvironment.getInstance().getCurrentSchedule()
+						.getTickCount() + ","
+				+ SimulationParameters.taskChoiceAlgorithm + ","
+				+ SimulationParameters.fillAgentSkillsMethod + ","
+				+ SimulationParameters.agentSkillPoolDataset + ","
+				+ SimulationParameters.taskSkillPoolDataset + ","
+				+ SimulationParameters.skillChoiceAlgorithm;
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
@@ -360,6 +358,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	private void finalMessage(String s) {
+		if (modelFactory.getFunctionality().isValidation()){
+			validation(s);
+		}
 		EndRunLogger.finalMessage(s);
 	}
 

@@ -16,6 +16,8 @@ public class AgentTestUniverse {
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void init() {
+		DATASET.clear();
+		
 		Agent agent1 = new Agent("Joe", "Smith", "Java newbie-1");
 		say("Initializing agent1..");
 		Skill skill11 = skillFactory.getSkill("Java");

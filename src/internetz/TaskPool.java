@@ -22,6 +22,10 @@ public class TaskPool extends DefaultContext<Task> {
 	public TaskPool() {
 		super("Tasks");
 	}
+	
+	public static void clearTasks(){
+		tasks.clear();
+	}
 
 	public void addTask(String key, Task task) {
 		tasks.put(key, task);

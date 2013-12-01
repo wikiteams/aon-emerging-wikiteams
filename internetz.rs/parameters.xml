@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
-    <parameter name="model_type" displayName="Model Type" converter="test.ModelConverter" 
-        type="test.Model" defaultValue="Normal" values="Normal Validation MultipleValidation Normal+Validation Stress" />
+    <parameter name="modelType" displayName="Model Type" 
+    	converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" 
+        type="string" defaultValue="Normal" 
+        values="Normal Validation MultipleValidation Normal+Validation Stress" />
     <parameter name="location" displayName="Location" type="string" 
+    	converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
     	defaultValue="Metric" values="Metric Anglossas" />
   
 	<parameter name="randomSeed" displayName="Default Random Seed"

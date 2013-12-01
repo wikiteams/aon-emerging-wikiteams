@@ -36,7 +36,7 @@ public class SkillFactory {
 	private static String filename = SystemUtils.IS_OS_LINUX ? "data/all-languages.csv"
 			: "data\\all-languages.csv";
 	public static ArrayList<Skill> skills = new ArrayList<Skill>();
-
+	
 	public SkillFactory() {
 		say("SkillFactory object created");
 	}

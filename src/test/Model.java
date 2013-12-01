@@ -33,7 +33,7 @@ public class Model {
 	}
 
 	public boolean isValidation() {
-		return validation;
+		return validation || multipleValidation;
 	}
 
 	public void setValidation(boolean validation) {
@@ -42,6 +42,10 @@ public class Model {
 
 	public boolean isMultipleValidation() {
 		return multipleValidation;
+	}
+	
+	public boolean isSingleValidation() {
+		return validation;
 	}
 
 	public void setMultipleValidation(boolean multipleValidation) {

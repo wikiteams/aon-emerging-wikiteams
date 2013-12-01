@@ -1,44 +1,53 @@
 package strategies;
 
+import internetz.Agent;
 import strategies.Strategy.SkillChoice;
 import strategies.Strategy.TaskChoice;
 import strategies.Strategy.TaskMinMaxChoice;
-import internetz.Agent;
+import constants.ModelFactory;
+import repast.simphony.random.RandomHelper;
 
 public class StrategyDistribution {
 
 	public static final int SINGULAR = 0;
 	public static final int MULTIPLE = 1;
 
+	private String[] taskChoiceSet = { "homophyly", "homophyly_experience",
+			"heterophyly", "preferential", "heterophyly_experience", "random",
+			"social_vector", "machine_learned", "comparision", "minmax",
+			"central" };
+	private String[] skillChoiceSet = { "proportional", "greedy", "choice",
+			"random" };
+
 	private int type;
-	
+
 	private String skillChoice;
 	private String taskChoice;
 	private String taskMinMaxChoice;
 
 	public TaskChoice getTaskStrategy(Agent agent) {
 		if (type == 0) {
-			if (taskChoice.equals("homophyly")) {
-				return Strategy.TaskChoice.HOMOPHYLY_EXP_BASED;
-			} else if (taskChoice.equals("homophyly_classic")) {
+			if (taskChoice.equals(taskChoiceSet[0])) {
 				return Strategy.TaskChoice.HOMOPHYLY_CLASSIC;
-			} else if (taskChoice.equals("heterophyly_classic")) {
+			} else if (taskChoice.equals(taskChoiceSet[1])) {
+				return Strategy.TaskChoice.HOMOPHYLY_EXP_BASED;
+			} else if (taskChoice.equals(taskChoiceSet[2])) {
 				return Strategy.TaskChoice.HETEROPHYLY_CLASSIC;
-			} else if (taskChoice.equals("preferential")) {
+			} else if (taskChoice.equals(taskChoiceSet[3])) {
 				return Strategy.TaskChoice.PREFERENTIAL;
-			} else if (taskChoice.equals("heterophyly")) {
+			} else if (taskChoice.equals(taskChoiceSet[4])) {
 				return Strategy.TaskChoice.HETEROPHYLY_EXP_BASED;
-			} else if (taskChoice.equals("random")) {
+			} else if (taskChoice.equals(taskChoiceSet[5])) {
 				return Strategy.TaskChoice.RANDOM;
-			} else if (taskChoice.equals("social_vector")) {
+			} else if (taskChoice.equals(taskChoiceSet[6])) {
 				return Strategy.TaskChoice.SOCIAL_VECTOR;
-			} else if (taskChoice.equals("machine_learned")) {
+			} else if (taskChoice.equals(taskChoiceSet[7])) {
 				return Strategy.TaskChoice.MACHINE_LEARNED;
-			} else if (taskChoice.equals("comparision")) {
+			} else if (taskChoice.equals(taskChoiceSet[8])) {
 				return Strategy.TaskChoice.COMPARISION;
-			} else if (taskChoice.equals("minmax")) {
+			} else if (taskChoice.equals(taskChoiceSet[9])) {
 				return Strategy.TaskChoice.ARG_MIN_MAX;
-			} else if (taskChoice.equals("central")) {
+			} else if (taskChoice.equals(taskChoiceSet[10])) {
 				return Strategy.TaskChoice.CENTRAL_ASSIGNMENT;
 			}
 		}
@@ -47,13 +56,13 @@ public class StrategyDistribution {
 
 	public SkillChoice getSkillStrategy(Agent agent) {
 		if (type == 0) {
-			if (skillChoice.equals("proportional")) {
+			if (skillChoice.equals(skillChoiceSet[0])) {
 				return Strategy.SkillChoice.PROPORTIONAL_TIME_DIVISION;
-			} else if (skillChoice.equals("greedy")) {
+			} else if (skillChoice.equals(skillChoiceSet[1])) {
 				return Strategy.SkillChoice.GREEDY_ASSIGNMENT_BY_TASK;
-			} else if (skillChoice.equals("choice")) {
+			} else if (skillChoice.equals(skillChoiceSet[2])) {
 				return Strategy.SkillChoice.CHOICE_OF_AGENT;
-			} else if (skillChoice.equals("random")) {
+			} else if (skillChoice.equals(skillChoiceSet[3])) {
 				return Strategy.SkillChoice.RANDOM;
 			}
 		}
@@ -68,12 +77,34 @@ public class StrategyDistribution {
 		this.skillChoice = skillChoice;
 	}
 
+	public void setSkillChoice(ModelFactory modelFactory, String skillChoice) {
+		if (modelFactory.getFunctionality().isMultipleValidation()) {
+			int intRandomized = RandomHelper.nextIntFromTo(0,
+					skillChoiceSet.length - 1);
+			assert (intRandomized >= 0)
+					&& (intRandomized <= skillChoiceSet.length - 1);
+			this.skillChoice = skillChoiceSet[intRandomized];
+		} else
+			this.skillChoice = skillChoice;
+	}
+
 	public String getTaskChoice() {
 		return taskChoice;
 	}
 
 	public void setTaskChoice(String taskChoice) {
 		this.taskChoice = taskChoice;
+	}
+
+	public void setTaskChoice(ModelFactory modelFactory, String taskChoice) {
+		if (modelFactory.getFunctionality().isMultipleValidation()) {
+			int intRandomized = RandomHelper.nextIntFromTo(0,
+					taskChoiceSet.length - 1);
+			assert (intRandomized >= 0)
+					&& (intRandomized <= taskChoiceSet.length - 1);
+			this.taskChoice = taskChoiceSet[intRandomized];
+		} else
+			this.taskChoice = taskChoice;
 	}
 
 	public int getType() {

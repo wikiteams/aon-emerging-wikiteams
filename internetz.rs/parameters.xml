@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <parameters>
     <parameter name="model_type" displayName="Model Type" converter="test.ModelConverter" 
-        type="test.Model" defaultValue="Normal" values="Normal Validation Normal+Validation" />
+        type="test.Model" defaultValue="Normal" values="Normal Validation MultipleValidation Normal+Validation Stress" />
     <parameter name="location" displayName="Location" type="string" 
     	defaultValue="Metric" values="Metric Anglossas" />
   
@@ -9,7 +9,8 @@
 		type="int" defaultValue="__NULL__" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="skillChoiceAlgorithm" displayName="skillChoiceAlgorithm"
-		type="java.lang.String" defaultValue="greedy" isReadOnly="false"
+		type="java.lang.String" defaultValue="greedy" isReadOnly="false" 
+		values="proportional greedy choice random"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 		
 	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"
@@ -36,7 +37,8 @@
 		type="java.lang.Integer" defaultValue="0" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="taskChoiceAlgorithm" displayName="taskChoiceAlgorithm"
-		type="java.lang.String" defaultValue="minmax" isReadOnly="false"
+		type="java.lang.String" defaultValue="random" isReadOnly="false" 
+		values="homophyly heterophyly homophyly_experience heterophyly_experience preferential random minmax central comparision social_vector"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 		
 	<parameter name="taskMinMaxChoiceAlgorithm" displayName="taskMinMaxChoiceAlgorithm"

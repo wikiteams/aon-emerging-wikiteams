@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import org.apache.commons.lang3.SystemUtils;
-
+import repast.simphony.random.RandomHelper;
 import constants.RandomMethod;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVReader;
@@ -74,8 +74,7 @@ public class SkillFactory {
 				assert (randomized >= 0.) && (randomized <= 1.);
 				return skills.get((int) (randomized * skills.size()));
 			case RANDOM_GENERATOR:
-				Random generator = new Random();
-				int i = generator.nextInt(skills.size());
+				int i = RandomHelper.nextIntFromTo(0,skills.size());
 				return skills.get(i);
 			case NORMAL_DISTRIBUTION:
 				Normal normal = new Normal(0.0, 1.0,

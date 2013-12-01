@@ -13,6 +13,7 @@ import logger.PjiitLogger;
 import logger.PjiitOutputter;
 import logger.SanityLogger;
 import logger.ValidationLogger;
+import logger.ValidationOutputter;
 import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
@@ -20,12 +21,12 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
-import repast.simphony.scenario.data.AttributeContainer;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
 import test.AgentTestUniverse;
+import test.Model;
 import test.TaskTestUniverse;
 import utils.NamesGenerator;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -39,8 +40,7 @@ import constants.ModelFactory;
  * @version 1.3 "Bobo bear"
  * @since 1.0
  * @author Oskar Jarczyk (since 1.0+)
- * @see 1) github markdown
- * 		2) "On the effectiveness of emergent task allocation"
+ * @see 1) github markdown 2) "On the effectiveness of emergent task allocation"
  */
 public class InternetzCtx extends DefaultContext<Object> {
 
@@ -72,10 +72,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 			SimulationParameters.init();
 			modelFactory = new ModelFactory(SimulationParameters.model_type);
 			say("Starting simulation with model: " + modelFactory.toString());
-			
-			if (modelFactory.getFunctionality().ordinal() > 0)
+
+			if (modelFactory.getFunctionality().isValidation())
 				initializeValidationLogger();
-			
+
 			// TODO: implement mixed strategy distribution
 			strategyDistribution = new StrategyDistribution();
 
@@ -104,9 +104,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			strategyDistribution
 					.setType(SimulationParameters.strategyDistribution);
 			strategyDistribution
-					.setSkillChoice(SimulationParameters.skillChoiceAlgorithm);
+					.setSkillChoice(modelFactory, 
+							SimulationParameters.skillChoiceAlgorithm);
 			strategyDistribution
-					.setTaskChoice(SimulationParameters.taskChoiceAlgorithm);
+					.setTaskChoice(modelFactory, 
+							SimulationParameters.taskChoiceAlgorithm);
 			strategyDistribution
 					.setTaskMinMaxChoice(SimulationParameters.taskMinMaxChoiceAlgorithm);
 		} catch (Exception exc) {
@@ -169,21 +171,20 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	private void initializeAgents() {
-		switch(modelFactory.getFunctionality()){
-		case NORMAL:
+		Model model = modelFactory.getFunctionality();
+		if (model.isNormal() && model.isValidation()) {
+			//
+		} else if (model.isNormal()) {
 			addAgents(SimulationParameters.agentCount);
-			break;
-		case VALIDATION:
+		} else if (model.isSingleValidation()) {
 			listAgent = new ArrayList<Agent>();
 			AgentTestUniverse.init();
 			initializeValidationAgents();
-			break;
-		case NORMAL_AND_VALIDATION:
-			//TODO implement it later...
-			break;
+		} else if (model.isMultipleValidation()) {
+			//
 		}
 	}
-	
+
 	private void initializeValidationAgents() {
 		for (Agent agent : AgentTestUniverse.DATASET) {
 			say("Adding validation agent to pool..");
@@ -202,21 +203,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	protected void initializeTasks() {
-		switch(modelFactory.getFunctionality()){
-		case NORMAL:
+		Model model = modelFactory.getFunctionality();
+		if (model.isNormal() && model.isValidation()) {
+			//
+		} else if (model.isNormal()) {
 			initializeTasksNormally();
-			break;
-		case VALIDATION:
+		} else if (model.isSingleValidation()) {
 			TaskTestUniverse.init();
 			initalizeValidationTasks();
-			break;
-		case NORMAL_AND_VALIDATION:
-			//TODO implement it later...
-			break;
 		}
 	}
-	
-	private void initalizeValidationTasks(){
+
+	private void initalizeValidationTasks() {
 		for (Task task : TaskTestUniverse.DATASET) {
 			say("Adding validation task to pool..");
 			taskPool.addTask(task.getName(), task);
@@ -224,8 +222,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			agentPool.add(task);
 		}
 	}
-	
-	private void initializeTasksNormally(){
+
+	private void initializeTasksNormally() {
 		for (int i = 0; i < SimulationParameters.taskCount; i++) {
 			Task task = new Task();
 			say("Creating task..");
@@ -236,10 +234,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			agentPool.add(task);
 		}
 	}
-	
-	private void initializeValidationLogger(){
+
+	private void initializeValidationLogger() {
 		ValidationLogger.init();
 		say(Constraints.VALIDATION_LOGGER_INITIALIZED);
+		validation("---------------------------------------------------------");
 	}
 
 	private void outputAgentSkillMatrix() throws IOException {
@@ -342,6 +341,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
+	}
+
+	private void validation(String s) {
+		ValidationOutputter.say(s);
+	}
+
+	private void validationError(String s) {
+		ValidationOutputter.error(s);
+	}
+
+	private void validationFatal(String s) {
+		ValidationOutputter.fatal(s);
 	}
 
 	private void sanity(String s) {

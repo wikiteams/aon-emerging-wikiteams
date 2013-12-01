@@ -12,53 +12,36 @@ import test.Model;
  */
 public class ModelFactory {
 
-	public enum ModelEnum {
-		NORMAL, VALIDATION, NORMAL_AND_VALIDATION
-	};
+	private Model functionality;
 
-	private static final ModelEnum DEFAULT = ModelEnum.NORMAL;
-	private ModelEnum functionality;
-
-	public ModelFactory() {
-		this(DEFAULT);
-	}
-
-	public ModelFactory(ModelEnum model) {
+	public ModelFactory(Model model) {
 		this.functionality = model;
 	}
 
-	public ModelFactory(Model model) {
-		String name = model.getName().toLowerCase();
-		if (name.equals("normal")) {
-			this.functionality = ModelEnum.NORMAL;
-		} else if (name.equals("validation")) {
-			this.functionality = ModelEnum.VALIDATION;
-		} else if (name.equals("normal+validation")) {
-			this.functionality = ModelEnum.NORMAL_AND_VALIDATION;
-		}
-	}
-
-	public ModelEnum getFunctionality() {
+	public Model getFunctionality() {
 		return functionality;
 	}
 
-	public void setFunctionality(ModelEnum functionality) {
+	public void setFunctionality(Model functionality) {
 		this.functionality = functionality;
 	}
 
 	@Override
 	public String toString() {
-		switch (functionality) {
-		case NORMAL: {
-			return "Normal";
+		return functionality.getName();
+	}
+	
+	@Override
+	public int hashCode() {
+		return functionality.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ModelFactory) {
+			ModelFactory other = (ModelFactory) obj;
+			return other.functionality.equals(this.functionality);
 		}
-		case VALIDATION: {
-			return "Validation";
-		}
-		case NORMAL_AND_VALIDATION: {
-			return "Normal+Validation";
-		}
-		}
-		return "ERR";
+		return false;
 	}
 }

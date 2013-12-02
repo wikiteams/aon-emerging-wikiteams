@@ -14,6 +14,9 @@ import logger.PjiitOutputter;
 import logger.SanityLogger;
 import logger.ValidationLogger;
 import logger.ValidationOutputter;
+
+import org.apache.log4j.LogManager;
+
 import repast.simphony.context.DefaultContext;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
@@ -21,6 +24,7 @@ import repast.simphony.engine.schedule.ISchedulableAction;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
@@ -55,13 +59,16 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
+	
+	private boolean shutdownInitiated = false;
+	private boolean alreadyFlushed = false;
 
 	public InternetzCtx() {
 		super("InternetzCtx");
 		
 		try {
 			initializeLoggers();
-			
+			RandomHelper.init();
 			clearStaticHeap();
 
 			say("Super object InternetzCtx loaded");
@@ -298,7 +305,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 		if (taskPool.getCount() < 1) {
 			say("count of taskPool is < 1, finishing simulation");
 			finalMessage(buildFinalMessage());
+			shutdownInitiated = true;
 			RunEnvironment.getInstance().endRun();
+			cleanAfter();
 		}
 	}
 	
@@ -309,11 +318,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ ","
 				+ RunEnvironment.getInstance().getCurrentSchedule()
 						.getTickCount() + ","
-				+ SimulationParameters.taskChoiceAlgorithm + ","
+				+ strategyDistribution.getTaskChoice() + ","
 				+ SimulationParameters.fillAgentSkillsMethod + ","
 				+ SimulationParameters.agentSkillPoolDataset + ","
 				+ SimulationParameters.taskSkillPoolDataset + ","
-				+ SimulationParameters.skillChoiceAlgorithm;
+				+ strategyDistribution.getSkillChoice() + ","
+						+ strategyDistribution.getTaskMinMaxChoice();
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
@@ -321,19 +331,17 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("checkForActivity() check launched");
 		if (EnvironmentEquilibrium.getActivity() == false) {
 			say("EnvironmentEquilibrium.getActivity() returns false!");
-			finalMessage(RunState.getInstance().getRunInfo().getBatchNumber()
-					+ ","
-					+ RunState.getInstance().getRunInfo().getRunNumber()
-					+ ","
-					+ RunEnvironment.getInstance().getCurrentSchedule()
-							.getTickCount() + ","
-					+ SimulationParameters.taskChoiceAlgorithm + ","
-					+ SimulationParameters.fillAgentSkillsMethod + ","
-					+ SimulationParameters.agentSkillPoolDataset + ","
-					+ SimulationParameters.taskSkillPoolDataset + ","
-					+ SimulationParameters.skillChoiceAlgorithm + ","
-					+ SimulationParameters.taskMinMaxChoiceAlgorithm);
+			finalMessage(buildFinalMessage());
+			shutdownInitiated = true;
 			RunEnvironment.getInstance().endRun();
+			cleanAfter();
+		}
+	}
+	
+	private void cleanAfter(){
+		if (!alreadyFlushed){
+			LogManager.shutdown();
+			alreadyFlushed = true;
 		}
 	}
 

@@ -74,7 +74,7 @@ public class SkillFactory {
 				assert (randomized >= 0.) && (randomized <= 1.);
 				return skills.get((int) (randomized * skills.size()));
 			case RANDOM_GENERATOR:
-				int i = RandomHelper.nextIntFromTo(0,skills.size());
+				int i = RandomHelper.nextIntFromTo(0,skills.size()-1);
 				return skills.get(i);
 			case NORMAL_DISTRIBUTION:
 				Normal normal = new Normal(0.0, 1.0,

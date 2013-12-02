@@ -5,6 +5,9 @@ velocity_log*
 debug_log*
 debug.log
 
+AgentExperience*
+TaskAndInternals*
+
 /bin
 /output
 

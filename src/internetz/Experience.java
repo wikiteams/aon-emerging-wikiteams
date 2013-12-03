@@ -6,18 +6,23 @@ import logger.PjiitOutputter;
 import cern.jet.random.ChiSquare;
 
 /**
- * Class describing the learning process of a human
- * for simulation purpose. 
+ * Class describing the learning process of a human for simulation purpose.
  * 
  * @author Oskar Jarczyk
  * @version 1.3
- *
+ * 
  */
 public class Experience {
 
-	public LearningCurve lc = null;
-	public double value; // aktualne "plain" doswiadczenie
-	public int top; // hipotetyczne przeuczenie
+	private LearningCurve lc = null;
+	private SigmoidCurve sc = null;
+
+	private enum ApproximationMethod {
+		SIGMOID, CHI_SQUARE
+	};
+
+	public double value; // plain experience
+	public int top; // hipothetical overlearning
 
 	private static final double expStub = 0.03;
 
@@ -30,13 +35,13 @@ public class Experience {
 	public Experience(boolean passionStub) {
 		this(0d, 0, passionStub);
 	}
-	
-	public Experience(double value, int top){
+
+	public Experience(double value, int top) {
 		this(value, top, false);
 	}
 
 	public Experience(double value, int top, boolean passionStub) {
-		if (passionStub){
+		if (passionStub) {
 			int maxx = SimulationParameters.agentSkillsMaximumExperience;
 			this.value = maxx * expStub;
 			this.top = maxx;
@@ -45,11 +50,23 @@ public class Experience {
 			this.top = top;
 		}
 		this.lc = new LearningCurve();
-		say("Creating Experience object with value: " + this.value + " and top: "
-				+ this.top);
+		say("Creating Experience object with value: " + this.value
+				+ " and top: " + this.top);
 	}
 
 	public double getDelta() {
+		return getDelta(ApproximationMethod.SIGMOID);
+	}
+
+	public double getDelta(ApproximationMethod method) {
+		switch (method) {
+			case SIGMOID:
+				return sc.getDelta((value / top));
+			case CHI_SQUARE:
+				return lc.getDelta((value / top));
+			default:
+				break;
+		}
 		return lc.getDelta((value / top));
 	}
 
@@ -58,7 +75,7 @@ public class Experience {
 		DecimalFormat df = new DecimalFormat("#.######");
 		sanity("Experience incremented by: " + df.format(how_much));
 	}
-	
+
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}
@@ -66,25 +83,24 @@ public class Experience {
 	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}
-	
+
 	/**
 	 * Learning Process represented by Sigmoid function
 	 * 
 	 * @author Oskar Jarczyk
 	 * @since 1.0
-	 *
+	 * 
 	 */
 	class SigmoidCurve {
-		
+
 		SigmoidCurve() {
-			
+
 		}
-		
-		private double getDelta(double k){
-			return 1d / ( 1d + Math.pow(Math.E,-k) );
+
+		private double getDelta(double k) {
+			return 1d / (1d + Math.pow(Math.E, -k));
 		}
 	}
-
 
 	/**
 	 * 

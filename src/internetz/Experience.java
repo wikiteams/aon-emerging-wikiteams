@@ -49,9 +49,14 @@ public class Experience {
 			this.value = value;
 			this.top = top;
 		}
-		this.lc = new LearningCurve();
+		createMathematicalCurves();
 		say("Creating Experience object with value: " + this.value
 				+ " and top: " + this.top);
+	}
+	
+	private void createMathematicalCurves(){
+		this.lc = new LearningCurve();
+		this.sc = new SigmoidCurve();
 	}
 
 	public double getDelta() {

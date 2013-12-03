@@ -1,4 +1,4 @@
-<?xml version="1.0"?><sweep runs="3">
+<?xml version="1.0"?><sweep runs="40">
 <parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="choice" />
 <parameter name="allowMultiMembership" type="constant" constant_type="java.lang.Boolean" value="true" />
 <parameter name="deployedTasksLeave" type="constant" constant_type="java.lang.Boolean" value="true" />

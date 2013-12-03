@@ -157,6 +157,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		SanityLogger.init();
 		sanity(Constraints.LOGGER_INITIALIZED);
 		EndRunLogger.init();
+		EndRunLogger.buildHeaders(buildFinalMessageHeader());
 	}
 
 	private void initializeAgents() {
@@ -324,6 +325,20 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ SimulationParameters.taskSkillPoolDataset + ","
 				+ strategyDistribution.getSkillChoice() + ","
 						+ strategyDistribution.getTaskMinMaxChoice();
+	}
+	
+	private String buildFinalMessageHeader(){
+		return "Batch Number"
+				+ ","
+				+ "Run Number"
+				+ ","
+				+ "Tick Count"
+				+ "Task choice strategy"
+				+ "fillAgentSkillsMethod"
+				+ "agentSkillPoolDataset"
+				+ "taskSkillPoolDataset"
+				+ "Skill choice strategy"
+						+ "Task MinMax choice";
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)

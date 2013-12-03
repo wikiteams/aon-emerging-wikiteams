@@ -11,7 +11,8 @@ import org.apache.log4j.SimpleLayout;
 
 public class EndRunLogger {
 	
-	static Logger logger = Logger.getLogger(EndRunLogger.class);
+	private static Logger logger = Logger.getLogger(EndRunLogger.class);
+	private static boolean headersBuilt = false;
 
 	public static void init() {
 		// setting up a FileAppender dynamically...
@@ -54,5 +55,12 @@ public class EndRunLogger {
 	
 	public static void finalMessage(String message){
 		logger.info(message);
+	}
+	
+	public static void buildHeaders(String s){
+		if (!headersBuilt){
+			finalMessage(s);
+			headersBuilt = true;
+		}
 	}
 }

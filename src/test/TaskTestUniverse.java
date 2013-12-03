@@ -18,7 +18,7 @@ public class TaskTestUniverse {
 		DATASET.clear();
 		
 		Task task1 = new Task();
-		say("Initializing task..");
+		say("Initializing task 1..");
 		Skill skill11 = skillFactory.getSkill("Java");
 		WorkUnit workDone11 = new WorkUnit(3);
 		WorkUnit workRequired11 = new WorkUnit(18);
@@ -33,7 +33,7 @@ public class TaskTestUniverse {
 		task1.addSkill("XML", new TaskInternals(skill13, workRequired13, workDone13));
 		
 		Task task2 = new Task();
-		say("Initializing task2..");
+		say("Initializing task 2..");
 		Skill skill21 = skillFactory.getSkill("Java");
 		WorkUnit workDone21 = new WorkUnit(0);
 		WorkUnit workRequired21 = new WorkUnit(10);
@@ -48,7 +48,7 @@ public class TaskTestUniverse {
 		task2.addSkill("XML", new TaskInternals(skill23, workRequired23, workDone23));
 		
 		Task task3 = new Task();
-		say("Initializing task3..");
+		say("Initializing task 3..");
 		Skill skill31 = skillFactory.getSkill("Java");
 		WorkUnit workDone31 = new WorkUnit(11);
 		WorkUnit workRequired31 = new WorkUnit(18);
@@ -63,7 +63,7 @@ public class TaskTestUniverse {
 		task3.addSkill("XML", new TaskInternals(skill33, workRequired33, workDone33));
 		
 		Task task4 = new Task();
-		say("Initializing task4..");
+		say("Initializing task 4..");
 		Skill skill41 = skillFactory.getSkill("C");
 		WorkUnit workDone41 = new WorkUnit(0);
 		WorkUnit workRequired41 = new WorkUnit(12);
@@ -73,10 +73,22 @@ public class TaskTestUniverse {
 		task4.addSkill("C", new TaskInternals(skill41, workRequired41, workDone41));
 		task4.addSkill("XML", new TaskInternals(skill42, workRequired42, workDone42));
 		
+		Task task5 = new Task();
+		say("Initializing task 5..");
+		Skill skill51 = skillFactory.getSkill("C");
+		WorkUnit workDone51 = new WorkUnit(11);
+		WorkUnit workRequired51 = new WorkUnit(12);
+		Skill skill52 = skillFactory.getSkill("XML");
+		WorkUnit workDone52 = new WorkUnit(9);
+		WorkUnit workRequired52 = new WorkUnit(10);
+		task5.addSkill("C", new TaskInternals(skill51, workRequired51, workDone51));
+		task5.addSkill("XML", new TaskInternals(skill52, workRequired52, workDone52));
+		
 		DATASET.add(task1);
 		DATASET.add(task2);
 		DATASET.add(task3);
 		DATASET.add(task4);
+		DATASET.add(task5);
 	}
 	
 	private static void say(String s) {

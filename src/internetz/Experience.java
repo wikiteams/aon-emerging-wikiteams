@@ -1,5 +1,7 @@
 package internetz;
 
+import internetz.Experience.SigmoidCurve;
+
 import java.text.DecimalFormat;
 
 import logger.PjiitOutputter;
@@ -99,10 +101,10 @@ public class Experience {
 	class SigmoidCurve {
 
 		SigmoidCurve() {
-
+			say("Object SigmoidCurve created, ref: " + this);
 		}
 
-		private double getDelta(double k) {
+		protected double getDelta(double k) {
 			return 1d / (1d + Math.pow(Math.E, -k));
 		}
 	}
@@ -123,6 +125,7 @@ public class Experience {
 		int freedom = 6;
 
 		LearningCurve() {
+			say("Object LearningCurve created, with ref: " + this);
 			chi = new ChiSquare(freedom,
 					cern.jet.random.ChiSquare.makeDefaultGenerator());
 		}
@@ -141,10 +144,10 @@ public class Experience {
 
 class ExperienceSanityCheck {
 
-	ChiSquare chi;
-	int freedom;
-	int k;
-
+	private ChiSquare chi;
+	private int freedom;
+	private int k;
+	//private SigmoidCurve sigmoidCurve;
 	public static double EpsilonCutValue;
 
 	ExperienceSanityCheck() {
@@ -153,8 +156,10 @@ class ExperienceSanityCheck {
 
 		chi = new ChiSquare(freedom,
 				cern.jet.random.ChiSquare.makeDefaultGenerator());
-
+		//sigmoidCurve = new SigmoidCurve();
+		
 		checkChi();
+		checkSigmoid();
 
 		EpsilonCutValue = checkEpsilonFromChi();
 	}
@@ -170,11 +175,25 @@ class ExperienceSanityCheck {
 		say("chi.cdf(0.9): " + chi.cdf(0.999 * k));
 		say("chi.nextDouble(): " + chi.nextDouble());
 	}
+	
+	public void checkSigmoid() {
+		say("sigmoid(-3.000): " + sigmoidGetDelta(-3d));
+		say("sigmoid(0.000): " + sigmoidGetDelta(0d));
+		say("sigmoid(0.005): " + sigmoidGetDelta(0.005d));
+		say("sigmoid(0.505): " + sigmoidGetDelta(0.505d));
+		say("sigmoid(0.995): " + sigmoidGetDelta(0.995d));
+		say("sigmoid(1.000): " + sigmoidGetDelta(1d));
+		say("sigmoid(3.000): " + sigmoidGetDelta(3d));
+	}
 
 	public double checkEpsilonFromChi() {
 		double e = chi.cdf(1 * k);
 		say("chi.cdf(1): " + e);
 		return 1 - e;
+	}
+	
+	private double sigmoidGetDelta(double k) {
+		return 1d / (1d + Math.pow(Math.E, -k));
 	}
 
 	private void say(String s) {

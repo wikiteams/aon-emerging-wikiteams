@@ -4,41 +4,55 @@
     	converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" 
         type="string" defaultValue="Normal" 
         values="Normal Validation MultipleValidation Normal+Validation Stress" />
-    <parameter name="location" displayName="Location" type="string" 
-    	converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
-    	defaultValue="Metric" values="Metric Anglossas" />
-  
-	<parameter name="randomSeed" displayName="Default Random Seed"
-		type="int" defaultValue="__NULL__" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="skillChoiceAlgorithm" displayName="skillChoiceAlgorithm"
 		type="java.lang.String" defaultValue="greedy" isReadOnly="false" 
 		values="proportional greedy choice random"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
+	<parameter name="deployedTasksLeave" displayName="deployedTasksLeave"
+		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+	<parameter name="allowRookieForSkills" displayName="allowRookieForSkills"
+		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+	<parameter name="agentCount" displayName="agentCount" type="java.lang.Integer"
+		defaultValue="50" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="numTasks" displayName="numTasks" type="java.lang.Integer"
+		defaultValue="20" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="experienceDecay" displayName="experienceDecay"
+		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />					
+		        
+	<parameter name="strategyDistribution" displayName="strategyDistribution"
+		type="java.lang.Integer" defaultValue="0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="numSteps" displayName="numSteps" type="java.lang.Integer"
+		defaultValue="5000" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />		
+    
+    <parameter name="location" displayName="Location" type="string" 
+    	converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"
+    	defaultValue="Metric" values="Metric Anglossas" />
+	<parameter name="randomSeed" displayName="Default Random Seed"
+		type="int" defaultValue="__NULL__" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 		
 	<parameter name="agentSkillPoolDataset" displayName="agentSkillPoolDataset"
 		type="java.lang.String" defaultValue="STATIC_PULL_REQUESTS" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
-	<parameter name="fillAgentSkillsMethod" displayName="fillAgentSkillsMethod"
-		type="java.lang.String" defaultValue="TOP_ACTIVE" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
-		
 	<parameter name="taskSkillPoolDataset" displayName="taskSkillPoolDataset"
 		type="java.lang.String" defaultValue="STATIC_FREQUENCY_TABLE" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 	<parameter name="staticFrequencyTableSc" displayName="staticFrequencyTableSc"
 		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-		
+	<parameter name="fillAgentSkillsMethod" displayName="fillAgentSkillsMethod"
+		type="java.lang.String" defaultValue="TOP_ACTIVE" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />		
 	<parameter name="allowMultiMembership" displayName="allowMultiMembership"
 		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
-	<parameter name="deployedTasksLeave" displayName="deployedTasksLeave"
-		type="java.lang.Boolean" defaultValue="true" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
-	<parameter name="strategyDistribution" displayName="strategyDistribution"
-		type="java.lang.Integer" defaultValue="0" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="taskChoiceAlgorithm" displayName="taskChoiceAlgorithm"
 		type="java.lang.String" defaultValue="random" isReadOnly="false" 
 		values="homophyly heterophyly homophyly_experience heterophyly_experience preferential random minmax central comparision social_vector"
@@ -55,20 +69,11 @@
 	<parameter name="gitHubClusterizedDistribution" displayName="gitHubClusterizedDistribution"
 		type="java.lang.String" defaultValue="distribute" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
-	<parameter name="agentCount" displayName="agentCount" type="java.lang.Integer"
-		defaultValue="50" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-	<parameter name="numSteps" displayName="numSteps" type="java.lang.Integer"
-		defaultValue="5000" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="maxWorkRequired" displayName="maxWorkRequired"
 		type="java.lang.Integer" defaultValue="20" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="agentSkillsMaximumExperience" displayName="agentSkillsMaximumExperience"
 		type="java.lang.Integer" defaultValue="100" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
-	<parameter name="numTasks" displayName="numTasks" type="java.lang.Integer"
-		defaultValue="20" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="agentSkillsPoolRandomize1" displayName="agentSkillsPoolRandomizeNoOfTasks"
 		type="java.lang.Integer" defaultValue="5" isReadOnly="false"
@@ -77,10 +82,6 @@
 		type="java.lang.Integer" defaultValue="10" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="fullyLearnedAgentsLeave" displayName="fullyLearnedAgentsLeave"
-		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
-		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
-		
-	<parameter name="allowRookieForSkills" displayName="allowRookieForSkills"
 		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
 		

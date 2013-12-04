@@ -11,7 +11,8 @@ import test.ModelConverter;
  * for more convenient access to them
  * 
  * @author Oskar Jarczyk
- * @since 1.3
+ * @since 1.0
+ * @version 1.3
  */
 public class SimulationParameters {
 
@@ -29,7 +30,7 @@ public class SimulationParameters {
 	public static String taskMinMaxChoiceAlgorithm = "";
 	
 	public static int strategyDistribution = 0;
-
+	public static boolean experienceDecay = false;
 	public static int randomSeed = 0;
 	
 	public static String taskSkillPoolDataset = "";
@@ -88,6 +89,8 @@ public class SimulationParameters {
 		maxWorkRequired = (Integer) param
 				.getValue("maxWorkRequired");
 		
+		experienceDecay = (Boolean) param
+				.getValue("experienceDecay");
 		deployedTasksLeave = (Boolean) param
 				.getValue("deployedTasksLeave");
 		fullyLearnedAgentsLeave = (Boolean) param

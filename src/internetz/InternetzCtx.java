@@ -116,7 +116,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 					.setTaskChoice(modelFactory, 
 							SimulationParameters.taskChoiceAlgorithm);
 			strategyDistribution
-					.setTaskMinMaxChoice(SimulationParameters.taskMinMaxChoiceAlgorithm);
+					.setTaskMinMaxChoice(modelFactory, 
+							SimulationParameters.taskMinMaxChoiceAlgorithm);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			say(Constraints.UNKNOWN_EXCEPTION);

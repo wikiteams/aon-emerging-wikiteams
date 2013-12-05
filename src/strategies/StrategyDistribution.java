@@ -18,6 +18,8 @@ public class StrategyDistribution {
 			"central" };
 	private String[] skillChoiceSet = { "proportional", "greedy", "choice",
 			"random" };
+	private String[] taskMinMaxChoiceSet = { "maxmax", "maxmin", "minmax",
+			"minmin" };
 
 	private int type;
 
@@ -136,6 +138,17 @@ public class StrategyDistribution {
 
 	public void setTaskMinMaxChoice(String taskMinMaxChoice) {
 		this.taskMinMaxChoice = taskMinMaxChoice;
+	}
+	
+	public void setTaskMinMaxChoice(ModelFactory modelFactory, String taskMinMaxChoice) {
+		if (modelFactory.getFunctionality().isMultipleValidation()) {
+			int intRandomized = RandomHelper.nextIntFromTo(0,
+					taskMinMaxChoiceSet.length - 1);
+			assert (intRandomized >= 0)
+					&& (intRandomized <= taskChoiceSet.length - 1);
+			this.taskMinMaxChoice = taskMinMaxChoiceSet[intRandomized];
+		} else
+			this.taskMinMaxChoice = taskMinMaxChoice;
 	}
 
 }

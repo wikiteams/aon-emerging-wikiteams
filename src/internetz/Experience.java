@@ -177,6 +177,9 @@ class ExperienceSanityCheck {
 	}
 	
 	public void checkSigmoid() {
+		say("sigmoid(-10.000): " + sigmoidGetDelta(-10d));
+		say("sigmoid(-8.000): " + sigmoidGetDelta(-8d));
+		say("sigmoid(-6.000): " + sigmoidGetDelta(-6d));
 		say("sigmoid(-3.000): " + sigmoidGetDelta(-3d));
 		say("sigmoid(0.000): " + sigmoidGetDelta(0d));
 		say("sigmoid(0.005): " + sigmoidGetDelta(0.005d));
@@ -184,6 +187,9 @@ class ExperienceSanityCheck {
 		say("sigmoid(0.995): " + sigmoidGetDelta(0.995d));
 		say("sigmoid(1.000): " + sigmoidGetDelta(1d));
 		say("sigmoid(3.000): " + sigmoidGetDelta(3d));
+		say("sigmoid(6.000): " + sigmoidGetDelta(6d));
+		say("sigmoid(8.000): " + sigmoidGetDelta(8d));
+		say("sigmoid(10.000): " + sigmoidGetDelta(10d));
 	}
 
 	public double checkEpsilonFromChi() {

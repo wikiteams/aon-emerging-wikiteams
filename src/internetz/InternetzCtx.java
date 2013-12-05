@@ -332,12 +332,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ ","
 				+ "Run Number"
 				+ ","
-				+ "Tick Count"
-				+ "Task choice strategy"
-				+ "fillAgentSkillsMethod"
-				+ "agentSkillPoolDataset"
-				+ "taskSkillPoolDataset"
-				+ "Skill choice strategy"
+				+ "Tick Count" + ","
+				+ "Task choice strategy" + ","
+				+ "fillAgentSkillsMethod" + ","
+				+ "agentSkillPoolDataset" + ","
+				+ "taskSkillPoolDataset" + ","
+				+ "Skill choice strategy" + ","
 						+ "Task MinMax choice";
 	}
 

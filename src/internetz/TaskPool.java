@@ -355,6 +355,9 @@ public class TaskPool extends DefaultContext<Task> {
 		case COMPARISION:
 			;
 			break;
+		case CENTRAL_ASSIGNMENT:
+			;
+			break;
 		case MACHINE_LEARNED:
 			;
 			break;

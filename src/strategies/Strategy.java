@@ -82,11 +82,17 @@ public class Strategy {
 		 */
 		HOMOPHYLY_CLASSIC,
 		/**
-		 * 
+		 * In this strategy we take first task top from the sort result of intersection. 
+		 * For agent $A_{i}$, let's consider his skills $\{S_{1}^{A_{i}},...,S_{i}^{A_{i}}\}$. 
+		 * Algorithm iterates through all available tasks and searches for intersection. 
+		 * It means, that if there is such task $T_{i}$ having skills $\{S_{1}^{T_{i}},...,S_{i}^{T_{i}}\}$ 
+		 * which satisfies $\exists\{S_{j}^{A}\}\cap\{S_{j}^{T}\}$ and $\{S_{j}^{A}\}\cap\{S_{j}^{T}\}$ 
+		 * is \textsl{not null}, than take this task into consideration and calculate sum of progress. 
+		 * If there are no tasks which have a common skill with agent's skills, than agent chooses a random task.
 		 */
 		HETEROPHYLY_CLASSIC,
 		/**
-		 * 
+		 * In this strategy we take first task bottom from the sort result of intersection.
 		 */
 		CENTRAL_ASSIGNMENT
 	}

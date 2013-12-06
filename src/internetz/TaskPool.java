@@ -13,6 +13,8 @@ import logger.PjiitOutputter;
 import repast.simphony.context.DefaultContext;
 import strategies.Aggregate;
 import strategies.Strategy;
+import tasks.Heterophyly;
+import tasks.Homophyly;
 import argonauts.PersistJobDone;
 
 public class TaskPool extends DefaultContext<Task> {
@@ -46,7 +48,7 @@ public class TaskPool extends DefaultContext<Task> {
 		assert strategy != null;
 		
 		switch (strategy) {
-		// *******************************************************************************
+		// *********************************************************************
 		case HOMOPHYLY_EXP_BASED:
 			assert agent != null;
 			Collection<Skill> skillsByExperienceHmphly = null;
@@ -212,78 +214,12 @@ public class TaskPool extends DefaultContext<Task> {
 			// random
 			break;
 		case HOMOPHYLY_CLASSIC:
-			Task taskWithHighestSG = null;
-			double found_sigma_delta = 0;
-			//ArrayList<Task> tasksWithMatchingSkillsHomCl = new ArrayList<Task>();
-			Collection<Skill> allAgentSkillsHomCl = agent.getSkills();
-			for (Task singleTaskFromPool : tasks.values()) {
-				double sigma_delta = 0;
-				boolean consider = false;
-				for (Skill singleSkill : allAgentSkillsHomCl) {
-					if (singleTaskFromPool.getTaskInternals().containsKey(
-							singleSkill.toString())) {
-						consider = true;
-						sigma_delta += singleTaskFromPool.
-								getTaskInternals(singleSkill.getName()).getProgress();
-					}
-				}
-				if (consider){
-					if (taskWithHighestSG == null) {
-						taskWithHighestSG = singleTaskFromPool;
-						found_sigma_delta = sigma_delta;
-					} else {
-						if (found_sigma_delta < sigma_delta) {
-							taskWithHighestSG = singleTaskFromPool;
-						}
-					}
-				}
-			}
-			if (taskWithHighestSG != null){
-				chosen = taskWithHighestSG;
-			} else {
-				// intersection is empty, chose random
-				if (tasks.size() > 0)
-					chosen = tasks.get(new Random().nextInt(tasks.size()));
-				else
-					chosen = null;
-			}
+			Homophyly homophyly = new Homophyly(tasks);
+			chosen = homophyly.concludeMath(agent);
 			break;
 		case HETEROPHYLY_CLASSIC:
-			Task taskWithLowestSG = null;
-			double found_sigma_delta_hetero = 0;
-			//ArrayList<Task> tasksWithMatchingSkillsHomCl = new ArrayList<Task>();
-			Collection<Skill> allAgentSkillsHetCl = agent.getSkills();
-			for (Task singleTaskFromPool : tasks.values()) {
-				double sigma_delta = 0;
-				boolean consider = false;
-				for (Skill singleSkill : allAgentSkillsHetCl) {
-					if (singleTaskFromPool.getTaskInternals().containsKey(
-							singleSkill.toString())) {
-						consider = true;
-						sigma_delta += singleTaskFromPool.
-								getTaskInternals(singleSkill.getName()).getProgress();
-					}
-				}
-				if (consider){
-					if (taskWithLowestSG == null) {
-						taskWithLowestSG = singleTaskFromPool;
-						found_sigma_delta = sigma_delta;
-					} else {
-						if (found_sigma_delta_hetero < sigma_delta) {
-							taskWithLowestSG = singleTaskFromPool;
-						}
-					}
-				}
-			}
-			if (taskWithLowestSG != null){
-				chosen = taskWithLowestSG;
-			} else {
-				// intersection is empty, chose random
-				if (tasks.size() > 0)
-					chosen = tasks.get(new Random().nextInt(tasks.size()));
-				else
-					chosen = null;
-			}
+			Heterophyly heterophyly = new Heterophyly(tasks);
+			chosen = heterophyly.concludeMath(agent);
 			break;
 		case SOCIAL_VECTOR:
 			// TODO: check if you added "category" attribute to Skills

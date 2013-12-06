@@ -8,14 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-import constants.Constraints;
 import logger.PjiitOutputter;
 import repast.simphony.context.DefaultContext;
-import strategies.Aggregate;
 import strategies.Strategy;
+import tasks.ArgMinMax;
+import tasks.CentralAssignment;
 import tasks.Heterophyly;
 import tasks.Homophyly;
+import tasks.Preferential;
 import argonauts.PersistJobDone;
+import constants.Constraints;
 
 public class TaskPool extends DefaultContext<Task> {
 
@@ -226,48 +228,10 @@ public class TaskPool extends DefaultContext<Task> {
 			;
 			break;
 		case PREFERENTIAL:
-			Task mostAdvanced = null;
-			ArrayList<Task> tasksWithMatchingSkillsPref = new ArrayList<Task>();
-			Collection<Skill> allAgentSkillsPref = agent.getSkills();
-			for (Task singleTaskFromPool : tasks.values()) {
-				internal:for (Skill singleSkill : allAgentSkillsPref) {
-					if (singleTaskFromPool.getTaskInternals().containsKey(
-							singleSkill.toString())) {
-						tasksWithMatchingSkillsPref.add(singleTaskFromPool);
-						if (mostAdvanced == null) {
-							mostAdvanced = singleTaskFromPool;
-						} else {
-							if (mostAdvanced.getGeneralAdvance() < singleTaskFromPool
-									.getGeneralAdvance()) {
-								mostAdvanced = singleTaskFromPool;
-							}
-						}
-						break internal;
-					}
-				}
-			}
-
-			if ( (tasksWithMatchingSkillsPref.size() < 1) || (mostAdvanced == null) ) {
-				//mostAdvanced = null;
-				for (Task singleTaskFromPool : tasks.values()) {
-					if (mostAdvanced == null) {
-						mostAdvanced = singleTaskFromPool;
-					} else {
-						if (mostAdvanced.getGeneralAdvance() < singleTaskFromPool
-								.getGeneralAdvance()) {
-							mostAdvanced = singleTaskFromPool;
-						}
-					}
-				}
-			}
-			
-			//assert mostAdvanced != null;
-
-			if (mostAdvanced != null) {
-				chosen = mostAdvanced;
-			} else {
+			Preferential preferential = new Preferential(tasks);
+			chosen = preferential.concludeMath(agent);
+			if (chosen == null)
 				say(Constraints.DIDNT_FOUND_TASK_TO_WORK_ON);
-			}
 			break;
 		// *******************************************************************************
 		case RANDOM:
@@ -292,88 +256,16 @@ public class TaskPool extends DefaultContext<Task> {
 			;
 			break;
 		case CENTRAL_ASSIGNMENT:
-			;
+			CentralAssignment centralAssignment = new CentralAssignment(tasks);
+			chosen = centralAssignment.concludeMath(agent);
 			break;
 		case MACHINE_LEARNED:
 			;
 			break;
 		// *******************************************************************************
 		case ARG_MIN_MAX:
-
-			ArrayList<Task> tasksWithMatchingSkillsMinMax = new ArrayList<Task>();
-			Collection<Skill> allAgentSkillsPreMinMax = agent.getSkills();
-			for (Task singleTaskFromPool : tasks.values()) {
-				for (Skill singleSkill : allAgentSkillsPreMinMax) {
-					if (singleTaskFromPool.getTaskInternals().containsKey(
-							singleSkill.toString())) {
-						tasksWithMatchingSkillsMinMax.add(singleTaskFromPool);
-					}
-				}
-			}
-
-			if (tasksWithMatchingSkillsMinMax.size() < 1) {
-				say("Didn't found task with such skills which agent have!");
-				break;
-			}
-
-			Collection<Skill> allAgentSkillsMinMax = agent.getSkills();
-
-			Random generator = new Random();
-			Task randomValue = tasksWithMatchingSkillsMinMax.get(generator
-					.nextInt(tasksWithMatchingSkillsMinMax.size()));
-
-			Task argMaxMax = randomValue;
-			Task argMaxMin = randomValue;
-			Task argMinMax = randomValue;
-			Task argMinMin = randomValue;
-
-			for (Task singleTaskFromPool : tasks.values()) {
-				boolean consider = false;
-				for (Skill singleSkill : allAgentSkillsMinMax) {
-					if (singleTaskFromPool.getTaskInternals().containsKey(
-							singleSkill.toString())) {
-						consider = true;
-						break;
-					}
-				}
-				if (consider) {
-					Aggregate aggregate = singleTaskFromPool.argmaxmin();
-					assert aggregate != null;
-					switch (agent.getStrategy().taskMinMaxChoice) {
-					case ARGMAX_ARGMAX:
-						if (aggregate.argmax > argMaxMax.argmax()) {
-							argMaxMax = singleTaskFromPool;
-
-						}
-						chosen = argMaxMax;
-						break;
-					case ARGMAX_ARGMIN:
-						if (aggregate.argmin > argMaxMax.argmin()) {
-							argMaxMin = singleTaskFromPool;
-
-						}
-						chosen = argMaxMin;
-						break;
-					case ARGMIN_ARGMAX:
-						if (aggregate.argmax < argMaxMax.argmax()) {
-							argMinMax = singleTaskFromPool;
-
-						}
-						chosen = argMinMax;
-						break;
-					case ARGMIN_ARGMIN:
-						if (aggregate.argmin < argMaxMax.argmin()) {
-							argMinMin = singleTaskFromPool;
-
-						}
-						chosen = argMinMin;
-						break;
-					default:
-						assert false; // should never happen
-						break;
-					}
-				}
-			}
+			ArgMinMax argMinMax = new ArgMinMax(tasks);
+			chosen = argMinMax.concludeMath(agent);
 			break;
 		default:
 			assert false; // there is no default method, so please never happen

@@ -6,7 +6,6 @@ import internetz.Task;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Random;
 
 import repast.simphony.random.RandomHelper;
 

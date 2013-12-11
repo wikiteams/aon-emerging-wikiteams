@@ -39,6 +39,10 @@ public class TaskPool extends DefaultContext<Task> {
 	public Task getTask(String key) {
 		return tasks.get(key);
 	}
+	
+	public Collection<Task> getTasks() {
+		return tasks.values();
+	}
 
 	public int getCount() {
 		return tasks.size();

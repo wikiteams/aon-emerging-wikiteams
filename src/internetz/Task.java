@@ -14,9 +14,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import logger.PjiitOutputter;
 import strategies.Aggregate;
+import strategies.CentralAssignmentTask;
 import strategies.GreedyAssignmentTask;
 import strategies.ProportionalTimeDivision;
 import strategies.Strategy;
+import tasks.CentralAssignment;
+import tasks.CentralAssignmentOrders;
 import argonauts.PersistJobDone;
 import constants.Constraints;
 
@@ -156,6 +159,28 @@ public class Task {
 			}
 		}
 		return returnCollection;
+	}
+	
+	public void workOnTaskControlled(Agent agent){
+		CentralAssignmentOrders cao = agent.getCentralAssignmentOrders();
+		CentralAssignmentTask centralAssignmentTask = new CentralAssignmentTask();
+		TaskInternals taskInternal = this.getTaskInternals(cao.getChosenSkill());
+		sanity("Choosing Si:{"
+				+ taskInternal.getSkill().getName()
+				+ "} inside Ti:{" + this.toString() + "}");
+
+		Experience experience = agent.getAgentInternals(
+				cao.getChosenSkill())
+				.getExperience();
+		double delta = experience.getDelta();
+		centralAssignmentTask.increment(this, taskInternal, 1,
+				delta);
+		experience.increment(1);
+		
+		if (SimulationParameters.deployedTasksLeave)
+			TaskPool.considerEnding(this);
+
+		PersistJobDone.addContribution(agent.getNick(), this);
 	}
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {

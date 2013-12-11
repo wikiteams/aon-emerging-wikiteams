@@ -16,11 +16,15 @@ import logger.ValidationLogger;
 import logger.ValidationOutputter;
 
 import org.apache.log4j.LogManager;
+import org.jfree.chart.block.CenterArrangement;
 
+import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
+import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ISchedulableAction;
+import repast.simphony.engine.schedule.ISchedule;
 import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
@@ -29,6 +33,8 @@ import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
+import tasks.CentralAssignment;
+import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
@@ -42,12 +48,13 @@ import constants.ModelFactory;
  * COIN network emergence simulator, successfully moved to Repast Simphony 2.1
  * for better performance
  * 
- * @version 1.3 "Bobo bear"
+ * @version 1.3 "Bobo Bear"
  * @since 1.0
  * @author Oskar Jarczyk (since 1.0+)
  * @see 1) github markdown 2) "On the effectiveness of emergent task allocation"
  */
-public class InternetzCtx extends DefaultContext<Object> {
+public class InternetzCtx extends DefaultContext<Object> implements
+		ContextBuilder<Object> {
 
 	private StrategyDistribution strategyDistribution;
 
@@ -59,13 +66,13 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
-	
+
 	private boolean shutdownInitiated = false;
 	private boolean alreadyFlushed = false;
 
 	public InternetzCtx() {
 		super("InternetzCtx");
-		
+
 		try {
 			initializeLoggers();
 			RandomHelper.init();
@@ -109,15 +116,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 			strategyDistribution
 					.setType(SimulationParameters.strategyDistribution);
-			strategyDistribution
-					.setSkillChoice(modelFactory, 
-							SimulationParameters.skillChoiceAlgorithm);
-			strategyDistribution
-					.setTaskChoice(modelFactory, 
-							SimulationParameters.taskChoiceAlgorithm);
-			strategyDistribution
-					.setTaskMinMaxChoice(modelFactory, 
-							SimulationParameters.taskMinMaxChoiceAlgorithm);
+			strategyDistribution.setSkillChoice(modelFactory,
+					SimulationParameters.skillChoiceAlgorithm);
+			strategyDistribution.setTaskChoice(modelFactory,
+					SimulationParameters.taskChoiceAlgorithm);
+			strategyDistribution.setTaskMinMaxChoice(modelFactory,
+					SimulationParameters.taskMinMaxChoiceAlgorithm);
 		} catch (Exception exc) {
 			exc.printStackTrace();
 			say(Constraints.UNKNOWN_EXCEPTION);
@@ -131,12 +135,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		say("Task choice algorithm is "
 				+ SimulationParameters.taskChoiceAlgorithm);
-		sanity("Number of teams created "
-				+ this.getObjects(Task.class).size());
+		sanity("Number of teams created " + this.getObjects(Task.class).size());
 		sanity("Number of agents created "
 				+ this.getObjects(Agent.class).size());
-		sanity("Algorithm tested: "
-				+ SimulationParameters.taskChoiceAlgorithm);
+		sanity("Algorithm tested: " + SimulationParameters.taskChoiceAlgorithm);
 
 		try {
 			outputAgentSkillMatrix();
@@ -288,7 +290,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		say("outputSNSData() check launched");
 		// outputAgentNetworkData();
 	}
-	
+
 	public void clearStaticHeap() {
 		say("Clearing static data from previous simulation");
 		PersistJobDone.clear();
@@ -312,8 +314,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			cleanAfter();
 		}
 	}
-	
-	private String buildFinalMessage(){
+
+	private String buildFinalMessage() {
 		return RunState.getInstance().getRunInfo().getBatchNumber()
 				+ ","
 				+ RunState.getInstance().getRunInfo().getRunNumber()
@@ -325,21 +327,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ SimulationParameters.agentSkillPoolDataset + ","
 				+ SimulationParameters.taskSkillPoolDataset + ","
 				+ strategyDistribution.getSkillChoice() + ","
-						+ strategyDistribution.getTaskMinMaxChoice();
+				+ strategyDistribution.getTaskMinMaxChoice();
 	}
-	
-	private String buildFinalMessageHeader(){
-		return "Batch Number"
-				+ ","
-				+ "Run Number"
-				+ ","
-				+ "Tick Count" + ","
-				+ "Task choice strategy" + ","
-				+ "fillAgentSkillsMethod" + ","
-				+ "agentSkillPoolDataset" + ","
-				+ "taskSkillPoolDataset" + ","
-				+ "Skill choice strategy" + ","
-						+ "Task MinMax choice";
+
+	private String buildFinalMessageHeader() {
+		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
+				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
+				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
+				+ "Skill choice strategy" + "," + "Task MinMax choice";
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
@@ -353,9 +348,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 			cleanAfter();
 		}
 	}
-	
-	private void cleanAfter(){
-		if (!alreadyFlushed){
+
+	private void cleanAfter() {
+		if (!alreadyFlushed) {
 			LogManager.shutdown();
 			alreadyFlushed = true;
 		}
@@ -382,10 +377,74 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	private void finalMessage(String s) {
-		if (modelFactory.getFunctionality().isValidation()){
+		if (modelFactory.getFunctionality().isValidation()) {
 			validation(s);
 		}
 		EndRunLogger.finalMessage(s);
+	}
+	
+	private void zeroAgentsOrders(){
+		say("Zeroing central plan !");
+		
+		for (Agent agent : listAgent){
+			agent.setCentralAssignmentOrders(null);
+		}
+	}
+
+	private void centralPlanning() {
+		say("Central planning working !");
+		
+		zeroAgentsOrders();
+		
+		for (int i = 0 ; i < listAgent.size() ; i++) {
+			double found_gMinusW = 0d;
+			Task chosen = null;
+			String skill = null;
+			
+			for (Task singleTaskFromPool : taskPool.getTasks()) {
+				//boolean consider = false;
+				
+				for (TaskInternals singleSkill : singleTaskFromPool.
+						getTaskInternals().values()) {
+					double gMinusW = singleSkill.getWorkLeft();
+					// ile pozostalo pracy
+					if (gMinusW > found_gMinusW){
+						//consider = true;
+						chosen = singleTaskFromPool;
+						skill = singleSkill.getSkill().getName();
+					}
+				}
+			}
+			
+			double max_delta = 0d;
+			Agent chosenAgent = null;
+			
+			//wybierz agenta m, który ma najwy¿sz¹ wydajnoœæ delta w skillu j
+			List<Agent> listOfAgents = CentralAssignment.choseAgents(listAgent);
+			for (Agent agent : listOfAgents){
+				double local_delta = 
+						agent.getAgentInternals(skill).getExperience().getDelta();
+				if (local_delta > max_delta){
+					chosenAgent = agent;
+				}
+			}
+			chosenAgent.setCentralAssignmentOrders(
+					new CentralAssignmentOrders(chosen, skill));
+		}
+	}
+
+	@Override
+	public Context build(Context<Object> context) {
+		if (strategyDistribution.getTaskChoice().equals("central")) {
+			say("Central planner initiating.....");
+			ISchedule schedule = RunEnvironment.getInstance()
+					.getCurrentSchedule();
+			ScheduleParameters params = ScheduleParameters.createRepeating(1,
+					1, ScheduleParameters.FIRST_PRIORITY);
+			schedule.schedule(params, this, "centralPlanning");
+			say("Central planner initiated and awaiting for call !");
+		}
+		return context;
 	}
 
 }

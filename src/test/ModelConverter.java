@@ -31,7 +31,7 @@ public class ModelConverter implements StringConverter<Model> {
 		StringTokenizer st = new StringTokenizer(strRep, "+");
 		while (st.hasMoreElements()) {
 			Object element = st.nextElement();
-			if (((String) element).toLowerCase().equals("model")) {
+			if (((String) element).toLowerCase().equals("normal")) {
 				model.setNormal(true);
 			}
 			if (((String) element).toLowerCase().equals("validation")) {

@@ -16,11 +16,8 @@ import logger.ValidationLogger;
 import logger.ValidationOutputter;
 
 import org.apache.log4j.LogManager;
-import org.jfree.chart.block.CenterArrangement;
 
-import repast.simphony.context.Context;
 import repast.simphony.context.DefaultContext;
-import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ISchedulableAction;
@@ -31,6 +28,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
+import strategies.CentralPlanning;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
 import tasks.CentralAssignment;
@@ -53,8 +51,7 @@ import constants.ModelFactory;
  * @author Oskar Jarczyk (since 1.0+)
  * @see 1) github markdown 2) "On the effectiveness of emergent task allocation"
  */
-public class InternetzCtx extends DefaultContext<Object> implements
-		ContextBuilder<Object> {
+public class InternetzCtx extends DefaultContext<Object> {
 
 	private StrategyDistribution strategyDistribution;
 
@@ -66,6 +63,8 @@ public class InternetzCtx extends DefaultContext<Object> implements
 	private AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
+
+	private CentralPlanning centralPlanningHq;
 
 	private boolean shutdownInitiated = false;
 	private boolean alreadyFlushed = false;
@@ -145,11 +144,16 @@ public class InternetzCtx extends DefaultContext<Object> implements
 		} catch (IOException e) {
 			say(Constraints.IO_EXCEPTION);
 			e.printStackTrace();
+		} catch (NullPointerException nexc){
+			say(Constraints.UNKNOWN_EXCEPTION);
+			nexc.printStackTrace();
 		}
 
 		if (SimulationParameters.forceStop)
 			RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
 
+		buildCentralPlanner();
+		
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
 	}
@@ -209,6 +213,8 @@ public class InternetzCtx extends DefaultContext<Object> implements
 		} else if (model.isValidation()) {
 			TaskTestUniverse.init();
 			initalizeValidationTasks();
+		} else {
+			assert false; // should never happen
 		}
 	}
 
@@ -383,59 +389,15 @@ public class InternetzCtx extends DefaultContext<Object> implements
 		EndRunLogger.finalMessage(s);
 	}
 	
-	private void zeroAgentsOrders(){
-		say("Zeroing central plan !");
-		
-		for (Agent agent : listAgent){
-			agent.setCentralAssignmentOrders(null);
-		}
+	public void centralPlanning() {
+		centralPlanningHq.centralPlanningCalc(listAgent, taskPool);
 	}
 
-	private void centralPlanning() {
-		say("Central planning working !");
-		
-		zeroAgentsOrders();
-		
-		for (int i = 0 ; i < listAgent.size() ; i++) {
-			double found_gMinusW = 0d;
-			Task chosen = null;
-			String skill = null;
-			
-			for (Task singleTaskFromPool : taskPool.getTasks()) {
-				//boolean consider = false;
-				
-				for (TaskInternals singleSkill : singleTaskFromPool.
-						getTaskInternals().values()) {
-					double gMinusW = singleSkill.getWorkLeft();
-					// ile pozostalo pracy
-					if (gMinusW > found_gMinusW){
-						//consider = true;
-						chosen = singleTaskFromPool;
-						skill = singleSkill.getSkill().getName();
-					}
-				}
-			}
-			
-			double max_delta = 0d;
-			Agent chosenAgent = null;
-			
-			//wybierz agenta m, który ma najwy¿sz¹ wydajnoœæ delta w skillu j
-			List<Agent> listOfAgents = CentralAssignment.choseAgents(listAgent);
-			for (Agent agent : listOfAgents){
-				double local_delta = 
-						agent.getAgentInternals(skill).getExperience().getDelta();
-				if (local_delta > max_delta){
-					chosenAgent = agent;
-				}
-			}
-			chosenAgent.setCentralAssignmentOrders(
-					new CentralAssignmentOrders(chosen, skill));
-		}
-	}
-
-	@Override
-	public Context build(Context<Object> context) {
+	public void buildCentralPlanner() {
+		say ("buildCentralPlanner lunched !");
 		if (strategyDistribution.getTaskChoice().equals("central")) {
+			centralPlanningHq = new CentralPlanning();
+			
 			say("Central planner initiating.....");
 			ISchedule schedule = RunEnvironment.getInstance()
 					.getCurrentSchedule();
@@ -444,7 +406,6 @@ public class InternetzCtx extends DefaultContext<Object> implements
 			schedule.schedule(params, this, "centralPlanning");
 			say("Central planner initiated and awaiting for call !");
 		}
-		return context;
 	}
 
 }

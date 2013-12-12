@@ -50,6 +50,7 @@ DOT,programming
 Darcs Patch,unknown/other
 Dart,programming
 DCPU-16 ASM,programming
+Delphi,programming
 Diff,unknown/other
 Dylan,programming
 Ecere Projects,data
@@ -118,9 +119,10 @@ Makefile,unknown/other
 Mako,unknown/other
 Markdown,markup
 Matlab,programming
-Max,programming
+Max/MSP,programming
 Max,programming
 Mirah,programming
+Modelica,programming
 Monkey,programming
 Moocode,unknown/other
 MoonScript,programming

@@ -11,29 +11,37 @@ import repast.simphony.annotate.AgentAnnot;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import strategies.Strategy;
+import tasks.CentralAssignmentOrders;
 import argonauts.PersistJobDone;
 
 @AgentAnnot(displayName="Agent")
 public class Agent {
-
-	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
-	
-	private Strategy strategy;
 	
 	private static final SkillFactory skillFactory = new SkillFactory();
-
 	public static int totalAgents = 0;
-	static double time = 0;
+	private static double time = 0;
 
-	private int id;
-	private String firstname;
-	private String lastname;
+	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
+	private Strategy strategy;
+	
+	private final int id = ++totalAgents;;
+	private String firstName;
+	private String lastName;
 	private String nick;
+	
+	private CentralAssignmentOrders centralAssignmentOrders;
 
 	public Agent() {
+		this("Undefined name", "Undefined", "Agent_");
+	}
+	
+	public Agent(String firstName, String lastName, String nick) {
 		say("Agent constructor called");
-		this.id = ++totalAgents;
+		//this.id = ++totalAgents;
 		AgentSkillsPool.fillWithSkills(this);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.nick = nick + this.id;
 	}
 
 	public void addSkill(String key, AgentInternals agentInternals) {
@@ -45,15 +53,10 @@ public class Agent {
 	}
 
 	public AgentInternals getAgentInternals(String key) {
-//		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY)){
-//			AgentInternals result = skills.get(key) == null ? (
-//					new AgentInternals(
-//							skillFactory.getSkill(key), 
-//							new Experience(true))
-//					) : skills.get(key);
-//			skills.put(key, result);
-//		}
-//		return skills.get(key); ---- THIS WAS SAFE, bet rewritten below to skip unnecessary if
+		return skills.get(key);
+	}
+	
+	public AgentInternals getAgentInternalsOrCreate(String key) {
 		AgentInternals result = null;
 		if (skills.get(key) == null){
 			result = (
@@ -79,27 +82,29 @@ public class Agent {
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		throw new UnsupportedOperationException();
+		//its a final field, so please dont touch it :)
+		//this.id = id;
 	}
 
 	public int getId() {
 		return this.id;
 	}
 
-	public String getFirstname() {
-		return firstname;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setFirstname(String firstname) {
-		this.firstname = firstname;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getLastname() {
-		return lastname;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	@ScheduledMethod(start = 1, interval = 1)
@@ -121,7 +126,10 @@ public class Agent {
 		if (taskToWork != null) {
 			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
-			taskToWork.workOnTask(this, this.strategy.skillChoice);
+			if (this.getCentralAssignmentOrders() != null){
+				taskToWork.workOnTaskControlled(this);
+			} else
+				taskToWork.workOnTask(this, this.strategy.skillChoice);
 			EnvironmentEquilibrium.setActivity(true);
 		} else {
 			say("Agent " + this.id + " didn't work on anything");
@@ -148,6 +156,16 @@ public class Agent {
 		this.strategy = strategy;
 	}
 	
+	public CentralAssignmentOrders getCentralAssignmentOrders() {
+		return centralAssignmentOrders;
+	}
+
+	public void setCentralAssignmentOrders(CentralAssignmentOrders centralAssignmentOrders) {
+		if (centralAssignmentOrders != null)
+			say("Agent " + this.nick + " got an order to work on " + centralAssignmentOrders);
+		this.centralAssignmentOrders = centralAssignmentOrders;
+	}
+
 	public String describeExperience(){
 //		Collection<AgentInternals> internals = this.getAgentInternals();
 //		Map<String, Double> deltaE = new HashMap<String, Double>();

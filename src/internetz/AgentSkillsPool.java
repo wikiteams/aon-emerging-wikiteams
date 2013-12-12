@@ -49,6 +49,10 @@ public abstract class AgentSkillsPool {
 		else if (method.toUpperCase().equals("STATIC_PULL_REQUESTS"))
 			instantiate(DataSet.STATIC_PULL_REQUESTS);
 	}
+	
+	public static void clear(){
+		skillSet.clear();
+	}
 
 	public static void instantiate(DataSet method) {
 		if (method == DataSet.STATIC_TOP1000_3SKILLS) {

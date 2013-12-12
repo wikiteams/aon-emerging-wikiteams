@@ -5,6 +5,9 @@ velocity_log*
 debug_log*
 debug.log
 
+AgentExperience*
+TaskAndInternals*
+
 /bin
 /output
 
@@ -16,3 +19,4 @@ debug.log
 /velocity.log
 /velocity.log.1
 /input_a1.csv
+/testbin

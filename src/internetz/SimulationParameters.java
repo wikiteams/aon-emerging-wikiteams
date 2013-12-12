@@ -3,6 +3,7 @@ package internetz;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.parameter.Parameters;
 import test.Model;
+import test.ModelConverter;
 
 /**
  * Basically stores parameters from repast file to a holder
@@ -10,7 +11,8 @@ import test.Model;
  * for more convenient access to them
  * 
  * @author Oskar Jarczyk
- * @since 1.3
+ * @since 1.0
+ * @version 1.3
  */
 public class SimulationParameters {
 
@@ -28,7 +30,7 @@ public class SimulationParameters {
 	public static String taskMinMaxChoiceAlgorithm = "";
 	
 	public static int strategyDistribution = 0;
-
+	public static boolean experienceDecay = false;
 	public static int randomSeed = 0;
 	
 	public static String taskSkillPoolDataset = "";
@@ -51,7 +53,10 @@ public class SimulationParameters {
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
 		
-		model_type = (Model) param.getValue("model_type");
+		ModelConverter modelConverter = new ModelConverter();
+		
+		model_type = (Model) modelConverter.fromString(
+				(String) param.getValue("modelType"));
 		location = (String) param.getValue("location");
 
 		agentCount = (Integer) param.getValue("agentCount");
@@ -84,6 +89,8 @@ public class SimulationParameters {
 		maxWorkRequired = (Integer) param
 				.getValue("maxWorkRequired");
 		
+		experienceDecay = (Boolean) param
+				.getValue("experienceDecay");
 		deployedTasksLeave = (Boolean) param
 				.getValue("deployedTasksLeave");
 		fullyLearnedAgentsLeave = (Boolean) param

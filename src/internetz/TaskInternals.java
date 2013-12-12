@@ -46,6 +46,10 @@ public class TaskInternals {
 		return Math.abs(this.workDone.d / this.workRequired.d);
 	}
 	
+	public double getWorkLeft(){
+		return Math.abs(this.workRequired.d - this.workDone.d);
+	}
+	
 	@Override
 	public String toString(){
 		DecimalFormat df = new DecimalFormat("#.######");

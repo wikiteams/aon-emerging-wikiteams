@@ -14,15 +14,19 @@ public class NamesGenerator {
 	
 	static RandomDataGenerator rdg = new RandomDataGenerator();
 	private static ArrayList<String> nicknames = new ArrayList<String>();
+	
+	public static void clear(){
+		nicknames.clear();
+	}
 
 	public static List<Agent> getnames(int count) {
 		List<Agent> randomPersons = rdg.generateList(
 				count,
-				new GenConfig().name(Name.Firstname, "firstname").name(
-						Name.Lastname, "lastname"), Agent.class);
+				new GenConfig().name(Name.Firstname, "firstName").name(
+						Name.Lastname, "lastName"), Agent.class);
 		
 		for(Agent agent : randomPersons){
-			String nick = agent.getFirstname() + "_" + agent.getLastname();
+			String nick = agent.getFirstName() + "_" + agent.getLastName();
 			if (! nicknames.contains(nick))
 				agent.setNick(nick);
 			else {

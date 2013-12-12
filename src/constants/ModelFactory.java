@@ -1,5 +1,7 @@
 package constants;
 
+import test.Model;
+
 /**
  * Tells whether we want to make model validations or just move to main
  * execution of simulation universe
@@ -10,42 +12,36 @@ package constants;
  */
 public class ModelFactory {
 
-	public enum ModelEnum {
-		NORMAL, VALIDATION, NORMAL_AND_VALIDATION
-	};
+	private Model functionality;
 
-	private static final ModelEnum DEFAULT = ModelEnum.NORMAL;
-	private ModelEnum functionality;
-
-	public ModelFactory() {
-		this(DEFAULT);
-	}
-
-	public ModelFactory(ModelEnum model) {
+	public ModelFactory(Model model) {
 		this.functionality = model;
 	}
 
-	public ModelEnum getFunctionality() {
+	public Model getFunctionality() {
 		return functionality;
 	}
 
-	public void setFunctionality(ModelEnum functionality) {
+	public void setFunctionality(Model functionality) {
 		this.functionality = functionality;
 	}
 
 	@Override
 	public String toString() {
-		switch (functionality) {
-		case NORMAL: {
-			return "Normal";
+		return functionality.getName();
+	}
+	
+	@Override
+	public int hashCode() {
+		return functionality.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof ModelFactory) {
+			ModelFactory other = (ModelFactory) obj;
+			return other.functionality.equals(this.functionality);
 		}
-		case VALIDATION: {
-			return "Validation";
-		}
-		case NORMAL_AND_VALIDATION: {
-			return "Normal+Validation";
-		}
-		}
-		return "ERR";
+		return false;
 	}
 }

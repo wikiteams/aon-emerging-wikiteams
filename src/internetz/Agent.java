@@ -24,7 +24,7 @@ public class Agent {
 	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
 	private Strategy strategy;
 	
-	private int id;
+	private final int id = ++totalAgents;;
 	private String firstName;
 	private String lastName;
 	private String nick;
@@ -32,16 +32,16 @@ public class Agent {
 	private CentralAssignmentOrders centralAssignmentOrders;
 
 	public Agent() {
-		new Agent("Undefined name", "Undefined", (totalAgents + 1) + "");
+		this("Undefined name", "Undefined", "Agent_");
 	}
 	
 	public Agent(String firstName, String lastName, String nick) {
 		say("Agent constructor called");
-		this.id = ++totalAgents;
+		//this.id = ++totalAgents;
 		AgentSkillsPool.fillWithSkills(this);
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.nick = nick;
+		this.nick = nick + this.id;
 	}
 
 	public void addSkill(String key, AgentInternals agentInternals) {
@@ -53,6 +53,10 @@ public class Agent {
 	}
 
 	public AgentInternals getAgentInternals(String key) {
+		return skills.get(key);
+	}
+	
+	public AgentInternals getAgentInternalsOrCreate(String key) {
 		AgentInternals result = null;
 		if (skills.get(key) == null){
 			result = (
@@ -78,7 +82,9 @@ public class Agent {
 	}
 
 	public void setId(int id) {
-		this.id = id;
+		throw new UnsupportedOperationException();
+		//its a final field, so please dont touch it :)
+		//this.id = id;
 	}
 
 	public int getId() {
@@ -155,6 +161,8 @@ public class Agent {
 	}
 
 	public void setCentralAssignmentOrders(CentralAssignmentOrders centralAssignmentOrders) {
+		if (centralAssignmentOrders != null)
+			say("Agent " + this.nick + " got an order to work on " + centralAssignmentOrders);
 		this.centralAssignmentOrders = centralAssignmentOrders;
 	}
 

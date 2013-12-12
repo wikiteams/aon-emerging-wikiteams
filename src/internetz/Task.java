@@ -169,7 +169,7 @@ public class Task {
 				+ taskInternal.getSkill().getName()
 				+ "} inside Ti:{" + this.toString() + "}");
 
-		Experience experience = agent.getAgentInternals(
+		Experience experience = agent.getAgentInternalsOrCreate(
 				cao.getChosenSkill())
 				.getExperience();
 		double delta = experience.getDelta();
@@ -215,7 +215,7 @@ public class Task {
 						+ singleTaskInternalFromIntersect.toString() + "}");
 				double n = intersection.size();
 				double alpha = 1d / n;
-				Experience experience = agent.getAgentInternals(
+				Experience experience = agent.getAgentInternalsOrCreate(
 						singleTaskInternalFromIntersect.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
@@ -256,7 +256,7 @@ public class Task {
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
 				// int n = skills.size();
 				// double alpha = 1 / n;
-				Experience experience = agent.getAgentInternals(
+				Experience experience = agent.getAgentInternalsOrCreate(
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
@@ -293,7 +293,7 @@ public class Task {
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
-				Experience experience = agent.getAgentInternals(
+				Experience experience = agent.getAgentInternalsOrCreate(
 						singleTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();
@@ -317,7 +317,7 @@ public class Task {
 						+ "} inside Ti:{" + randomTaskInternal.toString() + "}");
 				// int n = skills.size();
 				// double alpha = 1 / n;
-				Experience experience = agent.getAgentInternals(
+				Experience experience = agent.getAgentInternalsOrCreate(
 						randomTaskInternal.getSkill().getName())
 						.getExperience();
 				double delta = experience.getDelta();

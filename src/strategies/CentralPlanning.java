@@ -7,9 +7,11 @@ import internetz.TaskPool;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import logger.PjiitOutputter;
+import repast.simphony.random.RandomHelper;
 import tasks.CentralAssignment;
 import tasks.CentralAssignmentOrders;
 
@@ -36,7 +38,7 @@ public class CentralPlanning {
 	private Boolean checkIfApplicable(Task task, String skill){
 		boolean applicable = true;
 		for (Object[] object : taken){
-			if (((Task)object[0] ).equals(task) && ((String)object[1]).equals(skill)){
+			if (((Task)object[0]).equals(task) && ((String)object[1]).equals(skill)){
 				applicable = false;
 			}
 		}
@@ -51,11 +53,32 @@ public class CentralPlanning {
 		
 		zeroAgentsOrders(listAgent);
 		
-		for (int i = 0 ; i < listAgent.size() ; i++) {
+		mainloop: for (int i = 0 ; i < listAgent.size() ; i++) {
 			double found_gMinusW = 0d;
+			
 			Task chosen = null;
 			String skill = null;
+			List<Task> lista = new ArrayList<Task>(taskPool.getTasks());
+			Collections.shuffle(lista);
 			
+			that:for(Task task_ : lista){
+				List<TaskInternals> lista2 = new ArrayList<TaskInternals>(
+						task_.getTaskInternals().values());
+				Collections.shuffle(lista2);
+				for(TaskInternals ti_ : lista2){
+					if (checkIfApplicable(task_, ti_.getSkill().getName())){
+						chosen = task_;
+						skill = ti_.getSkill().getName();
+						break that;
+					}
+				}
+			}
+			
+			if ( (chosen == null) || (skill == null) )
+				break mainloop;
+			
+			assert chosen != null;
+			assert skill != null;
 			//ArrayList<Task> intersection = makeIntersection(taskPool.getTasks());
 			
 			for (Task singleTaskFromPool : taskPool.getTasks()) {
@@ -83,12 +106,19 @@ public class CentralPlanning {
 			List<Agent> listOfAgents = CentralAssignment.choseAgents(listAgent, bussy);
 			
 			for (Agent agent : listOfAgents){
-				double local_delta = 
-						agent.getAgentInternals(skill).getExperience().getDelta();
+				double local_delta = agent.getAgentInternals(skill) != null ?
+						agent.getAgentInternals(skill).getExperience().getDelta() : 0;
 				if (local_delta > max_delta){
 					chosenAgent = agent;
 				}
 			}
+			
+			if (chosenAgent == null){
+				// nie ma zadnego agenta o takich skillach, wybierz losowo
+				chosenAgent = listOfAgents.get(RandomHelper.
+						nextIntFromTo(0, listOfAgents.size() - 1));
+			}
+			
 			chosenAgent.setCentralAssignmentOrders(
 					new CentralAssignmentOrders(chosen, skill));
 			

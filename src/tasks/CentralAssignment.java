@@ -40,7 +40,7 @@ public class CentralAssignment {
 		Task chosen = null;
 		
 		CentralAssignmentOrders cao = agent.getCentralAssignmentOrders();
-		chosen = cao.getChosenTask();
+		chosen = cao == null ? null : cao.getChosenTask();
 
 		return chosen;
 	}

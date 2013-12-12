@@ -32,5 +32,10 @@ public class CentralAssignmentOrders {
 	public void setChosenTask(Task chosenTask) {
 		this.chosenTask = chosenTask;
 	}
+	
+	@Override
+	public String toString(){
+		return this.chosenTask.getName() + " " + this.chosenSkill;
+	}
 
 }

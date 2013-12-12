@@ -390,6 +390,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 	
 	public void centralPlanning() {
+		say("CentralPlanning scheduled method launched, listAgent.size(): " 
+				+ listAgent.size() + " taskPool.size(): " + taskPool.size());
 		centralPlanningHq.centralPlanningCalc(listAgent, taskPool);
 	}
 

@@ -260,7 +260,7 @@ public class TaskPool extends DefaultContext<Task> {
 			;
 			break;
 		case CENTRAL_ASSIGNMENT:
-			CentralAssignment centralAssignment = new CentralAssignment(tasks);
+			CentralAssignment centralAssignment = new CentralAssignment();
 			chosen = centralAssignment.concludeMath(agent);
 			break;
 		case MACHINE_LEARNED:

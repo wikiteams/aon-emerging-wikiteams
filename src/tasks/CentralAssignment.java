@@ -14,12 +14,6 @@ import strategies.Strategy.TaskChoice;
 
 public class CentralAssignment {
 
-	private Map<String, Task> tasks;
-
-	public CentralAssignment(Map<String, Task> tasks) {
-		this.tasks = tasks;
-	}
-
 	public static List<Agent> choseAgents(Collection<Agent> agents, Collection<Agent> bussy) {
 		List<Agent> list = new ArrayList<Agent>();
 		for (Agent agent : agents) {

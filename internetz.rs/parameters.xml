@@ -96,8 +96,8 @@
 		type="java.lang.Integer" defaultValue="75" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
 	<parameter name="granularityType" displayName="granularityType"
-		type="java.lang.String" defaultValue="TASKONLY" isReadOnly="false"
-		values="TASKONLY TASKANDSKILL"
+		type="java.lang.String" defaultValue="DISTRIBUTION" isReadOnly="false"
+		values="TASKONLY TASKANDSKILL DISTRIBUTION"
 		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 </parameters>
 

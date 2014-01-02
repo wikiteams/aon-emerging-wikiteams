@@ -10,6 +10,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import repast.simphony.random.RandomHelper;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -180,9 +181,9 @@ public abstract class AgentSkillsPool {
 			}
 		} else if (method == Method.RANDOM_FROM_GENERAL_POOL) {
 			// randomize HOW MANY SKILLS
-			Random generator = new Random();
-			int how_many = generator
-					.nextInt(SimulationParameters.agentSkillsPoolRandomize1);
+			//Random generator = new Random();
+			int how_many = RandomHelper.nextIntFromTo(0, 
+					SimulationParameters.agentSkillsPoolRandomize1 - 1);
 			ArrayList<Skill> __skills = new ArrayList<Skill>();
 			for (int i = 0; i < how_many; i++) {
 				Skill s1 = null;
@@ -195,9 +196,9 @@ public abstract class AgentSkillsPool {
 						break;
 					}
 				}
-				Random generator_exp = new Random();
+				//Random generator_exp = new Random();
 				int topExperience = SimulationParameters.agentSkillsMaximumExperience;
-				int experienceRandomized = generator_exp.nextInt(topExperience);
+				int experienceRandomized = RandomHelper.nextIntFromTo(0,topExperience-1);
 				// double exp__d = (double)exp__ / (double)top;
 				// dont do that, we want to persist integer experience
 				// not result of delta(exp) function !

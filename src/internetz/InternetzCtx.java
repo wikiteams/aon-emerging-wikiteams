@@ -38,6 +38,7 @@ import test.Model;
 import test.TaskTestUniverse;
 import utils.NamesGenerator;
 import argonauts.PersistJobDone;
+import argonauts.PersistRewiring;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
@@ -300,6 +301,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void clearStaticHeap() {
 		say("Clearing static data from previous simulation");
 		PersistJobDone.clear();
+		PersistRewiring.clear();
 		TaskSkillsPool.clear();
 		SkillFactory.skills.clear();
 		NamesGenerator.clear();

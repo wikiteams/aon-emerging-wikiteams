@@ -83,7 +83,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
-			modelFactory = new ModelFactory(SimulationParameters.model_type);
+			modelFactory = 
+					new ModelFactory(SimulationParameters.model_type);
 			say("Starting simulation with model: " + modelFactory.toString());
 
 			if (modelFactory.getFunctionality().isValidation())

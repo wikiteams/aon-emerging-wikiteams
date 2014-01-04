@@ -30,7 +30,8 @@ public abstract class AgentSkillsPool {
 		"data\\users-and-their-pull-requests.csv";
 
 	private enum DataSet {
-		STATIC_TOP1000_3SKILLS, STATIC_PULL_REQUESTS;
+		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, 
+		TOPREPOS_AND_TOPUSERS, TOPUSERS_AND_THEIRREPOS;
 	}
 
 	private enum Method {
@@ -45,10 +46,21 @@ public abstract class AgentSkillsPool {
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
-		if (method.toUpperCase().equals("STATIC_TABLE"))
-			instantiate(DataSet.STATIC_TOP1000_3SKILLS);
-		else if (method.toUpperCase().equals("STATIC_PULL_REQUESTS"))
-			instantiate(DataSet.STATIC_PULL_REQUESTS);
+//		if (method.toUpperCase().equals("STATIC_TABLE"))
+//			instantiate(DataSet.STATIC_TOP1000_3SKILLS);
+//		else if (method.toUpperCase().equals("STATIC_PULL_REQUESTS"))
+//			instantiate(DataSet.STATIC_PULL_REQUESTS);
+		
+		if (method.toUpperCase().equals("MOST_OFTEN_STARRED"))
+			instantiate(DataSet.MOST_OFTEN_STARRED);
+		else if (method.toUpperCase().equals("AT_LEAST_1_COMMIT"))
+			instantiate(DataSet.AT_LEAST_1_COMMIT);
+		else if (method.toUpperCase().equals("TOPUSERS_AND_THEIRREPOS"))
+			instantiate(DataSet.TOPUSERS_AND_THEIRREPOS);
+		else if (method.toUpperCase().equals("TOPREPOS_AND_THEIRUSERS"))
+			instantiate(DataSet.TOPREPOS_AND_THEIRUSERS);
+		else if (method.toUpperCase().equals("TOPREPOS_AND_TOPUSERS"))
+			instantiate(DataSet.TOPREPOS_AND_TOPUSERS);
 	}
 	
 	public static void clear(){
@@ -56,7 +68,29 @@ public abstract class AgentSkillsPool {
 	}
 
 	public static void instantiate(DataSet method) {
-		if (method == DataSet.STATIC_TOP1000_3SKILLS) {
+//		if (method == DataSet.STATIC_TOP1000_3SKILLS) {
+//			try {
+//				parse_csv(false);
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		} else if (method == DataSet.STATIC_PULL_REQUESTS) {
+//			try {
+//				parse_csv(true);
+//				parse_csv_ext();
+//			} catch (FileNotFoundException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
+		if (method == DataSet.MOST_OFTEN_STARRED) {
 			try {
 				parse_csv(false);
 			} catch (FileNotFoundException e) {
@@ -66,7 +100,7 @@ public abstract class AgentSkillsPool {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} else if (method == DataSet.STATIC_PULL_REQUESTS) {
+		} else if (method == DataSet.AT_LEAST_1_COMMIT) {
 			try {
 				parse_csv(true);
 				parse_csv_ext();

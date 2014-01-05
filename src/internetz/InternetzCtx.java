@@ -31,6 +31,7 @@ import repast.simphony.space.projection.Projection;
 import strategies.CentralPlanning;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
+import strategies.StrategyEvolutionDistribution;
 import tasks.CentralAssignment;
 import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
@@ -89,7 +90,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 				initializeValidationLogger();
 
 			// TODO: implement mixed strategy distribution
-			strategyDistribution = new StrategyDistribution();
+			if(SimulationParameters.strategyDistribution == 1) {
+				// ewolucja
+				strategyDistribution = new StrategyEvolutionDistribution();
+			} else {
+				strategyDistribution = new StrategyDistribution();
+			}
 
 			// initialize skill pools
 			skillFactory = new SkillFactory();

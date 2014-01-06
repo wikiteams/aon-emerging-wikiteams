@@ -18,6 +18,7 @@ import logger.ValidationOutputter;
 import org.apache.log4j.LogManager;
 
 import repast.simphony.context.DefaultContext;
+import repast.simphony.dataLoader.ContextBuilder;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.environment.RunState;
 import repast.simphony.engine.schedule.ISchedulableAction;
@@ -89,11 +90,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			if (modelFactory.getFunctionality().isValidation())
 				initializeValidationLogger();
 
-			// TODO: implement mixed strategy distribution
-			if(SimulationParameters.strategyDistribution == 1) {
-				// ewolucja
+			// evolution
+			if(SimulationParameters.evolution == true) {
 				strategyDistribution = new StrategyEvolutionDistribution();
 			} else {
+				// TODO: implement mixed strategy distribution
 				strategyDistribution = new StrategyDistribution();
 			}
 

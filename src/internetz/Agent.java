@@ -135,6 +135,8 @@ public class Agent {
 			say("Agent " + this.id + " didn't work on anything");
 			sanity("Agent " + this.id + " don't have a task to work on in step " + time);
 		}
+		
+		this.getUtility();
 
 		// Chose and algorithm for inside-task skill choose.
 	}
@@ -224,6 +226,21 @@ public class Agent {
 	
 	private void sanity(String s){
 		PjiitOutputter.sanity(s);
+	}
+	
+	/**
+	 * Calculate utlility of agent
+	 * TODO: prepare well version of calculating agent utility
+	 */
+	public Double getUtility() {
+		Double cumulatedExperience = 0.0; 
+		Collection<AgentInternals> internals = this.getAgentInternals();
+		for (AgentInternals ai : internals) {
+			cumulatedExperience += ai.getExperience().value;
+		}
+		
+		System.out.println("cumulated: " + cumulatedExperience.toString());
+		return cumulatedExperience;
 	}
 }
 

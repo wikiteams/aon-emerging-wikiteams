@@ -1,5 +1,6 @@
 package internetz;
 
+import github.DataSetProvider;
 import github.TaskSkillsPool;
 
 import java.io.FileWriter;
@@ -38,6 +39,7 @@ import test.Model;
 import test.TaskTestUniverse;
 import utils.NamesGenerator;
 import argonauts.PersistJobDone;
+import argonauts.PersistRewiring;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
@@ -82,7 +84,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
-			modelFactory = new ModelFactory(SimulationParameters.model_type);
+			modelFactory = 
+					new ModelFactory(SimulationParameters.model_type);
 			say("Starting simulation with model: " + modelFactory.toString());
 
 			if (modelFactory.getFunctionality().isValidation())
@@ -106,11 +109,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 
 		try {
+			DataSetProvider dsp = new 
+					DataSetProvider(SimulationParameters.dataSetAll);
+			
 			AgentSkillsPool
-					.instantiate(SimulationParameters.agentSkillPoolDataset);
+					.instantiate(dsp.getAgentSkillDataset());
 			say("Instatiated AgentSkillsPool");
 			TaskSkillsPool
-					.instantiate(SimulationParameters.taskSkillPoolDataset);
+					.instantiate(dsp.getTaskSkillDataset());
 			say("Instatied TaskSkillsPool");
 
 			strategyDistribution
@@ -300,6 +306,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void clearStaticHeap() {
 		say("Clearing static data from previous simulation");
 		PersistJobDone.clear();
+		PersistRewiring.clear();
 		TaskSkillsPool.clear();
 		SkillFactory.skills.clear();
 		NamesGenerator.clear();

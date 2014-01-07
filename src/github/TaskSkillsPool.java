@@ -43,6 +43,13 @@ public abstract class TaskSkillsPool {
 	private static String filenameGithubClusters = SystemUtils.IS_OS_LINUX ? "data/github_clusters.csv"
 			: "data\\github_clusters.csv";
 
+	private enum DataSet {
+		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, 
+		TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, 
+		SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, 
+		_200_LANGUAGES;
+	}
+	
 	public enum Method {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
@@ -59,16 +66,26 @@ public abstract class TaskSkillsPool {
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
-		if (method.toUpperCase().equals("STATIC_FREQUENCY_TABLE"))
-			instantiate(Method.STATIC_FREQUENCY_TABLE);
-		else if (method.toUpperCase().equals("GOOGLE_BIGQUERY_MINED"))
-			instantiate(Method.GOOGLE_BIGQUERY_MINED);
-		else if (method.toUpperCase().equals("GITHUB_CLUSTERIZED"))
-			instantiate(Method.GITHUB_CLUSTERIZED);
+		if (method.toUpperCase().equals("MOST_OFTEN_STARRED"))
+			instantiate(DataSet.MOST_OFTEN_STARRED);
+		else if (method.toUpperCase().equals("AT_LEAST_1_COMMIT"))
+			instantiate(DataSet.AT_LEAST_1_COMMIT);
+		else if (method.toUpperCase().equals("TOPUSERS_AND_THEIRREPOS"))
+			instantiate(DataSet.TOPUSERS_AND_THEIRREPOS);
+		else if (method.toUpperCase().equals("TOPREPOS_AND_THEIRUSERS"))
+			instantiate(DataSet.TOPREPOS_AND_THEIRUSERS);
+		else if (method.toUpperCase().equals("TOPREPOS_AND_TOPUSERS"))
+			instantiate(DataSet.TOPREPOS_AND_TOPUSERS);
+		else if (method.toUpperCase().equals("PUSHES_BY_LANGUAGES"))
+			instantiate(DataSet.PUSHES_BY_LANGUAGES);
+		else if (method.toUpperCase().equals("TOP_USERS"))
+			instantiate(DataSet.TOP_USERS);
+		else if (method.toUpperCase().equals("200_LANGUAGES"))
+			instantiate(DataSet._200_LANGUAGES);
 	}
 
-	public static void instantiate(Method method) {
-		if (method == Method.STATIC_FREQUENCY_TABLE) {
+	public static void instantiate(DataSet dataset) {
+		if (dataset == DataSet._200_LANGUAGES) {
 			try {
 				parseCsvStatic();
 			} catch (FileNotFoundException e) {
@@ -79,18 +96,8 @@ public abstract class TaskSkillsPool {
 				// TODO Auto-generated catch block
 				say("Input / Output Exception!");
 				e.printStackTrace();
-			} 
-//		} else if (method == Method.GOOGLE_BIGQUERY_MINED) {
-//			try {
-//				//parseCsvGoogle();
-//			} catch (FileNotFoundException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-		} else if (method == Method.GITHUB_CLUSTERIZED) {
+			}
+		} else if (dataset == DataSet.TOP_USERS) {
 			try {
 				parseCsvCluster();
 			} catch (FileNotFoundException e) {

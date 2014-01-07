@@ -10,34 +10,37 @@ import logger.PjiitOutputter;
 import repast.simphony.annotate.AgentAnnot;
 import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
+import repast.simphony.random.RandomHelper;
 import strategies.Strategy;
 import tasks.CentralAssignmentOrders;
+import argonauts.GranulatedChoice;
 import argonauts.PersistJobDone;
+import argonauts.PersistRewiring;
 
-@AgentAnnot(displayName="Agent")
+@AgentAnnot(displayName = "Agent")
 public class Agent {
-	
+
 	private static final SkillFactory skillFactory = new SkillFactory();
 	public static int totalAgents = 0;
 	private static double time = 0;
 
 	private Map<String, AgentInternals> skills = new HashMap<String, AgentInternals>();
 	private Strategy strategy;
-	
+
 	private final int id = ++totalAgents;;
 	private String firstName;
 	private String lastName;
 	private String nick;
-	
+
 	private CentralAssignmentOrders centralAssignmentOrders;
 
 	public Agent() {
 		this("Undefined name", "Undefined", "Agent_");
 	}
-	
+
 	public Agent(String firstName, String lastName, String nick) {
 		say("Agent constructor called");
-		//this.id = ++totalAgents;
+		// this.id = ++totalAgents;
 		AgentSkillsPool.fillWithSkills(this);
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -55,15 +58,12 @@ public class Agent {
 	public AgentInternals getAgentInternals(String key) {
 		return skills.get(key);
 	}
-	
+
 	public AgentInternals getAgentInternalsOrCreate(String key) {
 		AgentInternals result = null;
-		if (skills.get(key) == null){
-			result = (
-					new AgentInternals(
-							skillFactory.getSkill(key), 
-							new Experience(true))
-					);
+		if (skills.get(key) == null) {
+			result = (new AgentInternals(skillFactory.getSkill(key),
+					new Experience(true)));
 			skills.put(key, result);
 			result = skills.get(key);
 		} else {
@@ -83,8 +83,8 @@ public class Agent {
 
 	public void setId(int id) {
 		throw new UnsupportedOperationException();
-		//its a final field, so please dont touch it :)
-		//this.id = id;
+		// its a final field, so please dont touch it :)
+		// this.id = id;
 	}
 
 	public int getId() {
@@ -113,27 +113,64 @@ public class Agent {
 		say("Step(" + time + ") of Agent " + this.id
 				+ " scheduled method launched.");
 
-		//Context context = (Context) ContextUtils.getContext(this);
+		// Context context = (Context) ContextUtils.getContext(this);
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 
-		// Agent Aj uses Aj {strategy for choosing tasks} 
-		// and chooses a task to work on
+		if (SimulationParameters.granularity) {
+			GranulatedChoice granulated = PersistRewiring
+					.getGranulatedChoice(this);
+			
+			if (granulated != null){
+				// randomize decision
+				double __d = 
+						RandomHelper.nextDoubleFromTo(0d, 100d);
+				if (__d <= (double)(SimulationParameters.granularityObstinacy)){
+					// continue work on the same skill
+					// but check if the is any work left in this particular task !
+					Boolean workDone = 
+							granulated.getTaskChosen().workOnTaskFromContinuum(
+							this, granulated, this.strategy.skillChoice);
+					if (! workDone){
+						// chose new task for granulated choice !
+					}
+					EnvironmentEquilibrium.setActivity(true);
+				} else {
+					// chose new task for granulated choice !
+					Task taskToWork = TaskPool.chooseTask(this,
+							this.strategy.taskChoice);
+					executeJob(taskToWork);
+				}
+			} else {
+				// first run
+				// chose new task and assign granulated choice !
+				Task taskToWork = TaskPool.chooseTask(this,
+						this.strategy.taskChoice);
+				executeJob(taskToWork);
+			}
+		} else {
+			// Agent Aj uses Aj {strategy for choosing tasks}
+			// and chooses a task to work on
+			Task taskToWork = TaskPool.chooseTask(this,
+					this.strategy.taskChoice);
+			// TO DO: make a good assertion to prevent nulls !!
+			executeJob(taskToWork);
+		}
+	}
 
-		Task taskToWork = TaskPool.chooseTask(this, this.strategy.taskChoice);
-		// TO DO: make a good assertion to prevent nulls !!
-
+	private void executeJob(Task taskToWork) {
 		// Agent Aj works on Ti
 		if (taskToWork != null) {
 			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
-			if (this.getCentralAssignmentOrders() != null){
-				taskToWork.workOnTaskControlled(this);
+			if (this.getCentralAssignmentOrders() != null) {
+				taskToWork.workOnTaskCentrallyControlled(this);
 			} else
 				taskToWork.workOnTask(this, this.strategy.skillChoice);
 			EnvironmentEquilibrium.setActivity(true);
 		} else {
 			say("Agent " + this.id + " didn't work on anything");
-			sanity("Agent " + this.id + " don't have a task to work on in step " + time);
+			sanity("Agent " + this.id
+					+ " don't have a task to work on in step " + time);
 		}
 
 		// Chose and algorithm for inside-task skill choose.
@@ -155,46 +192,47 @@ public class Agent {
 	public void setStrategy(Strategy strategy) {
 		this.strategy = strategy;
 	}
-	
+
 	public CentralAssignmentOrders getCentralAssignmentOrders() {
 		return centralAssignmentOrders;
 	}
 
-	public void setCentralAssignmentOrders(CentralAssignmentOrders centralAssignmentOrders) {
+	public void setCentralAssignmentOrders(
+			CentralAssignmentOrders centralAssignmentOrders) {
 		if (centralAssignmentOrders != null)
-			say("Agent " + this.nick + " got an order to work on " + centralAssignmentOrders);
+			say("Agent " + this.nick + " got an order to work on "
+					+ centralAssignmentOrders);
 		this.centralAssignmentOrders = centralAssignmentOrders;
 	}
 
-	public String describeExperience(){
-//		Collection<AgentInternals> internals = this.getAgentInternals();
-//		Map<String, Double> deltaE = new HashMap<String, Double>();
-//		for (AgentInternals ai : internals) {
-//			deltaE.put(ai.getSkill().getName() , ai.getExperience().getDelta());
-//		}
-//		return deltaE.entrySet().toString();
-		
+	public String describeExperience() {
+		// Collection<AgentInternals> internals = this.getAgentInternals();
+		// Map<String, Double> deltaE = new HashMap<String, Double>();
+		// for (AgentInternals ai : internals) {
+		// deltaE.put(ai.getSkill().getName() , ai.getExperience().getDelta());
+		// }
+		// return deltaE.entrySet().toString();
+
 		Collection<AgentInternals> internals = this.getAgentInternals();
 		Map<String, String> deltaE = new HashMap<String, String>();
 		for (AgentInternals ai : internals) {
-			deltaE.put( ai.getSkill().getName() , 
-					(new DecimalFormat("#.######")).format(ai.getExperience().getDelta()) );
+			deltaE.put(ai.getSkill().getName(), (new DecimalFormat("#.######"))
+					.format(ai.getExperience().getDelta()));
 		}
 		return deltaE.entrySet().toString();
 	}
-	
-	public double describeExperience(Skill skill){
-		if (this.getStrategy().taskChoice.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)){
-			AgentInternals result = skills.get(skill.getName()) == null ? (
-					new AgentInternals(
-							skillFactory.getSkill(skill.getName()), 
-							new Experience(true))
-					) : skills.get(skill.getName());
+
+	public double describeExperience(Skill skill) {
+		if (this.getStrategy().taskChoice
+				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)) {
+			AgentInternals result = skills.get(skill.getName()) == null ? (new AgentInternals(
+					skillFactory.getSkill(skill.getName()),
+					new Experience(true))) : skills.get(skill.getName());
 			skills.put(skill.getName(), result);
 		}
 		return skills.get(skill.getName()).getExperience().getDelta();
 	}
-	
+
 	@Override
 	public String toString() {
 		return getNick();
@@ -208,35 +246,36 @@ public class Agent {
 	@Override
 	public boolean equals(Object obj) {
 		if ((this.id == ((Agent) obj).id)
-				&& (this.nick.toLowerCase().equals((((Agent) obj).nick.toLowerCase()))))
+				&& (this.nick.toLowerCase().equals((((Agent) obj).nick
+						.toLowerCase()))))
 			return true;
 		else
 			return false;
 	}
-	
-	protected boolean wasWorkingOnAnything(){
+
+	public boolean wasWorkingOnAnything() {
 		return PersistJobDone.getJobDone().containsKey(this.getNick());
 	}
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}
-	
-	private void sanity(String s){
+
+	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}
 }
 
 class EnvironmentEquilibrium {
-	
-    private static boolean activity = false;
 
-    public static synchronized boolean getActivity() {
-        return activity;
-    }
+	private static boolean activity = false;
 
-    public static synchronized void setActivity(boolean defineActivity) {
-        activity = defineActivity;
-    }
+	public static synchronized boolean getActivity() {
+		return activity;
+	}
+
+	public static synchronized void setActivity(boolean defineActivity) {
+		activity = defineActivity;
+	}
 
 }

@@ -32,6 +32,9 @@ public class SimulationParameters {
 	public static int strategyDistribution = 0;
 	public static boolean experienceDecay = false;
 	public static int randomSeed = 0;
+	public static boolean granularity = false;
+	public static int granularityObstinacy = 0;
+	public static String granularityType = "";
 	
 	public static String taskSkillPoolDataset = "";
 	public static String agentSkillPoolDataset = "";
@@ -49,6 +52,8 @@ public class SimulationParameters {
 	public static boolean forceStop = false;
 	
 	public static int maxWorkRequired = 0;
+	
+	public static boolean dataSetAll = false;
 
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
@@ -91,11 +96,20 @@ public class SimulationParameters {
 		
 		experienceDecay = (Boolean) param
 				.getValue("experienceDecay");
+		granularity = (Boolean) param
+				.getValue("granularity");
+		granularityObstinacy = (Integer) param
+				.getValue("granularityObstinacy");
+		granularityType = (String) param
+				.getValue("granularityType");
+
 		deployedTasksLeave = (Boolean) param
 				.getValue("deployedTasksLeave");
 		fullyLearnedAgentsLeave = (Boolean) param
 				.getValue("fullyLearnedAgentsLeave");
 		forceStop = (Boolean) param
 				.getValue("forceStop");
+		
+		dataSetAll = (Boolean) param.getValue("dataSetAll");
 	}
 }

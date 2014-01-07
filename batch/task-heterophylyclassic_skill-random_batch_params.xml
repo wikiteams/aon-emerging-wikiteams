@@ -21,4 +21,10 @@
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />
 <parameter name="taskMinMaxChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="none" />
+<parameter name="modelType" type="constant" constant_type="java.lang.String" value="Normal" />
+<parameter name="location" type="constant" constant_type="java.lang.String" value="Metric" />
+<parameter name="experienceDecay" type="constant" constant_type="java.lang.Boolean" value="true" />
+<parameter name="granularity" type="constant" constant_type="java.lang.Boolean" value="true" />
+<parameter name="granularityObstinacy" type="constant" constant_type="int" value="20" />
+<parameter name="granularityType" type="constant" constant_type="java.lang.String" value="DISTRIBUTED" />
 </sweep>

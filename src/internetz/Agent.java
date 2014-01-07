@@ -230,17 +230,21 @@ public class Agent {
 	
 	/**
 	 * Calculate utlility of agent
-	 * TODO: prepare well version of calculating agent utility
 	 */
 	public Double getUtility() {
 		Double cumulatedExperience = 0.0; 
+		Double epsilon = (double) (1/20);
+		Double min = 1000.0;
 		Collection<AgentInternals> internals = this.getAgentInternals();
 		for (AgentInternals ai : internals) {
 			cumulatedExperience += ai.getExperience().value;
+			if(ai.getExperience().value < min) {
+				min = ai.getExperience().value;
+			}
 		}
 		
 		System.out.println("cumulated: " + cumulatedExperience.toString());
-		return cumulatedExperience;
+		return min + epsilon * cumulatedExperience;
 	}
 }
 

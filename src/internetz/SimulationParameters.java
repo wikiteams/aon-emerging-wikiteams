@@ -52,6 +52,8 @@ public class SimulationParameters {
 	public static boolean forceStop = false;
 	
 	public static int maxWorkRequired = 0;
+	
+	public static boolean dataSetAll = false;
 
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
@@ -107,5 +109,7 @@ public class SimulationParameters {
 				.getValue("fullyLearnedAgentsLeave");
 		forceStop = (Boolean) param
 				.getValue("forceStop");
+		
+		dataSetAll = (Boolean) param.getValue("dataSetAll");
 	}
 }

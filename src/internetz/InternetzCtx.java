@@ -1,5 +1,6 @@
 package internetz;
 
+import github.DataSetProvider;
 import github.TaskSkillsPool;
 
 import java.io.FileWriter;
@@ -108,11 +109,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 
 		try {
+			DataSetProvider dsp = new 
+					DataSetProvider(SimulationParameters.dataSetAll);
+			
 			AgentSkillsPool
-					.instantiate(SimulationParameters.agentSkillPoolDataset);
+					.instantiate(dsp.getAgentSkillDataset());
 			say("Instatiated AgentSkillsPool");
 			TaskSkillsPool
-					.instantiate(SimulationParameters.taskSkillPoolDataset);
+					.instantiate(dsp.getTaskSkillDataset());
 			say("Instatied TaskSkillsPool");
 
 			strategyDistribution

@@ -38,7 +38,8 @@ public abstract class AgentSkillsPool {
 	private enum DataSet {
 		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, 
 		TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, 
-		SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS;
+		SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, 
+		_200_LANGUAGES;
 	}
 
 	private enum Method {
@@ -67,6 +68,8 @@ public abstract class AgentSkillsPool {
 			instantiate(DataSet.PUSHES_BY_LANGUAGES);
 		else if (method.toUpperCase().equals("TOP_USERS"))
 			instantiate(DataSet.TOP_USERS);
+		else if (method.toUpperCase().equals("200_LANGUAGES"))
+			instantiate(DataSet._200_LANGUAGES);
 	}
 
 	public static void clear() {
@@ -115,16 +118,16 @@ public abstract class AgentSkillsPool {
 				filenameMostOftenStarred), ',', '\'');
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
-			if (nickOnly) {
-				skillSet.put(nextLine[0], new HashMap<Skill, Double>());
-			} else {
-				HashMap<Skill, Double> l = new HashMap<Skill, Double>();
-				for (int i = 1; i < nextLine.length; i++) {
-					l.put(skillFactory.getSkill(nextLine[i]), null);
-					say("Parsed from CSV: " + nextLine[i]);
-				}
-				skillSet.put(nextLine[0], l);
-			}
+//			if (nickOnly) {
+//				skillSet.put(nextLine[0], new HashMap<Skill, Double>());
+//			} else {
+//				HashMap<Skill, Double> l = new HashMap<Skill, Double>();
+//				for (int i = 1; i < nextLine.length; i++) {
+//					l.put(skillFactory.getSkill(nextLine[i]), null);
+//					say("Parsed from CSV: " + nextLine[i]);
+//				}
+//				skillSet.put(nextLine[0], l);
+//			}
 		}
 		reader.close();
 	}

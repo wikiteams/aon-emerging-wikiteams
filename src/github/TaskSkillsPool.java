@@ -19,6 +19,7 @@ import java.util.Random;
 
 import org.apache.commons.lang3.SystemUtils;
 
+import repast.simphony.random.RandomHelper;
 import utils.CharacterConstants;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
@@ -99,6 +100,7 @@ public abstract class TaskSkillsPool {
 			}
 		} else if (dataset == DataSet.TOP_USERS) {
 			try {
+				parseCsvStatic();
 				parseCsvCluster();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
@@ -185,8 +187,8 @@ public abstract class TaskSkillsPool {
 	}
 
 	public static Skill choseRandomSkill() {
-		Random generator = new Random();
-		int i = generator.nextInt(singleSkillSet.size());
+		//Random generator = new Random();
+		int i = RandomHelper.nextIntFromTo(0,singleSkillSet.size()-1);
 		return getByIndex(singleSkillSet, i);
 	}
 
@@ -205,9 +207,9 @@ public abstract class TaskSkillsPool {
 			int x = ((int) (new Random().nextDouble() * SimulationParameters.staticFrequencyTableSc)) + 1;
 			for (int i = 0; i < x; i++) {
 				Skill skill = choseRandomSkill();
-				Random generator = new Random();
+				//Random generator = new Random();
 				WorkUnit w1 = new WorkUnit(
-						generator.nextInt(SimulationParameters.maxWorkRequired));
+						RandomHelper.nextIntFromTo(0,SimulationParameters.maxWorkRequired-1));
 				WorkUnit w2 = new WorkUnit(0);
 				TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
 				task.addSkill(skill.getName(), taskInternals);

@@ -37,6 +37,8 @@ import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
+import utils.DescribeUniverseBulkLoad;
+import utils.LaunchStatistics;
 import utils.NamesGenerator;
 import argonauts.PersistJobDone;
 import argonauts.PersistRewiring;
@@ -56,18 +58,18 @@ import constants.ModelFactory;
 public class InternetzCtx extends DefaultContext<Object> {
 
 	private StrategyDistribution strategyDistribution;
-
 	private ModelFactory modelFactory;
 	private SkillFactory skillFactory;
 	private Schedule schedule = new Schedule();
+	private String[] universe = null;
 
 	private TaskPool taskPool = new TaskPool();
 	private AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
-
 	private CentralPlanning centralPlanningHq;
 
+	@SuppressWarnings("unused")
 	private boolean shutdownInitiated = false;
 	private boolean alreadyFlushed = false;
 
@@ -84,8 +86,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
-			modelFactory = 
-					new ModelFactory(SimulationParameters.model_type);
+			if (SimulationParameters.multipleAgentSets) {
+				universe = DescribeUniverseBulkLoad.init();
+			}
+
+			modelFactory = new ModelFactory(SimulationParameters.model_type);
 			say("Starting simulation with model: " + modelFactory.toString());
 
 			if (modelFactory.getFunctionality().isValidation())
@@ -109,14 +114,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 
 		try {
-			DataSetProvider dsp = new 
-					DataSetProvider(SimulationParameters.dataSetAll);
-			
-			AgentSkillsPool
-					.instantiate(dsp.getAgentSkillDataset());
+			DataSetProvider dsp = new DataSetProvider(
+					SimulationParameters.dataSetAll);
+
+			AgentSkillsPool.instantiate(dsp.getAgentSkillDataset());
 			say("Instatiated AgentSkillsPool");
-			TaskSkillsPool
-					.instantiate(dsp.getTaskSkillDataset());
+			TaskSkillsPool.instantiate(dsp.getTaskSkillDataset());
 			say("Instatied TaskSkillsPool");
 
 			strategyDistribution
@@ -150,7 +153,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		} catch (IOException e) {
 			say(Constraints.IO_EXCEPTION);
 			e.printStackTrace();
-		} catch (NullPointerException nexc){
+		} catch (NullPointerException nexc) {
 			say(Constraints.UNKNOWN_EXCEPTION);
 			nexc.printStackTrace();
 		}
@@ -159,7 +162,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
 
 		buildCentralPlanner();
-		
+
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
 	}
@@ -178,7 +181,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		if (model.isNormal() && model.isValidation()) {
 			throw new UnsupportedOperationException();
 		} else if (model.isNormal()) {
-			addAgents(SimulationParameters.agentCount);
+			addAgents();
 		} else if (model.isSingleValidation()) {
 			listAgent = new ArrayList<Agent>();
 			AgentTestUniverse.init();
@@ -234,7 +237,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	private void initializeTasksNormally() {
-		for (int i = 0; i < SimulationParameters.taskCount; i++) {
+		Integer howMany = SimulationParameters.multipleAgentSets ? Integer
+				.parseInt(universe[0]) : SimulationParameters.taskCount;
+		for (int i = 0; i < howMany; i++) {
 			Task task = new Task();
 			say("Creating task..");
 			taskPool.addTask(task.getName(), task);
@@ -243,6 +248,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			taskPool.add(task);
 			agentPool.add(task);
 		}
+		
+		LaunchStatistics.taskCount = taskPool.getCount();
 	}
 
 	private void initializeValidationLogger() {
@@ -258,7 +265,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			for (AgentInternals __agentInternal : agent.getAgentInternals()) {
 				ArrayList<String> entries = new ArrayList<String>();
 				entries.add(agent.getNick());
-				entries.add(__agentInternal.getExperience().value + "");
+				entries.add(__agentInternal.getExperience().getValue() + "");
 				entries.add(__agentInternal.getSkill().getName());
 				String[] stockArr = new String[entries.size()];
 				stockArr = entries.toArray(stockArr);
@@ -268,7 +275,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		writer.close();
 	}
 
-	private void addAgents(int agentCnt) {
+	private void addAgents() {
+		Integer agentCnt = SimulationParameters.multipleAgentSets ? Integer
+				.parseInt(universe[1]) : SimulationParameters.agentCount;
+
 		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
@@ -285,6 +295,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			// this.add(agent);
 			agentPool.add(agent);
 		}
+		
+		LaunchStatistics.agentCount = agentPool.size() - LaunchStatistics.taskCount;
 	}
 
 	private void outputAgentNetworkData() {
@@ -334,9 +346,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ RunState.getInstance().getRunInfo().getRunNumber()
 				+ ","
 				+ RunEnvironment.getInstance().getCurrentSchedule()
-						.getTickCount() + ","
-				+ strategyDistribution.getTaskChoice() + ","
-				+ SimulationParameters.fillAgentSkillsMethod + ","
+						.getTickCount() + "," + LaunchStatistics.agentCount + ","
+				+ LaunchStatistics.taskCount + "," + strategyDistribution.getTaskChoice()
+				+ "," + SimulationParameters.fillAgentSkillsMethod + ","
 				+ SimulationParameters.agentSkillPoolDataset + ","
 				+ SimulationParameters.taskSkillPoolDataset + ","
 				+ strategyDistribution.getSkillChoice() + ","
@@ -345,6 +357,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private String buildFinalMessageHeader() {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
+				+ "Agents count" + "," + "Tasks count" + ","
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice";
@@ -395,18 +408,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 		EndRunLogger.finalMessage(s);
 	}
-	
+
 	public void centralPlanning() {
-		say("CentralPlanning scheduled method launched, listAgent.size(): " 
+		say("CentralPlanning scheduled method launched, listAgent.size(): "
 				+ listAgent.size() + " taskPool.size(): " + taskPool.size());
 		centralPlanningHq.centralPlanningCalc(listAgent, taskPool);
 	}
 
 	public void buildCentralPlanner() {
-		say ("buildCentralPlanner lunched !");
+		say("buildCentralPlanner lunched !");
 		if (strategyDistribution.getTaskChoice().equals("central")) {
 			centralPlanningHq = new CentralPlanning();
-			
+
 			say("Central planner initiating.....");
 			ISchedule schedule = RunEnvironment.getInstance()
 					.getCurrentSchedule();

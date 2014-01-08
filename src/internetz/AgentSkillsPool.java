@@ -89,7 +89,9 @@ public abstract class AgentSkillsPool {
 			}
 		} else if (method == DataSet.TOP_USERS) {
 			try {
-				parseCsvTopUsers(false);
+				//parseCsvTopUsers(false);
+				parseCsvTopUsers(true);
+				parseCsvUsersByPushes();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

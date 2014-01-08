@@ -47,6 +47,12 @@ public class TaskPool extends DefaultContext<Task> {
 		return tasks.values();
 	}
 
+	/**
+	 * Count tasks in the pool
+	 * 
+	 * @return Task pool size, in other words, 
+	 * count of the task in the simulation universe (positive int)
+	 */
 	public int getCount() {
 		return tasks.size();
 	}

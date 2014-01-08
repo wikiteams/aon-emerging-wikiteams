@@ -183,7 +183,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		if (model.isNormal() && model.isValidation()) {
 			throw new UnsupportedOperationException();
 		} else if (model.isNormal()) {
-			addAgents(SimulationParameters.agentCount);
+			addAgents();
 		} else if (model.isSingleValidation()) {
 			listAgent = new ArrayList<Agent>();
 			AgentTestUniverse.init();
@@ -275,7 +275,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		writer.close();
 	}
 
-	private void addAgents(int agentCnt) {
+	private void addAgents() {
+		Integer agentCnt = SimulationParameters.multipleAgentSets ? 
+				Integer.parseInt( universe[1] ) : SimulationParameters.agentCount;
+				
 		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);

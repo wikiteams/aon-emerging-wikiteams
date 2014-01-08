@@ -22,7 +22,7 @@ public class DescribeUniverseBulkLoad {
 		combinations = new LinkedList<String[]>();
 				
 		Ini ini = new Ini(new File(fileName));
-		int count = Integer.parseInt( ini.get("general", "count") );
+		int count = Integer.parseInt( ini.get("General", "count") );
 		
 		for(int i = 1 ; i <= count ; i++){
 			String a1 = ini.get("Agents-" + i, "agentCount");

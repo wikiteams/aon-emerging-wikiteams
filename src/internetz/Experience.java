@@ -23,8 +23,8 @@ public class Experience {
 		SIGMOID, CHI_SQUARE
 	};
 
-	public double value; // plain experience
-	public int top; // hipothetical overlearning
+	private double value; // plain experience
+	private int top; // hipothetical overlearning
 
 	private static final double expStub = 0.03;
 
@@ -75,6 +75,14 @@ public class Experience {
 				break;
 		}
 		return lc.getDelta((value / top));
+	}
+
+	public double getValue() {
+		return value;
+	}
+
+	public void setValue(double value) {
+		this.value = value;
 	}
 
 	public void increment(double how_much) {

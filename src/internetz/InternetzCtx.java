@@ -37,6 +37,7 @@ import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
+import utils.DescribeUniverseBulkLoad;
 import utils.NamesGenerator;
 import argonauts.PersistJobDone;
 import argonauts.PersistRewiring;
@@ -56,18 +57,18 @@ import constants.ModelFactory;
 public class InternetzCtx extends DefaultContext<Object> {
 
 	private StrategyDistribution strategyDistribution;
-
 	private ModelFactory modelFactory;
 	private SkillFactory skillFactory;
 	private Schedule schedule = new Schedule();
-
+	private String[] universe = null;
+	
 	private TaskPool taskPool = new TaskPool();
 	private AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
-
 	private CentralPlanning centralPlanningHq;
 
+	@SuppressWarnings("unused")
 	private boolean shutdownInitiated = false;
 	private boolean alreadyFlushed = false;
 
@@ -84,6 +85,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
+			if (SimulationParameters.multipleAgentSets){
+				universe = DescribeUniverseBulkLoad.init();
+			}
+			
 			modelFactory = 
 					new ModelFactory(SimulationParameters.model_type);
 			say("Starting simulation with model: " + modelFactory.toString());
@@ -234,7 +239,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	private void initializeTasksNormally() {
-		for (int i = 0; i < SimulationParameters.taskCount; i++) {
+		Integer howMany = SimulationParameters.multipleAgentSets ? 
+				Integer.parseInt( universe[0] ) : SimulationParameters.taskCount;
+		for (int i = 0; i < howMany; i++) {
 			Task task = new Task();
 			say("Creating task..");
 			taskPool.addTask(task.getName(), task);
@@ -258,7 +265,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			for (AgentInternals __agentInternal : agent.getAgentInternals()) {
 				ArrayList<String> entries = new ArrayList<String>();
 				entries.add(agent.getNick());
-				entries.add(__agentInternal.getExperience().value + "");
+				entries.add(__agentInternal.getExperience().getValue() + "");
 				entries.add(__agentInternal.getSkill().getName());
 				String[] stockArr = new String[entries.size()];
 				stockArr = entries.toArray(stockArr);

@@ -15,6 +15,8 @@ import test.ModelConverter;
  * @version 1.3
  */
 public class SimulationParameters {
+	
+	public static final boolean multipleAgentSets = true;
 
 	public static Model model_type = null;
 	public static String location = "";

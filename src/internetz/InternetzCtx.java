@@ -347,7 +347,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ ","
 				+ RunEnvironment.getInstance().getCurrentSchedule()
 						.getTickCount() + "," + LaunchStatistics.agentCount + ","
-				+ LaunchStatistics.taskCount + "," + strategyDistribution.getTaskChoice()
+				+ LaunchStatistics.taskCount + "," + SimulationParameters.experienceDecay 
+				+ "," + SimulationParameters.fullyLearnedAgentsLeave + "," + 
+				strategyDistribution.getTaskChoice()
 				+ "," + SimulationParameters.fillAgentSkillsMethod + ","
 				+ SimulationParameters.agentSkillPoolDataset + ","
 				+ SimulationParameters.taskSkillPoolDataset + ","
@@ -357,7 +359,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private String buildFinalMessageHeader() {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
-				+ "Agents count" + "," + "Tasks count" + ","
+				+ "Agents count" + "," + "Tasks count" + "," + "Experience decay" + ","
+				+ "Fully-learned agents leave" + ","
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice";

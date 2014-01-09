@@ -32,7 +32,6 @@ public class SimulationParameters {
 	public static String taskMinMaxChoiceAlgorithm = "";
 	
 	public static int strategyDistribution = 0;
-	public static boolean experienceDecay = false;
 	public static int randomSeed = 0;
 	public static boolean granularity = false;
 	public static int granularityObstinacy = 0;
@@ -48,6 +47,8 @@ public class SimulationParameters {
 
 	public static int agentSkillsPoolRandomize1 = 0;
 	public static int agentSkillsMaximumExperience = 0;
+	public static boolean experienceDecay = false;
+	public static boolean experienceCutPoint = false;
 	
 	public static boolean deployedTasksLeave = false;
 	public static boolean fullyLearnedAgentsLeave = false;
@@ -98,6 +99,8 @@ public class SimulationParameters {
 		
 		experienceDecay = (Boolean) param
 				.getValue("experienceDecay");
+		experienceCutPoint = (Boolean) param
+				.getValue("experienceCutPoint");
 		granularity = (Boolean) param
 				.getValue("granularity");
 		granularityObstinacy = (Integer) param

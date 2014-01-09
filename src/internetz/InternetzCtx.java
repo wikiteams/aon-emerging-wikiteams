@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import logger.EndRunLogger;
 import logger.PjiitLogger;
@@ -162,6 +163,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
 
 		buildCentralPlanner();
+		buildExperienceReassessment();
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
@@ -349,6 +351,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 						.getTickCount() + "," + LaunchStatistics.agentCount + ","
 				+ LaunchStatistics.taskCount + "," + SimulationParameters.experienceDecay 
 				+ "," + SimulationParameters.fullyLearnedAgentsLeave + "," + 
+				SimulationParameters.granularity + "," +
+				SimulationParameters.granularityType + "," +
+				SimulationParameters.granularityObstinacy + "," +
+				SimulationParameters.experienceCutPoint + "," +
 				strategyDistribution.getTaskChoice()
 				+ "," + SimulationParameters.fillAgentSkillsMethod + ","
 				+ SimulationParameters.agentSkillPoolDataset + ","
@@ -361,6 +367,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
 				+ "Agents count" + "," + "Tasks count" + "," + "Experience decay" + ","
 				+ "Fully-learned agents leave" + ","
+				+ "Granularity" + ","
+				+ "Granularity type" + ","
+				+ "Granularity obstinancy" + ","
+				+ "Exp cut point" + ","
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice";
@@ -418,6 +428,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		centralPlanningHq.centralPlanningCalc(listAgent, taskPool);
 	}
 
+	/**
+	 * Here I need to schedule method manually because i don't know
+	 * if central planer is enabled for the simulation whether not.
+	 */
 	public void buildCentralPlanner() {
 		say("buildCentralPlanner lunched !");
 		if (strategyDistribution.getTaskChoice().equals("central")) {
@@ -430,6 +444,43 @@ public class InternetzCtx extends DefaultContext<Object> {
 					1, ScheduleParameters.FIRST_PRIORITY);
 			schedule.schedule(params, this, "centralPlanning");
 			say("Central planner initiated and awaiting for call !");
+		}
+	}
+	
+	public void experienceReassess(){
+		for(Object agent : agentPool.getObjects(Agent.class)){
+			if (agent.getClass().getName().equals("Agent")){
+				say("Bingo! It's an agent in pool, I may have to decrease exp of this agent");
+				// use persist job done
+				Map<Integer, List<Skill>> c = PersistJobDone.getSkillsWorkedOn(((Agent)agent).getNick());
+				List<Skill> s = c.get(Integer.valueOf( (int) RunEnvironment.getInstance().getCurrentSchedule()
+						.getTickCount() ));
+			}
+		}
+	}
+	
+	/**
+	 * Here I need to schedule method manually because i don't know
+	 * if expDecay is enabled for the simulation whether not.
+	 */
+	public void buildExperienceReassessment() {
+		say("buildExperienceReassessment lunched !");
+		if (SimulationParameters.experienceDecay) {
+			int reassess = RandomHelper.nextIntFromTo(0,1);
+			// I want in results both expDecay off and on!
+			// thats why randomize to use both
+			if (reassess == 0){
+				
+			} else if (reassess == 1) {
+				say("Exp decay initiating.....");
+				ISchedule schedule = RunEnvironment.getInstance()
+						.getCurrentSchedule();
+				ScheduleParameters params = ScheduleParameters.createRepeating(1,
+						1, ScheduleParameters.LAST_PRIORITY);
+				schedule.schedule(params, this, "experienceReassess");
+				say("Experience decay initiated and awaiting for call !");
+			} else
+				assert false; // reassess is always 0 or 1
 		}
 	}
 

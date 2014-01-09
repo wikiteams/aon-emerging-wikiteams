@@ -4,6 +4,8 @@ simulation_logs.txt
 velocity_log*
 debug_log*
 debug.log
+validation.log*
+validation.log
 
 AgentExperience*
 TaskAndInternals*

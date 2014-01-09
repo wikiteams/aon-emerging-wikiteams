@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -164,6 +165,7 @@ public class Task {
 	}
 
 	public void workOnTaskCentrallyControlled(Agent agent) {
+		List<Skill> skillsImprovedList = new ArrayList<Skill>();
 		CentralAssignmentOrders cao = agent.getCentralAssignmentOrders();
 		CentralAssignmentTask centralAssignmentTask = new CentralAssignmentTask();
 		TaskInternals taskInternal = this
@@ -179,8 +181,9 @@ public class Task {
 
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
+		skillsImprovedList.add(taskInternal.getSkill());
 
-		PersistJobDone.addContribution(agent.getNick(), this);
+		PersistJobDone.addContribution(agent.getNick(), this, skillsImprovedList);
 	}
 
 	public Boolean workOnTaskFromContinuum(Agent agent,
@@ -194,6 +197,8 @@ public class Task {
 
 	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		Collection<TaskInternals> intersection;
+		List<Skill> skillsImprovedList = new ArrayList<Skill>();
+		
 		if (agent.getStrategy().taskChoice
 				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)
 				|| agent.getStrategy().taskChoice
@@ -233,6 +238,7 @@ public class Task {
 				proportionalTimeDivision.increment(this,
 						singleTaskInternalFromIntersect, 1, alpha, delta);
 				experience.increment(alpha);
+				skillsImprovedList.add( singleTaskInternalFromIntersect.getSkill() );
 			}
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
@@ -273,6 +279,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
 						delta);
 				experience.increment(1);
+				skillsImprovedList.add( singleTaskInternal.getSkill() );
 			}
 			break;
 		case CHOICE_OF_AGENT:
@@ -311,6 +318,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
 						delta);
 				experience.increment(1);
+				skillsImprovedList.add( singleTaskInternal.getSkill() );
 			}
 			break;
 		case RANDOM:
@@ -335,6 +343,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, randomTaskInternal, 1,
 						delta);
 				experience.increment(1);
+				skillsImprovedList.add( randomTaskInternal.getSkill() );
 			}
 			break;
 		default:
@@ -344,8 +353,9 @@ public class Task {
 
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
+		assert skillsImprovedList.size() > 0;
 
-		PersistJobDone.addContribution(agent.getNick(), this);
+		PersistJobDone.addContribution(agent.getNick(), this, skillsImprovedList);
 	}
 
 	public boolean isClosed() {

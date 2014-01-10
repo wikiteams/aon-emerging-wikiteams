@@ -19,7 +19,6 @@ import strategies.CentralAssignmentTask;
 import strategies.GreedyAssignmentTask;
 import strategies.ProportionalTimeDivision;
 import strategies.Strategy;
-import tasks.CentralAssignment;
 import tasks.CentralAssignmentOrders;
 import argonauts.GranulatedChoice;
 import argonauts.PersistJobDone;

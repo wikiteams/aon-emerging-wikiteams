@@ -50,6 +50,20 @@ public class Agent {
 	public void addSkill(String key, AgentInternals agentInternals) {
 		skills.put(key, agentInternals);
 	}
+	
+	/**
+	 * Actually used very rarely, as far as I know - 
+	 * only when experience after decayExp operation returns 0
+	 * Assertion that agent possess this skill before removal
+	 * @param key - name of the Skill to remove
+	 */
+	public void removeSkill(String key, boolean skipAssertion) {
+		assert skipAssertion ? true : skills.containsKey(key);
+		skills.remove(key);
+	}
+	public void removeSkill(Skill key, boolean skipAssertion) {
+		removeSkill(key.getName(), skipAssertion);
+	}
 
 	public Collection<AgentInternals> getAgentInternals() {
 		return skills.values();

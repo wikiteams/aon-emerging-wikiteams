@@ -5,16 +5,17 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+
+import logger.PjiitOutputter;
 
 import org.apache.commons.lang3.SystemUtils;
+
 import repast.simphony.random.RandomHelper;
-import constants.RandomMethod;
-import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVReader;
 import cern.jet.random.BreitWigner;
 import cern.jet.random.Normal;
 import cern.jet.random.Poisson;
+import constants.RandomMethod;
 
 /***
  * Here are all skills known to GitHub read and hold in ArrayList for more info,

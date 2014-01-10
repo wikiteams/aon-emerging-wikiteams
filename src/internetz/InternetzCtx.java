@@ -33,8 +33,6 @@ import repast.simphony.space.projection.Projection;
 import strategies.CentralPlanning;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
-import tasks.CentralAssignment;
-import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
@@ -455,6 +453,18 @@ public class InternetzCtx extends DefaultContext<Object> {
 				Map<Integer, List<Skill>> c = PersistJobDone.getSkillsWorkedOn(((Agent)agent).getNick());
 				List<Skill> s = c.get(Integer.valueOf( (int) RunEnvironment.getInstance().getCurrentSchedule()
 						.getTickCount() ));
+				
+				for (AgentInternals ai : ((Agent)agent).getAgentInternals()){
+					if (s.contains(ai.getSkill())){
+						// was working on this, don't decay
+					} else {
+						// decay this experience by beta < 1
+						boolean result = ai.decayExperience();
+						if (result){
+							((Agent)agent).removeSkill(ai.getSkill(), false);
+						}
+					}
+				}
 			}
 		}
 	}

@@ -1,7 +1,5 @@
 package internetz;
 
-import internetz.Experience.SigmoidCurve;
-
 import java.text.DecimalFormat;
 
 import logger.PjiitOutputter;
@@ -19,16 +17,17 @@ public class Experience {
 	private LearningCurve lc = null;
 	private SigmoidCurve sc = null;
 
-	private enum ApproximationMethod {
-		SIGMOID, CHI_SQUARE
-	};
-
 	private double value; // plain experience
 	private int top; // hipothetical overlearning
 
-	private static final double expStub = 0.03;
+	private static final double expStub = 0.03; // as it is 0.03
+	private static final double decayLevel = 0.05; // 5%
 
 	protected final static ExperienceSanityCheck esc = new ExperienceSanityCheck();
+	
+	private enum ApproximationMethod {
+		SIGMOID, CHI_SQUARE
+	};
 
 	public Experience() {
 		this(0d, 0, false);
@@ -63,6 +62,18 @@ public class Experience {
 
 	public double getDelta() {
 		return getDelta(ApproximationMethod.SIGMOID);
+	}
+	
+	public Boolean decay(){
+		boolean dies = false;
+		double howMuch = this.top * decayLevel;
+		if (value - howMuch <= 0){
+			dies = true;
+			this.value = 0;
+		} else {
+			this.value = value - howMuch;
+		}
+		return dies;
 	}
 
 	public double getDelta(ApproximationMethod method) {

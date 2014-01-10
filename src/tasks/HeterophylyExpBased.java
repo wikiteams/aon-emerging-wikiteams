@@ -11,11 +11,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 import logger.PjiitOutputter;
-import argonauts.PersistJobDone;
 import repast.simphony.random.RandomHelper;
+import argonauts.PersistJobDone;
 
 public class HeterophylyExpBased {
 	
@@ -103,7 +102,7 @@ public class HeterophylyExpBased {
 		// take biggest intersection set possible
 
 		chosen = intersection
-				.get((int) ((new Random().nextDouble()) * intersection
+				.get((int) ((RandomHelper.nextDoubleFromTo(0,1)) * intersection
 						.size()));
 		// random
 		

@@ -2,11 +2,8 @@ package internetz;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import logger.PjiitOutputter;
 import repast.simphony.context.DefaultContext;
@@ -19,7 +16,6 @@ import tasks.HeterophylyExpBased;
 import tasks.Homophyly;
 import tasks.HomophylyExpBased;
 import tasks.Preferential;
-import argonauts.PersistJobDone;
 import constants.Constraints;
 
 public class TaskPool extends DefaultContext<Task> {

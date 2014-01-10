@@ -6,6 +6,7 @@ import github.TaskSkillsPool;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,11 +31,10 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
+import repast.simphony.util.collections.IndexedIterable;
 import strategies.CentralPlanning;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
-import tasks.CentralAssignment;
-import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
@@ -64,8 +64,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private Schedule schedule = new Schedule();
 	private String[] universe = null;
 
-	private TaskPool taskPool = new TaskPool();
-	private AgentPool agentPool = new AgentPool();
+	private volatile TaskPool taskPool = new TaskPool();
+	private volatile AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
 	private CentralPlanning centralPlanningHq;
@@ -164,6 +164,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		buildCentralPlanner();
 		buildExperienceReassessment();
+		buildAgentsWithdrawns();
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
@@ -447,20 +448,35 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 	}
 	
-	public void experienceReassess(){
-		for(Object agent : agentPool.getObjects(Agent.class)){
-			if (agent.getClass().getName().equals("Agent")){
+	public synchronized void experienceReassess(){
+		IndexedIterable<Object> agentObjects= agentPool.getObjects(Agent.class);
+		for(Object agent : agentObjects){
+			String type = agent.getClass().getName();
+			if (type.equals("internetz.Agent")){
 				say("Bingo! It's an agent in pool, I may have to decrease exp of this agent");
 				// use persist job done
 				Map<Integer, List<Skill>> c = PersistJobDone.getSkillsWorkedOn(((Agent)agent).getNick());
 				List<Skill> s = c.get(Integer.valueOf( (int) RunEnvironment.getInstance().getCurrentSchedule()
 						.getTickCount() ));
+				
+				Collection<AgentInternals> aic = ((Agent)agent).getAgentInternals();
+				for (AgentInternals ai : aic){
+					if (s.contains(ai.getSkill())){
+						// was working on this, don't decay
+					} else {
+						// decay this experience by beta < 1
+						boolean result = ai.decayExperience();
+						if (result){
+							((Agent)agent).removeSkill(ai.getSkill(), false);
+						}
+					}
+				}
 			}
 		}
 	}
 	
 	/**
-	 * Here I need to schedule method manually because i don't know
+	 * Here I need to schedule method manually because I don't know
 	 * if expDecay is enabled for the simulation whether not.
 	 */
 	public void buildExperienceReassessment() {
@@ -470,8 +486,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 			// I want in results both expDecay off and on!
 			// thats why randomize to use both
 			if (reassess == 0){
-				
+				SimulationParameters.experienceDecay = false;
 			} else if (reassess == 1) {
+				SimulationParameters.experienceDecay = true;
 				say("Exp decay initiating.....");
 				ISchedule schedule = RunEnvironment.getInstance()
 						.getCurrentSchedule();
@@ -479,6 +496,52 @@ public class InternetzCtx extends DefaultContext<Object> {
 						1, ScheduleParameters.LAST_PRIORITY);
 				schedule.schedule(params, this, "experienceReassess");
 				say("Experience decay initiated and awaiting for call !");
+			} else
+				assert false; // reassess is always 0 or 1
+		}
+	}
+	
+	public synchronized void agentsWithdrawns(){
+		IndexedIterable<Object> agentObjects = agentPool.getObjects(Agent.class);
+		for(Object agent : agentObjects){
+			if (agent.getClass().getName().equals("internetz.Agent")){
+				say("Bingo! It's an agent in pool, I may have to force the agent to leave");
+				Collection<AgentInternals> aic = ((Agent)agent).getAgentInternals();
+				
+				for (AgentInternals ai : aic){
+					if (ai.getExperience().getDelta() == 1.){
+						//say("Agent reached maximum!");
+						((Agent)agent).removeSkill(ai.getSkill(), false);
+					}
+				}
+				if (((Agent)agent).getAgentInternals().size() < 1){
+					agentPool.remove(agent);
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Here I need to schedule method manually because I don't know
+	 * if fullyLearnedAgentsLeave is enabled for the simulation whether not.
+	 */
+	public void buildAgentsWithdrawns() {
+		say("buildAgentsWithdrawns lunched !");
+		if (SimulationParameters.fullyLearnedAgentsLeave) {
+			int reassess = RandomHelper.nextIntFromTo(0,1);
+			// I want in results both expDecay off and on!
+			// thats why randomize to use both
+			if (reassess == 0){
+				SimulationParameters.fullyLearnedAgentsLeave = false;
+			} else if (reassess == 1) {
+				SimulationParameters.fullyLearnedAgentsLeave = true;
+				say("Agents withdrawns initiating.....");
+				ISchedule schedule = RunEnvironment.getInstance()
+						.getCurrentSchedule();
+				ScheduleParameters params = ScheduleParameters.createRepeating(1,
+						1, ScheduleParameters.LAST_PRIORITY + 1);
+				schedule.schedule(params, this, "agentsWithdrawns");
+				say("Agents withdrawns initiated and awaiting for call !");
 			} else
 				assert false; // reassess is always 0 or 1
 		}

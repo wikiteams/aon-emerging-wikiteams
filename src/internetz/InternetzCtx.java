@@ -6,6 +6,7 @@ import github.TaskSkillsPool;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +31,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
+import repast.simphony.util.collections.IndexedIterable;
 import strategies.CentralPlanning;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
@@ -62,8 +64,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 	private Schedule schedule = new Schedule();
 	private String[] universe = null;
 
-	private TaskPool taskPool = new TaskPool();
-	private AgentPool agentPool = new AgentPool();
+	private volatile TaskPool taskPool = new TaskPool();
+	private volatile AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
 	private CentralPlanning centralPlanningHq;
@@ -446,8 +448,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 	}
 	
-	public void experienceReassess(){
-		for(Object agent : agentPool.getObjects(Agent.class)){
+	public synchronized void experienceReassess(){
+		IndexedIterable<Object> agentObjects= agentPool.getObjects(Agent.class);
+		for(Object agent : agentObjects){
 			String type = agent.getClass().getName();
 			if (type.equals("internetz.Agent")){
 				say("Bingo! It's an agent in pool, I may have to decrease exp of this agent");
@@ -456,7 +459,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 				List<Skill> s = c.get(Integer.valueOf( (int) RunEnvironment.getInstance().getCurrentSchedule()
 						.getTickCount() ));
 				
-				for (AgentInternals ai : ((Agent)agent).getAgentInternals()){
+				Collection<AgentInternals> aic = ((Agent)agent).getAgentInternals();
+				for (AgentInternals ai : aic){
 					if (s.contains(ai.getSkill())){
 						// was working on this, don't decay
 					} else {
@@ -497,11 +501,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 	}
 	
-	public void agentsWithdrawns(){
-		for(Object agent : agentPool.getObjects(Agent.class)){
+	public synchronized void agentsWithdrawns(){
+		IndexedIterable<Object> agentObjects = agentPool.getObjects(Agent.class);
+		for(Object agent : agentObjects){
 			if (agent.getClass().getName().equals("internetz.Agent")){
-				say("Bingo! It's an agent in pool, I may have to force the agent to leave");		
-				for (AgentInternals ai : ((Agent)agent).getAgentInternals()){
+				say("Bingo! It's an agent in pool, I may have to force the agent to leave");
+				Collection<AgentInternals> aic = ((Agent)agent).getAgentInternals();
+				
+				for (AgentInternals ai : aic){
 					if (ai.getExperience().getDelta() == 1.){
 						//say("Agent reached maximum!");
 						((Agent)agent).removeSkill(ai.getSkill(), false);
@@ -532,7 +539,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 				ISchedule schedule = RunEnvironment.getInstance()
 						.getCurrentSchedule();
 				ScheduleParameters params = ScheduleParameters.createRepeating(1,
-						1, ScheduleParameters.LAST_PRIORITY);
+						1, ScheduleParameters.LAST_PRIORITY + 1);
 				schedule.schedule(params, this, "agentsWithdrawns");
 				say("Agents withdrawns initiated and awaiting for call !");
 			} else

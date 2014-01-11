@@ -9,6 +9,8 @@ package constants;
  *
  */
 public class Constraints {
+	
+	public static final String EMPTY_STRING = "";
 
 	public static final String LOGGER_INITIALIZED = "PjiitLogger initialized";
 	public static final String VALIDATION_LOGGER_INITIALIZED = "Validation logger initialized";

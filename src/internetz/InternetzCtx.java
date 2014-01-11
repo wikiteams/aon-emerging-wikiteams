@@ -51,12 +51,16 @@ import constants.Constraints;
 import constants.ModelFactory;
 
 /**
- * COIN network emergence simulator, successfully moved to Repast Simphony 2.1
- * for better performance
+ * COIN network emergence simulator, a Repast Simphony 2.1 multi-agent social
+ * simulation for modelling task allocation techniques and behaviour of
+ * collaborators in websites like GitHub and Wikipedia. Works on both Windows
+ * and Linux environments.
  * 
- * @version 1.3 "Bobo Bear"
+ * @version 1.4 "MIT submission"
+ * 
  * @since 1.0
- * @author Oskar Jarczyk (since 1.0+)
+ * @author Oskar Jarczyk (since 1.0+), Blazej Gruszka (1.3+)
+ * 
  * @see 1) github markdown 2) "On the effectiveness of emergent task allocation"
  */
 public class InternetzCtx extends DefaultContext<Object> {
@@ -170,6 +174,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		buildCentralPlanner();
 		buildExperienceReassessment();
 		buildAgentsWithdrawns();
+		decideAboutGranularity();
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
@@ -364,8 +369,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ launchStatistics.expDecay + ","
 				+ launchStatistics.fullyLearnedAgentsLeave + ","
 				+ SimulationParameters.experienceCutPoint + ","
-				+ SimulationParameters.granularity + ","
-				+ SimulationParameters.granularityType + ","
+				+ launchStatistics.granularity + ","
+				+ launchStatistics.granularityType + ","
 				+ SimulationParameters.granularityObstinacy + ","
 				+ strategyDistribution.getTaskChoice() + ","
 				+ SimulationParameters.fillAgentSkillsMethod + ","
@@ -379,9 +384,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
 				+ "Agents count" + "," + "Tasks count" + ","
 				+ "Experience decay" + "," + "Fully-learned agents leave" + ","
-				+ "Exp cut point" + ","
-				+ "Granularity" + "," + "Granularity type" + ","
-				+ "Granularity obstinancy" + "," 
+				+ "Exp cut point" + "," + "Granularity" + ","
+				+ "Granularity type" + "," + "Granularity obstinancy" + ","
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice";
@@ -459,46 +463,49 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	public synchronized void experienceReassess() {
-		try{
-		IndexedIterable<Object> agentObjects = agentPool
-				.getObjects(Agent.class);
-		for (Object agent : agentObjects) {
-			String type = agent.getClass().getName();
-			if (type.equals("internetz.Agent")) {
-				say("Bingo! It's an agent in pool, I may have to decrease exp of this agent");
-				// use persist job done
-				Map<Integer, List<Skill>> c = PersistJobDone
-						.getSkillsWorkedOn(((Agent) agent).getNick());
-				if ((c == null) || (c.size() < 1)){ //agent didn't work on anything yet !
-					continue; // move on to next agent in pool
-				}
-				List<Skill> __s = c.get(Integer.valueOf((int) RunEnvironment
-						.getInstance().getCurrentSchedule().getTickCount()));
-				List<Skill> s = __s == null ? new ArrayList<Skill>() : __s;
+		try {
+			IndexedIterable<Object> agentObjects = agentPool
+					.getObjects(Agent.class);
+			for (Object agent : agentObjects) {
+				String type = agent.getClass().getName();
+				if (type.equals("internetz.Agent")) {
+					say("Bingo! It's an agent in pool, I may have to decrease exp of this agent");
+					// use persist job done
+					Map<Integer, List<Skill>> c = PersistJobDone
+							.getSkillsWorkedOn(((Agent) agent).getNick());
+					if ((c == null) || (c.size() < 1)) { // agent didn't work on
+															// anything yet !
+						continue; // move on to next agent in pool
+					}
+					List<Skill> __s = c.get(Integer
+							.valueOf((int) RunEnvironment.getInstance()
+									.getCurrentSchedule().getTickCount()));
+					List<Skill> s = __s == null ? new ArrayList<Skill>() : __s;
 
-				Collection<AgentInternals> aic = ((Agent) agent)
-						.getAgentInternals();
-				CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
-						aic);
-				for (Object ai : aicconcurrent) {
-					if (s.contains(((AgentInternals) ai).getSkill())) {
-						// was working on this, don't decay
-					} else {
-						// decay this experience by beta < 1
-						boolean result = ((AgentInternals) ai)
-								.decayExperience();
-						if (result) {
-							((Agent) agent).removeSkill(
-									((AgentInternals) ai).getSkill(), false);
+					Collection<AgentInternals> aic = ((Agent) agent)
+							.getAgentInternals();
+					CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
+							aic);
+					for (Object ai : aicconcurrent) {
+						if (s.contains(((AgentInternals) ai).getSkill())) {
+							// was working on this, don't decay
+						} else {
+							// decay this experience by beta < 1
+							boolean result = ((AgentInternals) ai)
+									.decayExperience();
+							if (result) {
+								((Agent) agent)
+										.removeSkill(((AgentInternals) ai)
+												.getSkill(), false);
+							}
 						}
 					}
 				}
 			}
-		}
-		}catch (Exception exc){
+		} catch (Exception exc) {
 			validationFatal(exc.toString());
 			validationError(exc.getLocalizedMessage());
-		}finally{
+		} finally {
 			say("Regular method run for expDecay finished for this step.");
 		}
 	}
@@ -532,33 +539,33 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	public synchronized void agentsWithdrawns() {
-		try{
-		IndexedIterable<Object> agentObjects = agentPool
-				.getObjects(Agent.class);
-		for (Object agent : agentObjects) {
-			if (agent.getClass().getName().equals("internetz.Agent")) {
-				say("Bingo! It's an agent in pool, I may have to force the agent to leave");
-				Collection<AgentInternals> aic = ((Agent) agent)
-						.getAgentInternals();
+		try {
+			IndexedIterable<Object> agentObjects = agentPool
+					.getObjects(Agent.class);
+			for (Object agent : agentObjects) {
+				if (agent.getClass().getName().equals("internetz.Agent")) {
+					say("Bingo! It's an agent in pool, I may have to force the agent to leave");
+					Collection<AgentInternals> aic = ((Agent) agent)
+							.getAgentInternals();
 
-				CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
-						aic);
-				for (Object ai : aicconcurrent) {
-					if (((AgentInternals) ai).getExperience().getDelta() == 1.) {
-						// say("Agent reached maximum!");
-						((Agent) agent).removeSkill(
-								((AgentInternals) ai).getSkill(), false);
+					CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
+							aic);
+					for (Object ai : aicconcurrent) {
+						if (((AgentInternals) ai).getExperience().getDelta() == 1.) {
+							// say("Agent reached maximum!");
+							((Agent) agent).removeSkill(
+									((AgentInternals) ai).getSkill(), false);
+						}
+					}
+					if (((Agent) agent).getAgentInternals().size() < 1) {
+						agentPool.remove(agent);
 					}
 				}
-				if (((Agent) agent).getAgentInternals().size() < 1) {
-					agentPool.remove(agent);
-				}
 			}
-		}
-		}catch (Exception exc){
+		} catch (Exception exc) {
 			validationFatal(exc.toString());
 			validationError(exc.getLocalizedMessage());
-		}finally{
+		} finally {
 			say("Eventual forcing agents to leave check finished!");
 		}
 	}
@@ -588,6 +595,34 @@ public class InternetzCtx extends DefaultContext<Object> {
 				say("Agents withdrawns initiated and awaiting for call !");
 			} else
 				assert false; // reassess is always 0 or 1
+		}
+	}
+
+	private void decideAboutGranularity() {
+		if (SimulationParameters.granularity) {
+			if (SimulationParameters.granularityType.equals("DISTRIBUTED")) {
+				int threePossibilities = RandomHelper.nextIntFromTo(1, 3);
+				switch (threePossibilities) {
+				case 1:
+					SimulationParameters.granularity = false;
+					launchStatistics.granularity = false;
+					launchStatistics.granularityType = "OFF";
+					break;
+				case 2:
+					SimulationParameters.granularity = true;
+					launchStatistics.granularity = true;
+					SimulationParameters.granularityType = "TASKONLY";
+					launchStatistics.granularityType = "TASKONLY";
+				case 3:
+					SimulationParameters.granularity = true;
+					launchStatistics.granularity = true;
+					SimulationParameters.granularityType = "TASKANDSKILL";
+					launchStatistics.granularityType = "TASKANDSKILL";
+				}
+			}
+		} else {
+			launchStatistics.granularity = false;
+			launchStatistics.granularityType = "OFF";
 		}
 	}
 

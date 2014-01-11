@@ -26,7 +26,6 @@ public class EndRunLogger {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 		logger.setLevel((Level) Level.ALL);
 	}
 	

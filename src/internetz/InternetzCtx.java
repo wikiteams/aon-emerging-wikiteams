@@ -362,7 +362,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 						.getTickCount() + "," + launchStatistics.agentCount
 				+ "," + launchStatistics.taskCount + ","
 				+ launchStatistics.expDecay + ","
-				+ SimulationParameters.fullyLearnedAgentsLeave + ","
+				+ launchStatistics.fullyLearnedAgentsLeave + ","
 				+ SimulationParameters.granularity + ","
 				+ SimulationParameters.granularityType + ","
 				+ SimulationParameters.granularityObstinacy + ","
@@ -560,8 +560,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 			// thats why randomize to use both
 			if (reassess == 0) {
 				SimulationParameters.fullyLearnedAgentsLeave = false;
+				launchStatistics.fullyLearnedAgentsLeave = false;
 			} else if (reassess == 1) {
 				SimulationParameters.fullyLearnedAgentsLeave = true;
+				launchStatistics.fullyLearnedAgentsLeave = true;
 				say("Agents withdrawns initiating.....");
 				ISchedule schedule = RunEnvironment.getInstance()
 						.getCurrentSchedule();

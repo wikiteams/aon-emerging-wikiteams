@@ -13,6 +13,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import strategies.Strategy;
 import tasks.CentralAssignmentOrders;
+import argonauts.GranularityType;
 import argonauts.GranulatedChoice;
 import argonauts.PersistJobDone;
 import argonauts.PersistRewiring;
@@ -146,6 +147,21 @@ public class Agent {
 							this, granulated, this.strategy.skillChoice);
 					if (! workDone){
 						// chose new task for granulated choice !
+						Task taskToWork = TaskPool.chooseTask(this,
+								this.strategy.taskChoice);
+						executeJob(taskToWork);
+						if (taskToWork != null){
+							switch(GranularityType.desc(SimulationParameters.granularityType)){
+							case TASKANDSKILL:
+								//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+								break;
+							case TASKONLY:
+								PersistRewiring.setOccupation(this, taskToWork);
+								break;
+							default:
+								break;
+							}
+						}
 					}
 					EnvironmentEquilibrium.setActivity(true);
 				} else {
@@ -153,6 +169,18 @@ public class Agent {
 					Task taskToWork = TaskPool.chooseTask(this,
 							this.strategy.taskChoice);
 					executeJob(taskToWork);
+					if (taskToWork != null){
+						switch(GranularityType.desc(SimulationParameters.granularityType)){
+						case TASKANDSKILL:
+							//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+							break;
+						case TASKONLY:
+							PersistRewiring.setOccupation(this, taskToWork);
+							break;
+						default:
+							break;
+						}
+					}
 				}
 			} else {
 				// first run
@@ -160,8 +188,20 @@ public class Agent {
 				Task taskToWork = TaskPool.chooseTask(this,
 						this.strategy.taskChoice);
 				executeJob(taskToWork);
+				if (taskToWork != null){
+					switch(GranularityType.desc(SimulationParameters.granularityType)){
+					case TASKANDSKILL:
+						//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+						break;
+					case TASKONLY:
+						PersistRewiring.setOccupation(this, taskToWork);
+						break;
+					default:
+						break;
+					}
+				}
 			}
-		} else {
+		} else { // block without granularity
 			// Agent Aj uses Aj {strategy for choosing tasks}
 			// and chooses a task to work on
 			Task taskToWork = TaskPool.chooseTask(this,

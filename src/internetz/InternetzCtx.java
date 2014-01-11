@@ -608,6 +608,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 					launchStatistics.granularity = false;
 					launchStatistics.granularityType = "OFF";
 					break;
+//				case 2:
+//					SimulationParameters.granularity = true;
+//					launchStatistics.granularity = true;
+//					SimulationParameters.granularityType = "TASKANDSKILL";
+//					launchStatistics.granularityType = "TASKANDSKILL";
+					//TODO: i need to think it over more
 				case 2:
 					SimulationParameters.granularity = true;
 					launchStatistics.granularity = true;
@@ -616,8 +622,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 				case 3:
 					SimulationParameters.granularity = true;
 					launchStatistics.granularity = true;
-					SimulationParameters.granularityType = "TASKANDSKILL";
-					launchStatistics.granularityType = "TASKANDSKILL";
+					SimulationParameters.granularityType = "TASKONLY";
+					launchStatistics.granularityType = "TASKONLY";
 				}
 			}
 		} else {

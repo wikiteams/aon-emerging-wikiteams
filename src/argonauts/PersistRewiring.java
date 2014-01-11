@@ -19,13 +19,22 @@ public class PersistRewiring {
 	}
 	
 	public static void setOccupation(Agent agent, Task task, TaskInternals taskInternals){
-//		int iteration = (int) RunEnvironment.getInstance().
-//				getCurrentSchedule().getTickCount();
-		
 		GranulatedChoice existing = currentTask.get(agent);
 		
 		if (existing == null){
 			GranulatedChoice granulated = new GranulatedChoice(task, taskInternals, 1);
+			currentTask.put(agent, granulated);
+		} else {
+			existing.incrementHowManyTimes(1);
+			currentTask.put(agent, existing);
+		}
+	}
+	
+	public static void setOccupation(Agent agent, Task task){
+		GranulatedChoice existing = currentTask.get(agent);
+		
+		if (existing == null){
+			GranulatedChoice granulated = new GranulatedChoice(task, null, 1);
 			currentTask.put(agent, granulated);
 		} else {
 			existing.incrementHowManyTimes(1);
@@ -41,6 +50,11 @@ public class PersistRewiring {
 		return currentTask.get(agent).getSkillChosen();
 	}
 	
+	/**
+	 * Gets choice for given agent - last Task worked on during previous tick
+	 * @param agent
+	 * @return Granulated choice (last Task and Skill worked on)
+	 */
 	public static GranulatedChoice getGranulatedChoice(Agent agent) {
 		return currentTask.get(agent);
 	}

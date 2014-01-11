@@ -363,10 +363,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ "," + launchStatistics.taskCount + ","
 				+ launchStatistics.expDecay + ","
 				+ launchStatistics.fullyLearnedAgentsLeave + ","
+				+ SimulationParameters.experienceCutPoint + ","
 				+ SimulationParameters.granularity + ","
 				+ SimulationParameters.granularityType + ","
 				+ SimulationParameters.granularityObstinacy + ","
-				+ SimulationParameters.experienceCutPoint + ","
 				+ strategyDistribution.getTaskChoice() + ","
 				+ SimulationParameters.fillAgentSkillsMethod + ","
 				+ SimulationParameters.agentSkillPoolDataset + ","
@@ -379,8 +379,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
 				+ "Agents count" + "," + "Tasks count" + ","
 				+ "Experience decay" + "," + "Fully-learned agents leave" + ","
+				+ "Exp cut point" + ","
 				+ "Granularity" + "," + "Granularity type" + ","
-				+ "Granularity obstinancy" + "," + "Exp cut point" + ","
+				+ "Granularity obstinancy" + "," 
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice";
@@ -458,6 +459,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	public synchronized void experienceReassess() {
+		try{
 		IndexedIterable<Object> agentObjects = agentPool
 				.getObjects(Agent.class);
 		for (Object agent : agentObjects) {
@@ -493,6 +495,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 				}
 			}
 		}
+		}catch (Exception exc){
+			validationFatal(exc.toString());
+			validationError(exc.getLocalizedMessage());
+		}finally{
+			say("Regular method run for expDecay finished for this step.");
+		}
 	}
 
 	/**
@@ -524,6 +532,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	public synchronized void agentsWithdrawns() {
+		try{
 		IndexedIterable<Object> agentObjects = agentPool
 				.getObjects(Agent.class);
 		for (Object agent : agentObjects) {
@@ -545,6 +554,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 					agentPool.remove(agent);
 				}
 			}
+		}
+		}catch (Exception exc){
+			validationFatal(exc.toString());
+			validationError(exc.getLocalizedMessage());
+		}finally{
+			say("Eventual forcing agents to leave check finished!");
 		}
 	}
 

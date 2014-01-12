@@ -369,7 +369,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ "," + launchStatistics.taskCount + ","
 				+ launchStatistics.expDecay + ","
 				+ launchStatistics.fullyLearnedAgentsLeave + ","
-				+ SimulationParameters.experienceCutPoint + ","
+				+ launchStatistics.experienceCutPoint + ","
 				+ launchStatistics.granularity + ","
 				+ launchStatistics.granularityType + ","
 				+ SimulationParameters.granularityObstinacy + ","

@@ -140,6 +140,8 @@ public class Agent {
 				double __d = 
 						RandomHelper.nextDoubleFromTo(0d, 100d);
 				if (__d <= (double)(SimulationParameters.granularityObstinacy)){
+					say("Step(" + time + ") of Agent " + this.id
+							+ " continuuing granularity");
 					// continue work on the same skill
 					// but check if the is any work left in this particular task !
 					Boolean workDone = 
@@ -163,8 +165,10 @@ public class Agent {
 							}
 						}
 					}
-					EnvironmentEquilibrium.setActivity(true);
+					//EnvironmentEquilibrium.setActivity(true);
 				} else {
+					say("Step(" + time + ") of Agent " + this.id
+							+ " choosing new task for granulated choice");
 					// chose new task for granulated choice !
 					Task taskToWork = TaskPool.chooseTask(this,
 							this.strategy.taskChoice);
@@ -183,6 +187,8 @@ public class Agent {
 					}
 				}
 			} else {
+				say("Step(" + time + ") of Agent " + this.id
+						+ " first run, chose new task and assign granulated choice");
 				// first run
 				// chose new task and assign granulated choice !
 				Task taskToWork = TaskPool.chooseTask(this,

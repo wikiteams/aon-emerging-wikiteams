@@ -213,7 +213,11 @@ public class Task {
 		double highest = -1.;
 
 		assert intersection != null;
-		assert intersection.size() > 0;
+		if ((SimulationParameters.granularity) && (intersection.size() < 1))
+			return false; // happens when agent tries to work on 
+		// task with no intersection of skills
+		
+		assert intersection.size() > 0; // assertion for the rest of cases
 
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:

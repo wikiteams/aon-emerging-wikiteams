@@ -504,7 +504,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			}
 		} catch (Exception exc) {
 			validationFatal(exc.toString());
-			validationError(exc.getLocalizedMessage());
+			validationError(exc.getMessage());
+			exc.printStackTrace();
 		} finally {
 			say("Regular method run for expDecay finished for this step.");
 		}
@@ -542,7 +543,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 		try {
 			IndexedIterable<Object> agentObjects = agentPool
 					.getObjects(Agent.class);
-			for (Object agent : agentObjects) {
+			CopyOnWriteArrayList acconcurrent = new CopyOnWriteArrayList();
+			for(Object object : agentObjects)
+				acconcurrent.add(object);
+			
+			for (Object agent : acconcurrent) {
 				if (agent.getClass().getName().equals("internetz.Agent")) {
 					say("Bingo! It's an agent in pool, I may have to force the agent to leave");
 					Collection<AgentInternals> aic = ((Agent) agent)
@@ -564,7 +569,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			}
 		} catch (Exception exc) {
 			validationFatal(exc.toString());
-			validationError(exc.getLocalizedMessage());
+			validationError(exc.getMessage());
+			exc.printStackTrace();
 		} finally {
 			say("Eventual forcing agents to leave check finished!");
 		}
@@ -619,11 +625,15 @@ public class InternetzCtx extends DefaultContext<Object> {
 					launchStatistics.granularity = true;
 					SimulationParameters.granularityType = "TASKONLY";
 					launchStatistics.granularityType = "TASKONLY";
+					break;
 				case 3:
 					SimulationParameters.granularity = true;
 					launchStatistics.granularity = true;
 					SimulationParameters.granularityType = "TASKONLY";
 					launchStatistics.granularityType = "TASKONLY";
+					break;
+				default:
+					break;
 				}
 			}
 		} else {

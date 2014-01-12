@@ -17,6 +17,8 @@ import test.ModelConverter;
 public class SimulationParameters {
 	
 	public static final boolean multipleAgentSets = true;
+	
+	public static final boolean allowSkillDeath = false;
 
 	public static Model model_type = null;
 	public static String location = "";

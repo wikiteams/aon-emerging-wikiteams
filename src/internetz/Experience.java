@@ -21,7 +21,8 @@ public class Experience {
 	private int top; // hipothetical overlearning
 
 	private static final double expStub = 0.03; // as it is 0.03
-	private static final double decayLevel = 0.05; // 5%
+	private static final double decayLevel = 0.0005; // 0,05%
+	private static final double stupidityLevel = 0.03; // 3%
 
 	protected final static ExperienceSanityCheck esc = new ExperienceSanityCheck();
 	
@@ -64,7 +65,23 @@ public class Experience {
 		return getDelta(ApproximationMethod.SIGMOID);
 	}
 	
-	public Boolean decay(){
+	public double decay(){
+		//boolean dries = false;
+		if(((this.value)/this.top) <= stupidityLevel){
+			//don't decay
+			return 0;
+		}
+		double howMuch = this.top * decayLevel;
+		if ( ((this.value - howMuch)/this.top) <= stupidityLevel){ // never make less than 3%
+			//dries = true;
+			this.value = stupidityLevel * this.top;
+		} else {
+			this.value = this.value - howMuch;
+		}
+		return this.value / this.top;
+	}
+	
+	public Boolean decayWithDeath(){
 		boolean dies = false;
 		double howMuch = this.top * decayLevel;
 		if (value - howMuch <= 0){

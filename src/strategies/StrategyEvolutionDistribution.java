@@ -5,6 +5,7 @@ import internetz.SimulationParameters;
 import strategies.Strategy.TaskChoice;
 
 public class StrategyEvolutionDistribution extends StrategyDistribution {
+	// Homophyly, Heterophyly, Preferential
 	Double[][] evolutionPlans = {
 		{0.8, 0.2, 0.0}, 
 		{0.8, 0.0, 0.2},
@@ -25,9 +26,10 @@ public class StrategyEvolutionDistribution extends StrategyDistribution {
 	public TaskChoice getTaskStrategy(Agent agent) {
 		Double proportion1 = (double)this.strategyCounter1 / (double)SimulationParameters.agentCount;
 		Double proportion2 = (double)this.strategyCounter2 / (double)SimulationParameters.agentCount;
-		Double proportion3 = (double)this.strategyCounter3 / (double)SimulationParameters.agentCount;
+		//Double proportion3 = (double)this.strategyCounter3 / (double)SimulationParameters.agentCount;
 		
-		Integer selected = 1;
+		// choose evolution plan
+		Integer selected = SimulationParameters.evolutionPlan;
 		
 		if(proportion1 < this.evolutionPlans[selected][0]) {
 			this.strategyCounter1++;
@@ -37,7 +39,7 @@ public class StrategyEvolutionDistribution extends StrategyDistribution {
 			return Strategy.TaskChoice.HETEROPHYLY_CLASSIC;
 		} else {
 			this.strategyCounter3++;
-			return Strategy.TaskChoice.HOMOPHYLY_CLASSIC;
+			return Strategy.TaskChoice.PREFERENTIAL;
 		}
 	}
 }

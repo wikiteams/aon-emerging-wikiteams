@@ -34,6 +34,9 @@
 	<parameter name="evolution" displayName="evolution"
 		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+	<parameter name="evolutionPlan" displayName="evolutionPlan"
+		type="java.lang.Integer" defaultValue="0" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
     
     <parameter name="location" displayName="Location" type="string" 
     	converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter"

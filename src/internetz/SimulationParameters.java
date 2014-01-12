@@ -31,6 +31,7 @@ public class SimulationParameters {
 	
 	public static int strategyDistribution = 0;
 	public static boolean evolution = false;
+	public static int evolutionPlan = 0;
 	public static boolean experienceDecay = false;
 	public static int randomSeed = 0;
 	
@@ -71,6 +72,7 @@ public class SimulationParameters {
 		taskMinMaxChoiceAlgorithm = (String) param.getValue("taskMinMaxChoiceAlgorithm");
 		strategyDistribution = (Integer) param.getValue("strategyDistribution");
 		evolution = (Boolean) param.getValue("evolution");
+		evolutionPlan = (Integer) param.getValue("evolutionPlan");
 		
 		taskSkillPoolDataset = (String) param.getValue("taskSkillPoolDataset");
 		agentSkillPoolDataset = (String) param.getValue("agentSkillPoolDataset");

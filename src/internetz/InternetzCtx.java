@@ -5,6 +5,7 @@ import github.TaskSkillsPool;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -29,6 +30,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import repast.simphony.space.graph.Network;
 import repast.simphony.space.projection.Projection;
+import repast.simphony.util.collections.IndexedIterable;
 import strategies.CentralPlanning;
 import strategies.Strategy;
 import strategies.StrategyDistribution;
@@ -326,6 +328,56 @@ public class InternetzCtx extends DefaultContext<Object> {
 			RunEnvironment.getInstance().endRun();
 			cleanAfter();
 		}
+	}
+	
+	@ScheduledMethod(start = 10, interval= 10, priority = ScheduleParameters.LAST_PRIORITY)
+	public void evolveAgents() {
+		HashMap<Integer, Strategy> strategies = this.SUS();
+		
+		IndexedIterable<Object> agents = this.agentPool.getObjects(Agent.class);
+		int index = 0;
+		
+		for(Object a: agents) {
+			if(((Agent) a).getStrategy() != strategies.get(index)) {
+				System.out.println("Agent has strategy: " + ((Agent) a).getStrategy());
+				System.out.println("Set new strategy: " + strategies.get(index));
+			}
+			((Agent) a).setStrategy(strategies.get(index));
+			index++;
+		}
+	}
+	
+	/**
+	 * Stochastic Universal Sampling
+	 */
+	public HashMap<Integer, Strategy> SUS() {
+		IndexedIterable<Object> agents = this.agentPool.getObjects(Agent.class);
+		
+		double agregateFitness = 0.0;
+		int selectionSize = Agent.totalAgents;
+		
+		for(Object a: agents) {
+			agregateFitness += ((Agent) a).getUtility();
+		}
+		
+		double startOffset = Math.random();
+		double cumulativeExpectation = 0;
+		int index = 0;
+		
+		HashMap<Integer, Strategy> strategies = new HashMap<Integer, Strategy>();
+		
+		for(Object a: agents) {
+			cumulativeExpectation += ((Agent) a).getUtility() / agregateFitness * selectionSize;
+			
+			while(cumulativeExpectation > startOffset + index) {
+				System.out.println("Choosen agent: " + a + "("+((Agent) a).getUtility()+")");
+				
+				strategies.put(index, ((Agent) a).getStrategy());
+				index++;
+			}
+		}
+		
+		return strategies;
 	}
 
 	private String buildFinalMessage() {

@@ -13,6 +13,7 @@ import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import strategies.Strategy;
 import tasks.CentralAssignmentOrders;
+import argonauts.GranularityType;
 import argonauts.GranulatedChoice;
 import argonauts.PersistJobDone;
 import argonauts.PersistRewiring;
@@ -139,6 +140,8 @@ public class Agent {
 				double __d = 
 						RandomHelper.nextDoubleFromTo(0d, 100d);
 				if (__d <= (double)(SimulationParameters.granularityObstinacy)){
+					say("Step(" + time + ") of Agent " + this.id
+							+ " continuuing granularity");
 					// continue work on the same skill
 					// but check if the is any work left in this particular task !
 					Boolean workDone = 
@@ -146,22 +149,65 @@ public class Agent {
 							this, granulated, this.strategy.skillChoice);
 					if (! workDone){
 						// chose new task for granulated choice !
+						Task taskToWork = TaskPool.chooseTask(this,
+								this.strategy.taskChoice);
+						executeJob(taskToWork);
+						if (taskToWork != null){
+							switch(GranularityType.desc(SimulationParameters.granularityType)){
+							case TASKANDSKILL:
+								//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+								break;
+							case TASKONLY:
+								PersistRewiring.setOccupation(this, taskToWork);
+								break;
+							default:
+								break;
+							}
+						}
 					}
-					EnvironmentEquilibrium.setActivity(true);
+					//EnvironmentEquilibrium.setActivity(true);
 				} else {
+					say("Step(" + time + ") of Agent " + this.id
+							+ " choosing new task for granulated choice");
 					// chose new task for granulated choice !
 					Task taskToWork = TaskPool.chooseTask(this,
 							this.strategy.taskChoice);
 					executeJob(taskToWork);
+					if (taskToWork != null){
+						switch(GranularityType.desc(SimulationParameters.granularityType)){
+						case TASKANDSKILL:
+							//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+							break;
+						case TASKONLY:
+							PersistRewiring.setOccupation(this, taskToWork);
+							break;
+						default:
+							break;
+						}
+					}
 				}
 			} else {
+				say("Step(" + time + ") of Agent " + this.id
+						+ " first run, chose new task and assign granulated choice");
 				// first run
 				// chose new task and assign granulated choice !
 				Task taskToWork = TaskPool.chooseTask(this,
 						this.strategy.taskChoice);
 				executeJob(taskToWork);
+				if (taskToWork != null){
+					switch(GranularityType.desc(SimulationParameters.granularityType)){
+					case TASKANDSKILL:
+						//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+						break;
+					case TASKONLY:
+						PersistRewiring.setOccupation(this, taskToWork);
+						break;
+					default:
+						break;
+					}
+				}
 			}
-		} else {
+		} else { // block without granularity
 			// Agent Aj uses Aj {strategy for choosing tasks}
 			// and chooses a task to work on
 			Task taskToWork = TaskPool.chooseTask(this,

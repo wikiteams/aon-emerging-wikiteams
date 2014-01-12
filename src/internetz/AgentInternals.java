@@ -29,8 +29,12 @@ public class AgentInternals {
 		return experience;
 	}
 	
-	public Boolean decayExperience(){
+	public double decayExperience(){
 		return experience.decay();
+	}
+	
+	public Boolean decayExperienceWithDeath(){
+		return experience.decayWithDeath();
 	}
 
 }

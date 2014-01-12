@@ -26,10 +26,10 @@ import constants.Constraints;
 
 /**
  * Task is a collection of a three-element set of skill, number of work units,
- * and work done.
+ * and work done. Literally, a representation of a simulation Task object.
  * 
  * @since 1.0
- * @version 1.2
+ * @version 1.4
  * @author Oskar Jarczyk
  */
 public class Task {
@@ -182,22 +182,19 @@ public class Task {
 			TaskPool.considerEnding(this);
 		skillsImprovedList.add(taskInternal.getSkill());
 
-		PersistJobDone.addContribution(agent.getNick(), this, skillsImprovedList);
+		PersistJobDone.addContribution(agent.getNick(), this,
+				skillsImprovedList);
 	}
 
 	public Boolean workOnTaskFromContinuum(Agent agent,
 			GranulatedChoice granulated, Strategy.SkillChoice strategy) {
-		boolean workDone = false;
-		
-		workOnTask(agent, strategy);
-		
-		return workDone;
+		return workOnTask(agent, strategy);
 	}
 
-	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
+	public Boolean workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		Collection<TaskInternals> intersection;
 		List<Skill> skillsImprovedList = new ArrayList<Skill>();
-		
+
 		if (agent.getStrategy().taskChoice
 				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)
 				|| agent.getStrategy().taskChoice
@@ -216,7 +213,11 @@ public class Task {
 		double highest = -1.;
 
 		assert intersection != null;
-		assert intersection.size() > 0;
+		if ((SimulationParameters.granularity) && (intersection.size() < 1))
+			return false; // happens when agent tries to work on 
+		// task with no intersection of skills
+		
+		assert intersection.size() > 0; // assertion for the rest of cases
 
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
@@ -237,12 +238,14 @@ public class Task {
 				proportionalTimeDivision.increment(this,
 						singleTaskInternalFromIntersect, 1, alpha, delta);
 				experience.increment(alpha);
-				skillsImprovedList.add( singleTaskInternalFromIntersect.getSkill() );
+				skillsImprovedList.add(singleTaskInternalFromIntersect
+						.getSkill());
 			}
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
-			CopyOnWriteArrayList<TaskInternals> copyIntersection = new CopyOnWriteArrayList<TaskInternals>(
+			CopyOnWriteArrayList<TaskInternals> copyIntersection = 
+					new CopyOnWriteArrayList<TaskInternals>(
 					intersection);
 			/**
 			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano w tym tasku, i
@@ -278,7 +281,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
 						delta);
 				experience.increment(1);
-				skillsImprovedList.add( singleTaskInternal.getSkill() );
+				skillsImprovedList.add(singleTaskInternal.getSkill());
 			}
 			break;
 		case CHOICE_OF_AGENT:
@@ -317,7 +320,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
 						delta);
 				experience.increment(1);
-				skillsImprovedList.add( singleTaskInternal.getSkill() );
+				skillsImprovedList.add(singleTaskInternal.getSkill());
 			}
 			break;
 		case RANDOM:
@@ -325,16 +328,10 @@ public class Task {
 			Collections.shuffle((ArrayList<TaskInternals>) intersection);
 			TaskInternals randomTaskInternal = ((ArrayList<TaskInternals>) intersection)
 					.get(0);
-			// Random generator = new Random();
-			// List<String> keys = new ArrayList<String>(skills.keySet());
-			// String randomKey = keys.get(generator.nextInt(keys.size()));
-			// TaskInternals randomTaskInternal = skills.get(randomKey);
 			{
 				sanity("Choosing Si:{"
 						+ randomTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + randomTaskInternal.toString() + "}");
-				// int n = skills.size();
-				// double alpha = 1 / n;
 				Experience experience = agent.getAgentInternalsOrCreate(
 						randomTaskInternal.getSkill().getName())
 						.getExperience();
@@ -342,7 +339,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, randomTaskInternal, 1,
 						delta);
 				experience.increment(1);
-				skillsImprovedList.add( randomTaskInternal.getSkill() );
+				skillsImprovedList.add(randomTaskInternal.getSkill());
 			}
 			break;
 		default:
@@ -352,9 +349,14 @@ public class Task {
 
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
-		assert skillsImprovedList.size() > 0;
 
-		PersistJobDone.addContribution(agent.getNick(), this, skillsImprovedList);
+		if (skillsImprovedList.size() > 0) {
+			PersistJobDone.addContribution(agent.getNick(), this,
+					skillsImprovedList);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean isClosed() {

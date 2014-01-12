@@ -3,6 +3,14 @@ package argonauts;
 import internetz.Task;
 import internetz.TaskInternals;
 
+/**
+ * Holds a reference to the last Task and TaskInternal
+ * Agent worked on during previous tick
+ * 
+ * @author Oskar Jarczyk
+ * @since 1.4
+ *
+ */
 public class GranulatedChoice {
 
 	private int howManyTimes;

@@ -7,9 +7,13 @@ import cern.jet.random.ChiSquare;
 
 /**
  * Class describing the learning process of a human for simulation purpose.
+ * Uses sigmoid approximation or alternatively ChiSquare CDF.
+ * 
+ * Allows for simulating experience decay, and cut-point E.
  * 
  * @author Oskar Jarczyk
- * @version 1.3
+ * @since 1.0
+ * @version 1.4
  * 
  */
 public class Experience {
@@ -132,16 +136,26 @@ public class Experience {
 	 * 
 	 * @author Oskar Jarczyk
 	 * @since 1.0
+	 * @version 1.4
 	 * 
 	 */
 	class SigmoidCurve {
+		
+		private double limes = 6;
 
 		SigmoidCurve() {
 			say("Object SigmoidCurve created, ref: " + this);
 		}
 
 		protected double getDelta(double k) {
-			return 1d / (1d + Math.pow(Math.E, -k));
+			double base = 0;
+			if ( (k < 1.001) && (k >= 0.) ) {
+				base = (-limes) + (k*(2*limes));
+			} else {
+				assert false;
+				// if not, smth would be wrong
+			}
+			return 1d / (1d + Math.pow(Math.E, -base));
 		}
 	}
 

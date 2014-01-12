@@ -175,6 +175,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		buildExperienceReassessment();
 		buildAgentsWithdrawns();
 		decideAboutGranularity();
+		decideAboutCutPoint();
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
@@ -657,6 +658,26 @@ public class InternetzCtx extends DefaultContext<Object> {
 		} else {
 			launchStatistics.granularity = false;
 			launchStatistics.granularityType = "OFF";
+		}
+	}
+	
+	private void decideAboutCutPoint() {
+		if (SimulationParameters.experienceCutPoint) {
+				int twoPossibilities = RandomHelper.nextIntFromTo(0, 1);
+				switch (twoPossibilities) {
+				case 0:
+					SimulationParameters.experienceCutPoint = false;
+					launchStatistics.experienceCutPoint = false;
+					break;
+				case 1:
+					SimulationParameters.experienceCutPoint = true;
+					launchStatistics.experienceCutPoint = true;
+					break;
+				default:
+					break;
+				}
+		} else {
+			launchStatistics.experienceCutPoint = false;
 		}
 	}
 

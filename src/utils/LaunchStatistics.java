@@ -10,7 +10,8 @@ public class LaunchStatistics {
 	public boolean fullyLearnedAgentsLeave = false;
 	
 	public boolean granularity = false;
-	//public double granularityV = 0;
 	public String granularityType = Constraints.EMPTY_STRING;
+	
+	public boolean experienceCutPoint = false;
 
 }

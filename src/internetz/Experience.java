@@ -6,7 +6,7 @@ import logger.PjiitOutputter;
 import cern.jet.random.ChiSquare;
 
 /**
- * Class describing the learning process of a human for simulation purpose.
+ * Class describing the learning process of a human for simulation purpose. 
  * Uses sigmoid approximation or alternatively ChiSquare CDF.
  * 
  * Allows for simulating experience decay, and cut-point E.
@@ -28,8 +28,10 @@ public class Experience {
 	private static final double decayLevel = 0.0005; // 0,05%
 	private static final double stupidityLevel = 0.03; // 3%
 
+	private static final double cutPoint = 1 - calculateCutPoint(6.0);
+
 	protected final static ExperienceSanityCheck esc = new ExperienceSanityCheck();
-	
+
 	private enum ApproximationMethod {
 		SIGMOID, CHI_SQUARE
 	};
@@ -59,36 +61,41 @@ public class Experience {
 		say("Creating Experience object with value: " + this.value
 				+ " and top: " + this.top);
 	}
-	
-	private void createMathematicalCurves(){
+
+	private void createMathematicalCurves() {
 		this.lc = new LearningCurve();
 		this.sc = new SigmoidCurve();
+	}
+
+	private static double calculateCutPoint(double k) {
+		return 1d / (1d + Math.pow(Math.E, -k));
 	}
 
 	public double getDelta() {
 		return getDelta(ApproximationMethod.SIGMOID);
 	}
-	
-	public double decay(){
-		//boolean dries = false;
-		if(((this.value)/this.top) <= stupidityLevel){
-			//don't decay
+
+	public double decay() {
+		// boolean dries = false;
+		if (((this.value) / this.top) <= stupidityLevel) {
+			// don't decay
 			return 0;
 		}
 		double howMuch = this.top * decayLevel;
-		if ( ((this.value - howMuch)/this.top) <= stupidityLevel){ // never make less than 3%
-			//dries = true;
+		if (((this.value - howMuch) / this.top) <= stupidityLevel) { 
+			// never make less than 3%
+			// dries = true;
 			this.value = stupidityLevel * this.top;
 		} else {
 			this.value = this.value - howMuch;
 		}
 		return this.value / this.top;
 	}
-	
-	public Boolean decayWithDeath(){
+
+	public Boolean decayWithDeath() {
 		boolean dies = false;
 		double howMuch = this.top * decayLevel;
-		if (value - howMuch <= 0){
+		if (value - howMuch <= 0) {
 			dies = true;
 			this.value = 0;
 		} else {
@@ -99,12 +106,12 @@ public class Experience {
 
 	public double getDelta(ApproximationMethod method) {
 		switch (method) {
-			case SIGMOID:
-				return sc.getDelta((value / top));
-			case CHI_SQUARE:
-				return lc.getDelta((value / top));
-			default:
-				break;
+		case SIGMOID:
+			return sc.getDelta((value / top));
+		case CHI_SQUARE:
+			return lc.getDelta((value / top));
+		default:
+			break;
 		}
 		return lc.getDelta((value / top));
 	}
@@ -140,7 +147,7 @@ public class Experience {
 	 * 
 	 */
 	class SigmoidCurve {
-		
+
 		private double limes = 6;
 
 		SigmoidCurve() {
@@ -148,14 +155,51 @@ public class Experience {
 		}
 
 		protected double getDelta(double k) {
-			double base = 0;
-			if ( (k < 1.001) && (k >= 0.) ) {
-				base = (-limes) + (k*(2*limes));
+			double result = 0;
+			if (!SimulationParameters.experienceCutPoint) {
+				double base = 0;
+				if ((k < 0.5) && (k >= 0.)) {
+					base = (-limes) + (k * (2 * limes));
+					result = 1d / (1d + Math.pow(Math.E, -base));
+					result = result - (Experience.cutPoint * (Math.abs(0-base)));
+					if (result < 0.) result = 0.; // because of possible precision issues
+				} else if ((k < 1.001) && (k > 0.5)) {
+					base = (-limes) + (k * (2 * limes));
+					result = 1d / (1d + Math.pow(Math.E, -base));
+					result = result + (Experience.cutPoint * (0+base));
+					if (result > 1.) result = 1.; // possible precision issues
+				} else if (k == 0.5){
+					base = (-limes) + (k * (2 * limes));
+					result = 1d / (1d + Math.pow(Math.E, -base));
+				}
+				else {
+					assert false;
+					// if not, smth would be wrong
+				}
 			} else {
-				assert false;
-				// if not, smth would be wrong
+				throw new UnsupportedOperationException();
+				// TODO: finish implementation
+//				double base = 0;
+//				if ((k < 0.5) && (k >= 0.)) {
+//					base = (-limes) + (k * (2 * limes));
+//					result = 1d / (1d + Math.pow(Math.E, -base));
+//					result = result - (Experience.cutPoint * (Math.abs(0-base)));
+//					if (result < 0.) result = 0.; // because of possible precision issues
+//				} else if ((k < 1.001) && (k > 0.5)) {
+//					base = (-limes) + (k * (2 * limes));
+//					result = 1d / (1d + Math.pow(Math.E, -base));
+//					result = result + (Experience.cutPoint * (0+base));
+//					if (result > 1.) result = 1.; // possible precision issues
+//				} else if (k == 0.5){
+//					base = (-limes) + (k * (2 * limes));
+//					result = 1d / (1d + Math.pow(Math.E, -base));
+//				}
+//				else {
+//					assert false;
+//					// if not, smth would be wrong
+//				}
 			}
-			return 1d / (1d + Math.pow(Math.E, -base));
+			return result;
 		}
 	}
 
@@ -197,7 +241,7 @@ class ExperienceSanityCheck {
 	private ChiSquare chi;
 	private int freedom;
 	private int k;
-	//private SigmoidCurve sigmoidCurve;
+	// private SigmoidCurve sigmoidCurve;
 	public static double EpsilonCutValue;
 
 	ExperienceSanityCheck() {
@@ -206,8 +250,8 @@ class ExperienceSanityCheck {
 
 		chi = new ChiSquare(freedom,
 				cern.jet.random.ChiSquare.makeDefaultGenerator());
-		//sigmoidCurve = new SigmoidCurve();
-		
+		// sigmoidCurve = new SigmoidCurve();
+
 		checkChi();
 		checkSigmoid();
 
@@ -225,7 +269,7 @@ class ExperienceSanityCheck {
 		say("chi.cdf(0.9): " + chi.cdf(0.999 * k));
 		say("chi.nextDouble(): " + chi.nextDouble());
 	}
-	
+
 	public void checkSigmoid() {
 		say("sigmoid(-10.000): " + sigmoidGetDelta(-10d));
 		say("sigmoid(-8.000): " + sigmoidGetDelta(-8d));
@@ -247,7 +291,7 @@ class ExperienceSanityCheck {
 		say("chi.cdf(1): " + e);
 		return 1 - e;
 	}
-	
+
 	private double sigmoidGetDelta(double k) {
 		return 1d / (1d + Math.pow(Math.E, -k));
 	}

@@ -199,6 +199,10 @@ public class Experience {
 //					// if not, smth would be wrong
 //				}
 			}
+			
+			assert result >= 0.;
+			assert result <= 1.;
+			
 			return result;
 		}
 	}

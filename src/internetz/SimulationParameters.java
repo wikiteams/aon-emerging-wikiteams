@@ -15,6 +15,10 @@ import test.ModelConverter;
  * @version 1.3
  */
 public class SimulationParameters {
+	
+	public static final boolean multipleAgentSets = true;
+	
+	public static final boolean allowSkillDeath = false;
 
 	public static Model model_type = null;
 	public static String location = "";
@@ -32,8 +36,10 @@ public class SimulationParameters {
 	public static int strategyDistribution = 0;
 	public static boolean evolution = false;
 	public static int evolutionPlan = 0;
-	public static boolean experienceDecay = false;
 	public static int randomSeed = 0;
+	public static boolean granularity = false;
+	public static int granularityObstinacy = 0;
+	public static String granularityType = "";
 	
 	public static String taskSkillPoolDataset = "";
 	public static String agentSkillPoolDataset = "";
@@ -45,12 +51,16 @@ public class SimulationParameters {
 
 	public static int agentSkillsPoolRandomize1 = 0;
 	public static int agentSkillsMaximumExperience = 0;
+	public static boolean experienceDecay = false;
+	public static boolean experienceCutPoint = false;
 	
 	public static boolean deployedTasksLeave = false;
 	public static boolean fullyLearnedAgentsLeave = false;
 	public static boolean forceStop = false;
 	
 	public static int maxWorkRequired = 0;
+	
+	public static boolean dataSetAll = false;
 
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();
@@ -95,11 +105,22 @@ public class SimulationParameters {
 		
 		experienceDecay = (Boolean) param
 				.getValue("experienceDecay");
+		experienceCutPoint = (Boolean) param
+				.getValue("experienceCutPoint");
+		granularity = (Boolean) param
+				.getValue("granularity");
+		granularityObstinacy = (Integer) param
+				.getValue("granularityObstinacy");
+		granularityType = (String) param
+				.getValue("granularityType");
+
 		deployedTasksLeave = (Boolean) param
 				.getValue("deployedTasksLeave");
 		fullyLearnedAgentsLeave = (Boolean) param
 				.getValue("fullyLearnedAgentsLeave");
 		forceStop = (Boolean) param
 				.getValue("forceStop");
+		
+		dataSetAll = (Boolean) param.getValue("dataSetAll");
 	}
 }

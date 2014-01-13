@@ -1,13 +1,18 @@
 package internetz;
 
+import github.DataSetProvider;
 import github.TaskSkillsPool;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import logger.EndRunLogger;
 import logger.PjiitLogger;
@@ -40,36 +45,45 @@ import tasks.CentralAssignmentOrders;
 import test.AgentTestUniverse;
 import test.Model;
 import test.TaskTestUniverse;
+import utils.DescribeUniverseBulkLoad;
+import utils.LaunchStatistics;
 import utils.NamesGenerator;
+import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArrayList;
 import argonauts.PersistJobDone;
+import argonauts.PersistRewiring;
 import au.com.bytecode.opencsv.CSVWriter;
 import constants.Constraints;
 import constants.ModelFactory;
 
 /**
- * COIN network emergence simulator, successfully moved to Repast Simphony 2.1
- * for better performance
+ * COIN network emergence simulator, a Repast Simphony 2.1 multi-agent social
+ * simulation for modelling task allocation techniques and behaviour of
+ * collaborators in websites like GitHub and Wikipedia. Works on both Windows
+ * and Linux environments.
  * 
- * @version 1.3 "Bobo Bear"
+ * @version 1.4 "MIT submission"
+ * 
  * @since 1.0
- * @author Oskar Jarczyk (since 1.0+)
+ * @author Oskar Jarczyk (since 1.0+), Blazej Gruszka (1.3+)
+ * 
  * @see 1) github markdown 2) "On the effectiveness of emergent task allocation"
  */
 public class InternetzCtx extends DefaultContext<Object> {
 
 	private StrategyDistribution strategyDistribution;
-
 	private ModelFactory modelFactory;
 	private SkillFactory skillFactory;
+	private LaunchStatistics launchStatistics;
 	private Schedule schedule = new Schedule();
+	private String[] universe = null;
 
 	private TaskPool taskPool = new TaskPool();
 	private AgentPool agentPool = new AgentPool();
 
 	private List<Agent> listAgent;
-
 	private CentralPlanning centralPlanningHq;
 
+	@SuppressWarnings("unused")
 	private boolean shutdownInitiated = false;
 	private boolean alreadyFlushed = false;
 
@@ -86,6 +100,11 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say(Constraints.LOADING_PARAMETERS);
 
 			SimulationParameters.init();
+			if (SimulationParameters.multipleAgentSets) {
+				universe = DescribeUniverseBulkLoad.init();
+			}
+
+			launchStatistics = new LaunchStatistics();
 			modelFactory = new ModelFactory(SimulationParameters.model_type);
 			say("Starting simulation with model: " + modelFactory.toString());
 
@@ -115,11 +134,12 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 
 		try {
-			AgentSkillsPool
-					.instantiate(SimulationParameters.agentSkillPoolDataset);
+			DataSetProvider dsp = new DataSetProvider(
+					SimulationParameters.dataSetAll);
+
+			AgentSkillsPool.instantiate(dsp.getAgentSkillDataset());
 			say("Instatiated AgentSkillsPool");
-			TaskSkillsPool
-					.instantiate(SimulationParameters.taskSkillPoolDataset);
+			TaskSkillsPool.instantiate(dsp.getTaskSkillDataset());
 			say("Instatied TaskSkillsPool");
 
 			strategyDistribution
@@ -153,7 +173,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		} catch (IOException e) {
 			say(Constraints.IO_EXCEPTION);
 			e.printStackTrace();
-		} catch (NullPointerException nexc){
+		} catch (NullPointerException nexc) {
 			say(Constraints.UNKNOWN_EXCEPTION);
 			nexc.printStackTrace();
 		}
@@ -162,12 +182,20 @@ public class InternetzCtx extends DefaultContext<Object> {
 			RunEnvironment.getInstance().endAt(SimulationParameters.numSteps);
 
 		buildCentralPlanner();
-		
+		buildExperienceReassessment();
+		buildAgentsWithdrawns();
+		decideAboutGranularity();
+		decideAboutCutPoint();
+
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
 	}
 
 	private void initializeLoggers() throws IOException {
+		// System.setErr(new PrintStream(new
+		// FileOutputStream("error_console.log")));
+		// actually this little bastard is not working, find out why ?
+
 		PjiitLogger.init();
 		say(Constraints.LOGGER_INITIALIZED);
 		SanityLogger.init();
@@ -181,7 +209,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		if (model.isNormal() && model.isValidation()) {
 			throw new UnsupportedOperationException();
 		} else if (model.isNormal()) {
-			addAgents(SimulationParameters.agentCount);
+			addAgents();
 		} else if (model.isSingleValidation()) {
 			listAgent = new ArrayList<Agent>();
 			AgentTestUniverse.init();
@@ -237,7 +265,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 	}
 
 	private void initializeTasksNormally() {
-		for (int i = 0; i < SimulationParameters.taskCount; i++) {
+		Integer howMany = SimulationParameters.multipleAgentSets ? Integer
+				.parseInt(universe[1]) : SimulationParameters.taskCount;
+		for (int i = 0; i < howMany; i++) {
 			Task task = new Task();
 			say("Creating task..");
 			taskPool.addTask(task.getName(), task);
@@ -246,6 +276,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 			taskPool.add(task);
 			agentPool.add(task);
 		}
+
+		launchStatistics.taskCount = taskPool.getCount();
 	}
 
 	private void initializeValidationLogger() {
@@ -261,7 +293,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			for (AgentInternals __agentInternal : agent.getAgentInternals()) {
 				ArrayList<String> entries = new ArrayList<String>();
 				entries.add(agent.getNick());
-				entries.add(__agentInternal.getExperience().value + "");
+				entries.add(__agentInternal.getExperience().getValue() + "");
 				entries.add(__agentInternal.getSkill().getName());
 				String[] stockArr = new String[entries.size()];
 				stockArr = entries.toArray(stockArr);
@@ -271,7 +303,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 		writer.close();
 	}
 
-	private void addAgents(int agentCnt) {
+	private void addAgents() {
+		Integer agentCnt = SimulationParameters.multipleAgentSets ? Integer
+				.parseInt(universe[0]) : SimulationParameters.agentCount;
+
 		listAgent = NamesGenerator.getnames(agentCnt);
 		for (int i = 0; i < agentCnt; i++) {
 			Agent agent = listAgent.get(i);
@@ -288,6 +323,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 			// this.add(agent);
 			agentPool.add(agent);
 		}
+
+		launchStatistics.agentCount = agentPool.size()
+				- launchStatistics.taskCount;
 	}
 
 	private void outputAgentNetworkData() {
@@ -309,6 +347,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void clearStaticHeap() {
 		say("Clearing static data from previous simulation");
 		PersistJobDone.clear();
+		PersistRewiring.clear();
 		TaskSkillsPool.clear();
 		SkillFactory.skills.clear();
 		NamesGenerator.clear();
@@ -386,7 +425,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ RunState.getInstance().getRunInfo().getRunNumber()
 				+ ","
 				+ RunEnvironment.getInstance().getCurrentSchedule()
-						.getTickCount() + ","
+						.getTickCount() + "," + launchStatistics.agentCount
+				+ "," + launchStatistics.taskCount + ","
+				+ launchStatistics.expDecay + ","
+				+ launchStatistics.fullyLearnedAgentsLeave + ","
+				+ launchStatistics.experienceCutPoint + ","
+				+ launchStatistics.granularity + ","
+				+ launchStatistics.granularityType + ","
+				+ SimulationParameters.granularityObstinacy + ","
 				+ strategyDistribution.getTaskChoice() + ","
 				+ SimulationParameters.fillAgentSkillsMethod + ","
 				+ SimulationParameters.agentSkillPoolDataset + ","
@@ -397,6 +443,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	private String buildFinalMessageHeader() {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
+				+ "Agents count" + "," + "Tasks count" + ","
+				+ "Experience decay" + "," + "Fully-learned agents leave" + ","
+				+ "Exp cut point" + "," + "Granularity" + ","
+				+ "Granularity type" + "," + "Granularity obstinancy" + ","
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice";
@@ -447,18 +497,22 @@ public class InternetzCtx extends DefaultContext<Object> {
 		}
 		EndRunLogger.finalMessage(s);
 	}
-	
+
 	public void centralPlanning() {
-		say("CentralPlanning scheduled method launched, listAgent.size(): " 
+		say("CentralPlanning scheduled method launched, listAgent.size(): "
 				+ listAgent.size() + " taskPool.size(): " + taskPool.size());
 		centralPlanningHq.centralPlanningCalc(listAgent, taskPool);
 	}
 
+	/**
+	 * Here I need to schedule method manually because i don't know if central
+	 * planer is enabled for the simulation whether not.
+	 */
 	public void buildCentralPlanner() {
-		say ("buildCentralPlanner lunched !");
+		say("buildCentralPlanner lunched !");
 		if (strategyDistribution.getTaskChoice().equals("central")) {
 			centralPlanningHq = new CentralPlanning();
-			
+
 			say("Central planner initiating.....");
 			ISchedule schedule = RunEnvironment.getInstance()
 					.getCurrentSchedule();
@@ -466,6 +520,224 @@ public class InternetzCtx extends DefaultContext<Object> {
 					1, ScheduleParameters.FIRST_PRIORITY);
 			schedule.schedule(params, this, "centralPlanning");
 			say("Central planner initiated and awaiting for call !");
+		}
+	}
+
+	public synchronized void experienceReassess() {
+		try {
+			IndexedIterable<Object> agentObjects = agentPool
+					.getObjects(Agent.class);
+			for (Object agent : agentObjects) {
+				String type = agent.getClass().getName();
+				if (type.equals("internetz.Agent")) {
+					say("Checking if I may have to decrease exp of "
+							+ (((Agent) agent).getNick()));
+					// use persist job done
+					Map<Integer, List<Skill>> c = PersistJobDone
+							.getSkillsWorkedOn(((Agent) agent).getNick());
+					if ((c == null) || (c.size() < 1)) { // agent didn't work on
+															// anything yet !
+						continue; // move on to next agent in pool
+					}
+					List<Skill> __s = c.get(Integer
+							.valueOf((int) RunEnvironment.getInstance()
+									.getCurrentSchedule().getTickCount()));
+					List<Skill> s = __s == null ? new ArrayList<Skill>() : __s;
+
+					Collection<AgentInternals> aic = ((Agent) agent)
+							.getAgentInternals();
+					CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
+							aic);
+					for (Object ai : aicconcurrent) {
+						if (s.contains(((AgentInternals) ai).getSkill())) {
+							// was working on this, don't decay
+						} else {
+							// decay this experience by beta < 1
+							if (SimulationParameters.allowSkillDeath) {
+								boolean result = ((AgentInternals) ai)
+										.decayExperienceWithDeath();
+								if (result) {
+									((Agent) agent).removeSkill(
+											((AgentInternals) ai).getSkill(),
+											false);
+								}
+							} else {
+								double value = 
+										((AgentInternals) ai).decayExperience();
+								if (value == 0){
+									say("Experience of agent "
+											+ (((Agent) agent).getNick()) + 
+											" wasn't decreased because it's already low");
+								} else
+								say("Experience of agent "
+										+ (((Agent) agent).getNick()) + 
+										" decreased and is now " + value);
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception exc) {
+			validationFatal(exc.toString());
+			validationError(exc.getMessage());
+			exc.printStackTrace();
+		} finally {
+			say("Regular method run for expDecay finished for this step.");
+		}
+	}
+
+	/**
+	 * Here I need to schedule method manually because I don't know if expDecay
+	 * is enabled for the simulation whether not.
+	 */
+	public void buildExperienceReassessment() {
+		say("buildExperienceReassessment lunched !");
+		if (SimulationParameters.experienceDecay) {
+			int reassess = RandomHelper.nextIntFromTo(0, 1);
+			// I want in results both expDecay off and on!
+			// thats why randomize to use both
+			if (reassess == 0) {
+				SimulationParameters.experienceDecay = false;
+				launchStatistics.expDecay = false;
+			} else if (reassess == 1) {
+				SimulationParameters.experienceDecay = true;
+				launchStatistics.expDecay = true;
+				say("Exp decay initiating.....");
+				ISchedule schedule = RunEnvironment.getInstance()
+						.getCurrentSchedule();
+				ScheduleParameters params = ScheduleParameters.createRepeating(
+						1, 1, ScheduleParameters.LAST_PRIORITY);
+				schedule.schedule(params, this, "experienceReassess");
+				say("Experience decay initiated and awaiting for call !");
+			} else
+				assert false; // reassess is always 0 or 1
+		}
+	}
+
+	public synchronized void agentsWithdrawns() {
+		try {
+			IndexedIterable<Object> agentObjects = agentPool
+					.getObjects(Agent.class);
+			CopyOnWriteArrayList acconcurrent = new CopyOnWriteArrayList();
+			for (Object object : agentObjects)
+				acconcurrent.add(object);
+
+			for (Object agent : acconcurrent) {
+				if (agent.getClass().getName().equals("internetz.Agent")) {
+					say("Checking if I may have to force "
+							+ (((Agent) agent).getNick()) + " to leave");
+					Collection<AgentInternals> aic = ((Agent) agent)
+							.getAgentInternals();
+
+					CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
+							aic);
+					for (Object ai : aicconcurrent) {
+						if (((AgentInternals) ai).getExperience().getDelta() >= 1.) {
+							say("Agent " + (((Agent) agent).getNick())
+									+ " reached maximum in skill " + ((AgentInternals) ai).getSkill());
+							((Agent) agent).removeSkill(
+									((AgentInternals) ai).getSkill(), false);
+						}
+					}
+					if (((Agent) agent).getAgentInternals().size() < 1) {
+						say("Agent " + (((Agent) agent).getNick())
+								+ " don't have any more skills. Removing agent");
+						agentPool.remove(agent);
+					}
+				}
+			}
+		} catch (Exception exc) {
+			validationFatal(exc.toString());
+			validationError(exc.getMessage());
+			exc.printStackTrace();
+		} finally {
+			say("Eventual forcing agents to leave check finished!");
+		}
+	}
+
+	/**
+	 * Here I need to schedule method manually because I don't know if
+	 * fullyLearnedAgentsLeave is enabled for the simulation whether not.
+	 */
+	public void buildAgentsWithdrawns() {
+		say("buildAgentsWithdrawns lunched !");
+		if (SimulationParameters.fullyLearnedAgentsLeave) {
+			int reassess = RandomHelper.nextIntFromTo(0, 1);
+			// I want in results both expDecay off and on!
+			// thats why randomize to use both
+			if (reassess == 0) {
+				SimulationParameters.fullyLearnedAgentsLeave = false;
+				launchStatistics.fullyLearnedAgentsLeave = false;
+			} else if (reassess == 1) {
+				SimulationParameters.fullyLearnedAgentsLeave = true;
+				launchStatistics.fullyLearnedAgentsLeave = true;
+				say("Agents withdrawns initiating.....");
+				ISchedule schedule = RunEnvironment.getInstance()
+						.getCurrentSchedule();
+				ScheduleParameters params = ScheduleParameters.createRepeating(
+						1, 1, ScheduleParameters.LAST_PRIORITY + 1);
+				schedule.schedule(params, this, "agentsWithdrawns");
+				say("Agents withdrawns initiated and awaiting for call !");
+			} else
+				assert false; // reassess is always 0 or 1
+		}
+	}
+
+	private void decideAboutGranularity() {
+		if (SimulationParameters.granularity) {
+			if (SimulationParameters.granularityType.equals("DISTRIBUTED")) {
+				int threePossibilities = RandomHelper.nextIntFromTo(1, 2);
+				switch (threePossibilities) {
+				case 1:
+					SimulationParameters.granularity = false;
+					launchStatistics.granularity = false;
+					launchStatistics.granularityType = "OFF";
+					break;
+				// case 2:
+				// SimulationParameters.granularity = true;
+				// launchStatistics.granularity = true;
+				// SimulationParameters.granularityType = "TASKANDSKILL";
+				// launchStatistics.granularityType = "TASKANDSKILL";
+				// TODO: i need to think it over more
+				case 2:
+					SimulationParameters.granularity = true;
+					launchStatistics.granularity = true;
+					SimulationParameters.granularityType = "TASKONLY";
+					launchStatistics.granularityType = "TASKONLY";
+					break;
+				// case 3:
+				// SimulationParameters.granularity = true;
+				// launchStatistics.granularity = true;
+				// SimulationParameters.granularityType = "TASKONLY";
+				// launchStatistics.granularityType = "TASKONLY";
+				// break;
+				default:
+					break;
+				}
+			}
+		} else {
+			launchStatistics.granularity = false;
+			launchStatistics.granularityType = "OFF";
+		}
+	}
+	
+	private void decideAboutCutPoint() {
+		if (SimulationParameters.experienceCutPoint) {
+				int twoPossibilities = RandomHelper.nextIntFromTo(0, 1);
+				switch (twoPossibilities) {
+				case 0:
+					SimulationParameters.experienceCutPoint = false;
+					launchStatistics.experienceCutPoint = false;
+					break;
+				case 1:
+					SimulationParameters.experienceCutPoint = true;
+					launchStatistics.experienceCutPoint = true;
+					break;
+				default:
+					break;
+				}
+		} else {
+			launchStatistics.experienceCutPoint = false;
 		}
 	}
 

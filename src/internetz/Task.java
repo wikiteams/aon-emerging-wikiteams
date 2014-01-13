@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -18,23 +19,23 @@ import strategies.CentralAssignmentTask;
 import strategies.GreedyAssignmentTask;
 import strategies.ProportionalTimeDivision;
 import strategies.Strategy;
-import tasks.CentralAssignment;
 import tasks.CentralAssignmentOrders;
+import argonauts.GranulatedChoice;
 import argonauts.PersistJobDone;
 import constants.Constraints;
 
 /**
  * Task is a collection of a three-element set of skill, number of work units,
- * and work done.
+ * and work done. Literally, a representation of a simulation Task object.
  * 
  * @since 1.0
- * @version 1.2
+ * @version 1.4
  * @author Oskar Jarczyk
  */
 public class Task {
 
 	private static int idIncrementalCounter = 0;
-	
+
 	public static double START_ARG_MIN = 1.002;
 	public static double START_ARG_MAX = -0.002;
 
@@ -94,25 +95,26 @@ public class Task {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public double argmax(){
+
+	public double argmax() {
 		double argmax = START_ARG_MAX;
-		for(TaskInternals skill : skills.values()){
+		for (TaskInternals skill : skills.values()) {
 			double p = skill.getProgress();
 			if (p > argmax)
 				argmax = skill.getProgress();
 		}
 		return argmax;
 	}
-	
+
 	/**
 	 * Less CPU ticks to get both of them
-	 * @return Aggregate - argmax and argmin for all taskinternals
-	 * {argmax, argmin}
+	 * 
+	 * @return Aggregate - argmax and argmin for all taskinternals {argmax,
+	 *         argmin}
 	 */
-	public Aggregate argmaxmin(){
-		Aggregate arg = new Aggregate( START_ARG_MAX , START_ARG_MIN );
-		for(TaskInternals skill : skills.values()){
+	public Aggregate argmaxmin() {
+		Aggregate arg = new Aggregate(START_ARG_MAX, START_ARG_MIN);
+		for (TaskInternals skill : skills.values()) {
 			double p = skill.getProgress();
 			if (p < arg.argmin)
 				arg.argmin = skill.getProgress();
@@ -121,20 +123,20 @@ public class Task {
 		}
 		return arg;
 	}
-	
-	public double argmin(){
+
+	public double argmin() {
 		double argmin = START_ARG_MIN;
-		for(TaskInternals skill : skills.values()){
+		for (TaskInternals skill : skills.values()) {
 			double p = skill.getProgress();
 			if (p < argmin)
 				argmin = skill.getProgress();
 		}
 		return argmin;
 	}
-	
-	public double getGeneralAdvance(){
+
+	public double getGeneralAdvance() {
 		double result = 0;
-		for(TaskInternals skill : skills.values()){
+		for (TaskInternals skill : skills.values()) {
 			result += skill.getProgress();
 		}
 		result = result / skills.size();
@@ -160,34 +162,43 @@ public class Task {
 		}
 		return returnCollection;
 	}
-	
-	public void workOnTaskControlled(Agent agent){
+
+	public void workOnTaskCentrallyControlled(Agent agent) {
+		List<Skill> skillsImprovedList = new ArrayList<Skill>();
 		CentralAssignmentOrders cao = agent.getCentralAssignmentOrders();
 		CentralAssignmentTask centralAssignmentTask = new CentralAssignmentTask();
-		TaskInternals taskInternal = this.getTaskInternals(cao.getChosenSkill());
-		sanity("Choosing Si:{"
-				+ taskInternal.getSkill().getName()
+		TaskInternals taskInternal = this
+				.getTaskInternals(cao.getChosenSkill());
+		sanity("Choosing Si:{" + taskInternal.getSkill().getName()
 				+ "} inside Ti:{" + this.toString() + "}");
 
 		Experience experience = agent.getAgentInternalsOrCreate(
-				cao.getChosenSkill())
-				.getExperience();
+				cao.getChosenSkill()).getExperience();
 		double delta = experience.getDelta();
-		centralAssignmentTask.increment(this, taskInternal, 1,
-				delta);
+		centralAssignmentTask.increment(this, taskInternal, 1, delta);
 		experience.increment(1);
-		
+
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
+		skillsImprovedList.add(taskInternal.getSkill());
 
-		PersistJobDone.addContribution(agent.getNick(), this);
+		PersistJobDone.addContribution(agent.getNick(), this,
+				skillsImprovedList);
 	}
 
-	public void workOnTask(Agent agent, Strategy.SkillChoice strategy) {
+	public Boolean workOnTaskFromContinuum(Agent agent,
+			GranulatedChoice granulated, Strategy.SkillChoice strategy) {
+		return workOnTask(agent, strategy);
+	}
+
+	public Boolean workOnTask(Agent agent, Strategy.SkillChoice strategy) {
 		Collection<TaskInternals> intersection;
-		if ( agent.getStrategy().taskChoice
-				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED) || agent.getStrategy().taskChoice
-				.equals(Strategy.TaskChoice.PREFERENTIAL) ) {
+		List<Skill> skillsImprovedList = new ArrayList<Skill>();
+
+		if (agent.getStrategy().taskChoice
+				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)
+				|| agent.getStrategy().taskChoice
+						.equals(Strategy.TaskChoice.PREFERENTIAL)) {
 			// heterophyly is an experience-genesis strategy
 			intersection = skills.values();
 		} else {
@@ -202,13 +213,18 @@ public class Task {
 		double highest = -1.;
 
 		assert intersection != null;
-		assert intersection.size() > 0;
+		if ((SimulationParameters.granularity) && (intersection.size() < 1))
+			return false; // happens when agent tries to work on 
+		// task with no intersection of skills
+		
+		assert intersection.size() > 0; // assertion for the rest of cases
 
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:
 			say(Constraints.INSIDE_PROPORTIONAL_TIME_DIVISION);
 			ProportionalTimeDivision proportionalTimeDivision = new ProportionalTimeDivision();
-			for (TaskInternals singleTaskInternalFromIntersect : new CopyOnWriteArrayList<TaskInternals>(intersection) ) {
+			for (TaskInternals singleTaskInternalFromIntersect : new CopyOnWriteArrayList<TaskInternals>(
+					intersection)) {
 				sanity("Choosing Si:{"
 						+ singleTaskInternalFromIntersect.getSkill().getName()
 						+ "} inside Ti:{"
@@ -222,6 +238,8 @@ public class Task {
 				proportionalTimeDivision.increment(this,
 						singleTaskInternalFromIntersect, 1, alpha, delta);
 				experience.increment(alpha);
+				skillsImprovedList.add(singleTaskInternalFromIntersect
+						.getSkill());
 			}
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
@@ -263,6 +281,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
 						delta);
 				experience.increment(1);
+				skillsImprovedList.add(singleTaskInternal.getSkill());
 			}
 			break;
 		case CHOICE_OF_AGENT:
@@ -272,7 +291,8 @@ public class Task {
 			 * Pracuj wylacznie nad tym skillem, w ktorym agent ma najwiecej
 			 * doswiadczenia
 			 */
-			for (TaskInternals searchTaskInternal : new CopyOnWriteArrayList<TaskInternals>(intersection)) {
+			for (TaskInternals searchTaskInternal : new CopyOnWriteArrayList<TaskInternals>(
+					intersection)) {
 				if (agent.describeExperience(searchTaskInternal.getSkill()) > highest) {
 					highest = agent.describeExperience(searchTaskInternal
 							.getSkill());
@@ -300,6 +320,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, singleTaskInternal, 1,
 						delta);
 				experience.increment(1);
+				skillsImprovedList.add(singleTaskInternal.getSkill());
 			}
 			break;
 		case RANDOM:
@@ -307,16 +328,10 @@ public class Task {
 			Collections.shuffle((ArrayList<TaskInternals>) intersection);
 			TaskInternals randomTaskInternal = ((ArrayList<TaskInternals>) intersection)
 					.get(0);
-			// Random generator = new Random();
-			// List<String> keys = new ArrayList<String>(skills.keySet());
-			// String randomKey = keys.get(generator.nextInt(keys.size()));
-			// TaskInternals randomTaskInternal = skills.get(randomKey);
 			{
 				sanity("Choosing Si:{"
 						+ randomTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + randomTaskInternal.toString() + "}");
-				// int n = skills.size();
-				// double alpha = 1 / n;
 				Experience experience = agent.getAgentInternalsOrCreate(
 						randomTaskInternal.getSkill().getName())
 						.getExperience();
@@ -324,6 +339,7 @@ public class Task {
 				greedyAssignmentTask.increment(this, randomTaskInternal, 1,
 						delta);
 				experience.increment(1);
+				skillsImprovedList.add(randomTaskInternal.getSkill());
 			}
 			break;
 		default:
@@ -334,7 +350,13 @@ public class Task {
 		if (SimulationParameters.deployedTasksLeave)
 			TaskPool.considerEnding(this);
 
-		PersistJobDone.addContribution(agent.getNick(), this);
+		if (skillsImprovedList.size() > 0) {
+			PersistJobDone.addContribution(agent.getNick(), this,
+					skillsImprovedList);
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public boolean isClosed() {

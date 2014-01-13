@@ -95,6 +95,17 @@
 	<parameter name="forceStop" displayName="forceStop"
 		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
 		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+		
+	<parameter name="granularity" displayName="granularity"
+		type="java.lang.Boolean" defaultValue="false" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$BooleanConverter" />
+	<parameter name="granularityObstinacy" displayName="granularityObstinacy"
+		type="java.lang.Integer" defaultValue="75" isReadOnly="false"
+		converter="repast.simphony.parameter.StringConverterFactory$IntConverter" />
+	<parameter name="granularityType" displayName="granularityType"
+		type="java.lang.String" defaultValue="DISTRIBUTION" isReadOnly="false"
+		values="TASKONLY TASKANDSKILL DISTRIBUTION"
+		converter="repast.simphony.parameter.StringConverterFactory$StringStringConverter" />
 </parameters>
 
 

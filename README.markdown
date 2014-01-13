@@ -105,3 +105,9 @@ In Eclipse, (launchers -> internetz Model.launch), then press Start in Repast wi
 * skillChoiceAlgorithm
 * agentSkillsPoolRandomize1
 * agentSkillsPoolRandomize2
+* experienceDecay
+* granularity
+* granularityObstinacy
+* granularityType
+* dataSetAll
+* experienceCutPoint

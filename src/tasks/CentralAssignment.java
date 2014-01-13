@@ -2,14 +2,11 @@ package tasks;
 
 import internetz.Agent;
 import internetz.Task;
-import internetz.TaskInternals;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import repast.simphony.random.RandomHelper;
 import strategies.Strategy.TaskChoice;
 
 public class CentralAssignment {

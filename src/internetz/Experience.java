@@ -119,6 +119,10 @@ public class Experience {
 	public double getValue() {
 		return value;
 	}
+	
+	public double getTop() {
+		return top;
+	}
 
 	public void setValue(double value) {
 		this.value = value;
@@ -161,12 +165,13 @@ public class Experience {
 				if ((k < 0.5) && (k >= 0.)) {
 					base = (-limes) + (k * (2 * limes));
 					result = 1d / (1d + Math.pow(Math.E, -base));
-					result = result - (Experience.cutPoint * (Math.abs(0-base)));
+					//result = result - (Experience.cutPoint * (Math.abs(0-base)));
+					result = result - (Experience.cutPoint * (Math.abs(1-(2*k))));
 					if (result < 0.) result = 0.; // because of possible precision issues
 				} else if ((k < 1.001) && (k > 0.5)) {
 					base = (-limes) + (k * (2 * limes));
 					result = 1d / (1d + Math.pow(Math.E, -base));
-					result = result + (Experience.cutPoint * (0+base));
+					result = result + (Experience.cutPoint * (Math.abs(1-(2*k))));
 					if (result > 1.) result = 1.; // possible precision issues
 				} else if (k == 0.5){
 					base = (-limes) + (k * (2 * limes));

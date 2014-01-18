@@ -311,6 +311,14 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say("in add aggent i: " + i);
 			// Required adding agent to context
 			// this.add(agent);
+			
+			for(AgentInternals ai : agent.getAgentInternals()){
+				assert ai.getExperience().getValue() > 0;
+				say("For a=" + agent.toString() + " delta is " + ai.getExperience().getDelta());
+				say("For a=" + agent.toString() + " value is " + ai.getExperience().getValue());
+				say("For a=" + agent.toString() + " top is " + ai.getExperience().getTop());
+			}
+			
 			agentPool.add(agent);
 		}
 

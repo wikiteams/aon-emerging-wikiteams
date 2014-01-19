@@ -134,12 +134,20 @@ public class Task {
 		return argmin;
 	}
 
+	/**
+	 * Gets the general completion of the Task. Calculates work done inside the
+	 * Skills and divides by the number of skills.
+	 * 
+	 * @return Always the value between [0;1]
+	 */
 	public double getGeneralAdvance() {
 		double result = 0;
 		for (TaskInternals skill : skills.values()) {
 			result += skill.getProgress();
 		}
 		result = result / skills.size();
+		assert result >= 0.;
+		assert result <= 1.;
 		return result;
 	}
 
@@ -214,9 +222,9 @@ public class Task {
 
 		assert intersection != null;
 		if ((SimulationParameters.granularity) && (intersection.size() < 1))
-			return false; // happens when agent tries to work on 
+			return false; // happens when agent tries to work on
 		// task with no intersection of skills
-		
+
 		assert intersection.size() > 0; // assertion for the rest of cases
 
 		switch (strategy) {
@@ -244,8 +252,7 @@ public class Task {
 			break;
 		case GREEDY_ASSIGNMENT_BY_TASK:
 			say(Constraints.INSIDE_GREEDY_ASSIGNMENT_BY_TASK);
-			CopyOnWriteArrayList<TaskInternals> copyIntersection = 
-					new CopyOnWriteArrayList<TaskInternals>(
+			CopyOnWriteArrayList<TaskInternals> copyIntersection = new CopyOnWriteArrayList<TaskInternals>(
 					intersection);
 			/**
 			 * Tutaj sprawdzamy nad ktorymi taskami juz pracowano w tym tasku, i

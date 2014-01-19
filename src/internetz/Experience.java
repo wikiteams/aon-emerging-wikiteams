@@ -165,7 +165,6 @@ public class Experience {
 				if ((k < 0.5) && (k >= 0.)) {
 					base = (-limes) + (k * (2 * limes));
 					result = 1d / (1d + Math.pow(Math.E, -base));
-					//result = result - (Experience.cutPoint * (Math.abs(0-base)));
 					result = result - (Experience.cutPoint * (Math.abs(1-(2*k))));
 					if (result < 0.) result = 0.; // because of possible precision issues
 				} else if ((k < 1.001) && (k > 0.5)) {
@@ -184,25 +183,6 @@ public class Experience {
 			} else {
 				throw new UnsupportedOperationException();
 				// TODO: finish implementation
-//				double base = 0;
-//				if ((k < 0.5) && (k >= 0.)) {
-//					base = (-limes) + (k * (2 * limes));
-//					result = 1d / (1d + Math.pow(Math.E, -base));
-//					result = result - (Experience.cutPoint * (Math.abs(0-base)));
-//					if (result < 0.) result = 0.; // because of possible precision issues
-//				} else if ((k < 1.001) && (k > 0.5)) {
-//					base = (-limes) + (k * (2 * limes));
-//					result = 1d / (1d + Math.pow(Math.E, -base));
-//					result = result + (Experience.cutPoint * (0+base));
-//					if (result > 1.) result = 1.; // possible precision issues
-//				} else if (k == 0.5){
-//					base = (-limes) + (k * (2 * limes));
-//					result = 1d / (1d + Math.pow(Math.E, -base));
-//				}
-//				else {
-//					assert false;
-//					// if not, smth would be wrong
-//				}
 			}
 			
 			assert result >= 0.;

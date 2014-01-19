@@ -56,11 +56,24 @@ import constants.ModelFactory;
  * collaborators in websites like GitHub and Wikipedia. Works on both Windows
  * and Linux environments.
  * 
- * @version 1.4 "MIT submission"
+ * Code repository https://github.com/wikiteams/aon-emerging-wikiteams
  * 
+ * Repast License: The Repast suite software and documentation is licensed under
+ * a "New BSD" style license. Please note that Repast Simphony uses a variety of
+ * tools and third party external libraries each having its own compatible
+ * license, including software released under the Eclipse Public License, the
+ * Common Public License, the GNU Library General Public License and other
+ * licenses.
+ * 
+ * Simulation (Project) uses library "Common Beanutils" which is licensed under
+ * Apache License
+ * 
+ * Project uses ini4j library which is licensed under Apache License.
+ * 
+ * @version 1.4.1 "Tardis"
+ * @category Agent-organized Social Simulations
  * @since 1.0
  * @author Oskar Jarczyk (since 1.0+), Blazej Gruszka (1.3+)
- * 
  * @see 1) github markdown 2) "On the effectiveness of emergent task allocation"
  */
 public class InternetzCtx extends DefaultContext<Object> {
@@ -311,14 +324,17 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say("in add aggent i: " + i);
 			// Required adding agent to context
 			// this.add(agent);
-			
-			for(AgentInternals ai : agent.getAgentInternals()){
+
+			for (AgentInternals ai : agent.getAgentInternals()) {
 				assert ai.getExperience().getValue() > 0;
-				say("For a=" + agent.toString() + " delta is " + ai.getExperience().getDelta());
-				say("For a=" + agent.toString() + " value is " + ai.getExperience().getValue());
-				say("For a=" + agent.toString() + " top is " + ai.getExperience().getTop());
+				say("For a=" + agent.toString() + " delta is "
+						+ ai.getExperience().getDelta());
+				say("For a=" + agent.toString() + " value is "
+						+ ai.getExperience().getValue());
+				say("For a=" + agent.toString() + " top is "
+						+ ai.getExperience().getTop());
 			}
-			
+
 			agentPool.add(agent);
 		}
 
@@ -374,7 +390,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ ","
 				+ RunEnvironment.getInstance().getCurrentSchedule()
 						.getTickCount() + "," + launchStatistics.agentCount
-				+ "," + launchStatistics.taskCount + ","
+				+ "," + launchStatistics.taskCount + "," + getTaskLeft() + ","
 				+ launchStatistics.expDecay + ","
 				+ launchStatistics.fullyLearnedAgentsLeave + ","
 				+ launchStatistics.experienceCutPoint + ","
@@ -389,9 +405,22 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ strategyDistribution.getTaskMinMaxChoice();
 	}
 
+	private int getTaskLeft() {
+		int left = 0;
+		for (Task task : taskPool.getObjects(Task.class)){
+			if(task.getClass().getName().equals("internetz.Task")){
+				if (task.getGeneralAdvance() < 1.){
+					left++;
+				}
+			}
+		}
+		return left;
+	}
+
 	private String buildFinalMessageHeader() {
 		return "Batch Number" + "," + "Run Number" + "," + "Tick Count" + ","
 				+ "Agents count" + "," + "Tasks count" + ","
+				+ "Tasks left" + ","
 				+ "Experience decay" + "," + "Fully-learned agents leave" + ","
 				+ "Exp cut point" + "," + "Granularity" + ","
 				+ "Granularity type" + "," + "Granularity obstinancy" + ","
@@ -510,16 +539,16 @@ public class InternetzCtx extends DefaultContext<Object> {
 											false);
 								}
 							} else {
-								double value = 
-										((AgentInternals) ai).decayExperience();
-								if (value == 0){
+								double value = ((AgentInternals) ai)
+										.decayExperience();
+								if (value == 0) {
 									say("Experience of agent "
-											+ (((Agent) agent).getNick()) + 
-											" wasn't decreased because it's already low");
+											+ (((Agent) agent).getNick())
+											+ " wasn't decreased because it's already low");
 								} else
-								say("Experience of agent "
-										+ (((Agent) agent).getNick()) + 
-										" decreased and is now " + value);
+									say("Experience of agent "
+											+ (((Agent) agent).getNick())
+											+ " decreased and is now " + value);
 							}
 						}
 					}
@@ -582,7 +611,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 					for (Object ai : aicconcurrent) {
 						if (((AgentInternals) ai).getExperience().getDelta() >= 1.) {
 							say("Agent " + (((Agent) agent).getNick())
-									+ " reached maximum in skill " + ((AgentInternals) ai).getSkill());
+									+ " reached maximum in skill "
+									+ ((AgentInternals) ai).getSkill());
 							((Agent) agent).removeSkill(
 									((AgentInternals) ai).getSkill(), false);
 						}
@@ -668,22 +698,22 @@ public class InternetzCtx extends DefaultContext<Object> {
 			launchStatistics.granularityType = "OFF";
 		}
 	}
-	
+
 	private void decideAboutCutPoint() {
 		if (SimulationParameters.experienceCutPoint) {
-				int twoPossibilities = RandomHelper.nextIntFromTo(0, 1);
-				switch (twoPossibilities) {
-				case 0:
-					SimulationParameters.experienceCutPoint = false;
-					launchStatistics.experienceCutPoint = false;
-					break;
-				case 1:
-					SimulationParameters.experienceCutPoint = true;
-					launchStatistics.experienceCutPoint = true;
-					break;
-				default:
-					break;
-				}
+			int twoPossibilities = RandomHelper.nextIntFromTo(0, 1);
+			switch (twoPossibilities) {
+			case 0:
+				SimulationParameters.experienceCutPoint = false;
+				launchStatistics.experienceCutPoint = false;
+				break;
+			case 1:
+				SimulationParameters.experienceCutPoint = true;
+				launchStatistics.experienceCutPoint = true;
+				break;
+			default:
+				break;
+			}
 		} else {
 			launchStatistics.experienceCutPoint = false;
 		}

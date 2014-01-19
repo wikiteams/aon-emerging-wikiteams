@@ -5,7 +5,14 @@ import java.util.Date;
 
 public class PjiitOutputter {
 
-	private static boolean __DONT__FORCE__SKIP = true;
+	/**
+	 * Lets avoid in the normal situations outputting all the debug messages
+	 * to a log file, it can grow enormous big, so we want to disable it
+	 * for every day use..
+	 * 
+	 * __DONT__FORCE__SKIP__ = true; will enable diagnostic messages
+	 */
+	private static boolean __DONT__FORCE__SKIP = false;
 
 	public static void say(String s) {
 		if (__DONT__FORCE__SKIP) {

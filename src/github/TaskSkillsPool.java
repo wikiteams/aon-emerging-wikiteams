@@ -209,7 +209,7 @@ public abstract class TaskSkillsPool {
 				Skill skill = choseRandomSkill();
 				//Random generator = new Random();
 				WorkUnit w1 = new WorkUnit(
-						RandomHelper.nextIntFromTo(0,SimulationParameters.maxWorkRequired-1));
+						RandomHelper.nextIntFromTo(1,SimulationParameters.maxWorkRequired-1));
 				WorkUnit w2 = new WorkUnit(0);
 				TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
 				task.addSkill(skill.getName(), taskInternals);

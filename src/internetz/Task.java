@@ -142,10 +142,21 @@ public class Task {
 	 */
 	public double getGeneralAdvance() {
 		double result = 0;
+		double count = 0;
 		for (TaskInternals skill : skills.values()) {
-			result += skill.getProgress();
+			double progress = skill.getProgress();
+			say("skill " + skill.getSkill().getName() + " progress " + progress);
+			result += progress > 1. ? 1. : progress;
+			say("result " + result);
+			count ++;
 		}
-		result = result / skills.size();
+		say("skills count " + count);
+		if (count == 0){
+			// all TaskInternals are gone, thus the Task is finished 100% !
+			return 1;
+		}
+		assert count > 0.; // avoid dividing by 0;
+		result = (result / count);
 		assert result >= 0.;
 		assert result <= 1.;
 		return result;

@@ -25,8 +25,8 @@ public class TaskPool extends DefaultContext<Task> {
 	public TaskPool() {
 		super("Tasks");
 	}
-	
-	public static void clearTasks(){
+
+	public static void clearTasks() {
 		tasks.clear();
 	}
 
@@ -38,7 +38,7 @@ public class TaskPool extends DefaultContext<Task> {
 	public Task getTask(String key) {
 		return tasks.get(key);
 	}
-	
+
 	public Collection<Task> getTasks() {
 		return tasks.values();
 	}
@@ -46,8 +46,8 @@ public class TaskPool extends DefaultContext<Task> {
 	/**
 	 * Count tasks in the pool
 	 * 
-	 * @return Task pool size, in other words, 
-	 * count of the task in the simulation universe (positive int)
+	 * @return Task pool size, in other words, count of the task in the
+	 *         simulation universe (positive int)
 	 */
 	public int getCount() {
 		return tasks.size();
@@ -57,7 +57,7 @@ public class TaskPool extends DefaultContext<Task> {
 			Strategy.TaskChoice strategy) {
 		Task chosen = null;
 		assert strategy != null;
-		
+
 		switch (strategy) {
 		case HOMOPHYLY_EXP_BASED:
 			HomophylyExpBased homophylyExpBased = new HomophylyExpBased(tasks);
@@ -65,7 +65,8 @@ public class TaskPool extends DefaultContext<Task> {
 			break;
 		case HETEROPHYLY_EXP_BASED:
 			// it will be basically negation of homophyly
-			HeterophylyExpBased heterophylyExpBased = new HeterophylyExpBased(tasks);
+			HeterophylyExpBased heterophylyExpBased = new HeterophylyExpBased(
+					tasks);
 			chosen = heterophylyExpBased.concludeMath(agent);
 			break;
 		case HOMOPHYLY_CLASSIC:
@@ -99,7 +100,7 @@ public class TaskPool extends DefaultContext<Task> {
 			}
 			if (tasksWithMatchingSkills.size() > 0) {
 				chosen = tasksWithMatchingSkills.get(RandomHelper
-						.nextIntFromTo(0,tasksWithMatchingSkills.size()-1));
+						.nextIntFromTo(0, tasksWithMatchingSkills.size() - 1));
 			} else {
 				say("Didn't found task with such skills which agent have!");
 			}
@@ -130,6 +131,18 @@ public class TaskPool extends DefaultContext<Task> {
 			sanity("Agent " + agent.toString() + " uses strategy "
 					+ agent.getStrategy()
 					+ " but didnt found any task to work on.");
+			if (SimulationParameters.allwaysChooseTask) {
+				sanity(Constraints.ROOKIE);
+				ArrayList<Task> choseRandomFromThis = new ArrayList<Task>();
+				for (Task singleTaskFromPool : tasks.values()) {
+					if (singleTaskFromPool.getGeneralAdvance() < 1.) {
+						choseRandomFromThis.add(singleTaskFromPool);
+					}
+				}
+				if (choseRandomFromThis.size() > 0)
+					chosen = choseRandomFromThis.get(RandomHelper
+							.nextIntFromTo(0, choseRandomFromThis.size() - 1));
+			}
 		}
 		return chosen;
 	}
@@ -154,7 +167,7 @@ public class TaskPool extends DefaultContext<Task> {
 		}
 		return result;
 	}
-	
+
 	public static HashMap<Skill, ArrayList<Task>> getTasksPerSkills(
 			Collection<Skill> c) {
 		HashMap<Skill, ArrayList<Task>> result = new HashMap<Skill, ArrayList<Task>>();
@@ -190,7 +203,7 @@ public class TaskPool extends DefaultContext<Task> {
 					+ " is depleted and leaving the environment");
 		}
 	}
-	
+
 	private static void sanity(String s) {
 		PjiitOutputter.sanity(s);
 	}

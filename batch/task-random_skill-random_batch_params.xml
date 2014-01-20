@@ -30,5 +30,5 @@
 <parameter name="granularityType" type="constant" constant_type="java.lang.String" value="DISTRIBUTED" />
 <parameter name="dataSetAll" type="constant" constant_type="java.lang.Boolean" value="true" />
 <parameter name="experienceCutPoint" type="constant" constant_type="java.lang.Boolean" value="true" />
-
+<parameter name="allwaysChooseTask" type="constant" constant_type="java.lang.Boolean" value="true" />
 </sweep>

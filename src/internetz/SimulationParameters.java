@@ -28,6 +28,7 @@ public class SimulationParameters {
 	public static int percStartMembership = 0;
 	public static boolean allowMultiMembership = false;
 	public static int numSteps = 0;
+	public static boolean allwaysChooseTask = true;
 	
 	public static String taskChoiceAlgorithm = "";
 	public static String skillChoiceAlgorithm = "";
@@ -74,6 +75,7 @@ public class SimulationParameters {
 		percStartMembership = (Integer) param.getValue("percStartMembership");
 		allowMultiMembership = (Boolean) param.getValue("allowMultiMembership");
 		numSteps = (Integer) param.getValue("numSteps");
+		allwaysChooseTask = (Boolean) param.getValue("allwaysChooseTask");
 
 		taskChoiceAlgorithm = (String) param.getValue("taskChoiceAlgorithm");
 		skillChoiceAlgorithm = (String) param.getValue("skillChoiceAlgorithm");

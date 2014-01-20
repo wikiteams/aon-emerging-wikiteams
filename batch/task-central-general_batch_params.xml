@@ -24,5 +24,5 @@
 <parameter name="modelType" type="constant" constant_type="java.lang.String" value="normal" />
 <parameter name="location" type="constant" constant_type="java.lang.String" value="Metric" />
 <parameter name="experienceDecay" type="constant" constant_type="java.lang.Boolean" value="true" />
-
+<parameter name="allwaysChooseTask" type="constant" constant_type="java.lang.Boolean" value="true" />
 </sweep>

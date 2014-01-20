@@ -140,7 +140,9 @@ public abstract class TaskSkillsPool {
 			String repo = nextLine[0];
 			if (nextLine[2].trim().equals("null"))
 				continue;
-			Skill s = skillFactory.getSkill(nextLine[2]);
+			Skill s = skillFactory.getSkill(nextLine[2].replaceAll("\\s",""));
+			if (s == null)
+				continue;
 			Double value = Double.parseDouble(nextLine[1]);
 			say("repo:" + repo + " skill:" + s + " value:" + value);
 			addRepoSkill(repo, s, value);

@@ -24,6 +24,7 @@ import utils.CharacterConstants;
 import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import cern.jet.random.Poisson;
 
 /**
@@ -31,7 +32,7 @@ import cern.jet.random.Poisson;
  * from GitHub portal, possible randomization for bigger variation of results
  * 
  * @since 1.0
- * @version 1.2
+ * @version 1.4
  * @author Oskar Jarczyk
  * 
  */
@@ -40,30 +41,25 @@ public abstract class TaskSkillsPool {
 	private static String filenameFrequencySkills = SystemUtils.IS_OS_LINUX ? "data/skills-probability.csv"
 			: "data\\skills-probability.csv";
 	private static String filenameGoogleSkills = SystemUtils.IS_OS_LINUX ? "data/tasks-skills.csv"
-			: "data\\task-skills.csv";
+			: "data\\tasks-skills.csv";
 	private static String filenameGithubClusters = SystemUtils.IS_OS_LINUX ? "data/github_clusters.csv"
 			: "data\\github_clusters.csv";
 
 	private enum DataSet {
-		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, 
-		TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, 
-		SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, 
-		_200_LANGUAGES;
+		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, _200_LANGUAGES;
 	}
-	
+
 	public enum Method {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
-	
-	public static void clear(){
+
+	public static void clear() {
 		singleSkillSet.clear();
 		skillSetMatrix.clear();
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = 
-			new LinkedHashMap<String, Skill>();
-	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
-			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -100,8 +96,9 @@ public abstract class TaskSkillsPool {
 			}
 		} else if (dataset == DataSet.TOP_USERS) {
 			try {
-				parseCsvStatic();
-				parseCsvCluster();
+				// parseCsvStatic();
+				// parseCsvCluster();
+				parseCsvGoogle();
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -134,31 +131,41 @@ public abstract class TaskSkillsPool {
 		reader.close();
 	}
 
-//	private static void parseCsvGoogle() throws IOException,
-//			FileNotFoundException {
-//		CSVReader reader = new CSVReader(new FileReader(filenameGoogleSkills), ',',
-//				CSVWriter.NO_QUOTE_CHARACTER, 1);
-//		String[] nextLine;
-//		while ((nextLine = reader.readNext()) != null) {
-//			String repo = nextLine[0];
-//			if (nextLine[2].trim().equals("null"))
-//				continue;
-//			Skill s = skillFactory.getSkill(nextLine[2]);
-//			Double value = Double.parseDouble(nextLine[1]);
-//			say("repo:" + repo + " skill:" + s + " value:" + value);
-//			addRepoSkill(repo, s, value);
-//		}
-//		reader.close();
-//	}
-	
-//	private static void addRepoSkill(String repo, Skill skill, Double value){
-//		Repository r = new Repository(repo);
-//		if (skillSetMatrix.containsKey(r)){
-//			
-//		} else {
-//			skillSetMatrix.put(r, value)
-//		}
-//	}
+	private static void parseCsvGoogle() throws IOException,
+			FileNotFoundException {
+		CSVReader reader = new CSVReader(new FileReader(filenameGoogleSkills),
+				',', CSVWriter.NO_QUOTE_CHARACTER, 1);
+		String[] nextLine;
+		while ((nextLine = reader.readNext()) != null) {
+			String repo = nextLine[0];
+			if (nextLine[2].trim().equals("null"))
+				continue;
+			Skill s = skillFactory.getSkill(nextLine[2]);
+			Double value = Double.parseDouble(nextLine[1]);
+			say("repo:" + repo + " skill:" + s + " value:" + value);
+			addRepoSkill(repo, s, value);
+		}
+		reader.close();
+	}
+
+	private static void addRepoSkill(String repo, Skill skill, Double value) {
+		Repository r = new Repository(repo);
+		if (skillSetMatrix.containsKey(r)) {
+			HashMap<Skill, Double> hs = skillSetMatrix.get(r);
+			if (hs.containsKey(skill)){
+				Double v = hs.get(skill);
+				v += value;
+				hs.put(skill, v);
+			} else {
+				hs.put(skill, value);
+			}
+			skillSetMatrix.put(r, hs);
+		} else {
+			HashMap<Skill, Double> hs = new HashMap<Skill, Double>();
+			hs.put(skill, value);
+			skillSetMatrix.put(r, hs);
+		}
+	}
 
 	private static void parseCsvCluster() throws IOException,
 			FileNotFoundException {
@@ -187,8 +194,8 @@ public abstract class TaskSkillsPool {
 	}
 
 	public static Skill choseRandomSkill() {
-		//Random generator = new Random();
-		int i = RandomHelper.nextIntFromTo(0,singleSkillSet.size()-1);
+		// Random generator = new Random();
+		int i = RandomHelper.nextIntFromTo(0, singleSkillSet.size() - 1);
 		return getByIndex(singleSkillSet, i);
 	}
 
@@ -204,16 +211,27 @@ public abstract class TaskSkillsPool {
 	public static void fillWithSkills(Task task) {
 		if (SimulationParameters.taskSkillPoolDataset
 				.equals("STATIC_FREQUENCY_TABLE")) {
+			int random = RandomHelper.nextIntFromTo(0, skillSetMatrix.size()-1);
+			HashMap<Skill, Double> skills = getByIndex(skillSetMatrix, random);
+			for(Skill skill : skills.keySet()){
+				Double d = skills.get(skill);
+				WorkUnit w1 = new WorkUnit(RandomHelper.nextDoubleFromTo(0, d));
+				WorkUnit w2 = new WorkUnit(d);
+				TaskInternals taskInternals = new TaskInternals(skill, w2, w1);
+				task.addSkill(skill.getName(), taskInternals);
+				say("Task " + task + " filled with skills from tasks-skills.csv");
+			}
+		} else if (SimulationParameters.taskSkillPoolDataset.equals("RANDOM")) {
 			int x = ((int) (new Random().nextDouble() * SimulationParameters.staticFrequencyTableSc)) + 1;
 			for (int i = 0; i < x; i++) {
 				Skill skill = choseRandomSkill();
-				//Random generator = new Random();
-				WorkUnit w1 = new WorkUnit(
-						RandomHelper.nextIntFromTo(1,SimulationParameters.maxWorkRequired-1));
+				// Random generator = new Random();
+				WorkUnit w1 = new WorkUnit(RandomHelper.nextIntFromTo(1,
+						SimulationParameters.maxWorkRequired - 1));
 				WorkUnit w2 = new WorkUnit(0);
 				TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
 				task.addSkill(skill.getName(), taskInternals);
-				say("Task " + task + " filled with skills");
+				say("Task " + task + " filled with skills randomly");
 			}
 		} else if (SimulationParameters.taskSkillPoolDataset
 				.equals("GITHUB_CLUSTERIZED")) {

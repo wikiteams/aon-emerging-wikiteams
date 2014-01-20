@@ -214,18 +214,19 @@ public class Task {
 		Collection<TaskInternals> intersection;
 		List<Skill> skillsImprovedList = new ArrayList<Skill>();
 
-		if (agent.getStrategy().taskChoice
-				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)
-				|| agent.getStrategy().taskChoice
-						.equals(Strategy.TaskChoice.PREFERENTIAL)) {
-			// heterophyly is an experience-genesis strategy
-			intersection = skills.values();
-		} else {
+		// this below was the old way of doing!
+//		if (agent.getStrategy().taskChoice
+//				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)
+//				|| agent.getStrategy().taskChoice
+//						.equals(Strategy.TaskChoice.PREFERENTIAL)) {
+//			// heterophyly is an experience-genesis strategy
+//			intersection = skills.values();
+//		} else {
 			// the intersection is always non-empty because we call
 			// "workOnTask" after picking a task with witch we have
 			// in common at least one skill...
 			intersection = computeIntersection(agent, skills.values());
-		}
+		//}
 
 		GreedyAssignmentTask greedyAssignmentTask = new GreedyAssignmentTask();
 		TaskInternals singleTaskInternal = null;
@@ -236,7 +237,9 @@ public class Task {
 			return false; // happens when agent tries to work on
 		// task with no intersection of skills
 
-		assert intersection.size() > 0; // assertion for the rest of cases
+		//assert intersection.size() > 0; // assertion for the rest of cases
+		if (intersection.size() > 1)
+			intersection = skills.values(); // experience - genesis action needed!
 
 		switch (strategy) {
 		case PROPORTIONAL_TIME_DIVISION:

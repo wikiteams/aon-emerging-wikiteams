@@ -128,7 +128,6 @@ public class Agent {
 		say("Step(" + time + ") of Agent " + this.id
 				+ " scheduled method launched.");
 
-		// Context context = (Context) ContextUtils.getContext(this);
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 
 		if (SimulationParameters.granularity) {

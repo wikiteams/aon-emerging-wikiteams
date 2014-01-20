@@ -35,5 +35,7 @@ public class Constraints {
 			"Didn't found task with such skills which agent have!";
 	public static final String DIDNT_FOUND_TASK_TO_WORK_ON = 
 			"Didn't found task to work on!";
+	public static final String ROOKIE = 
+			"Choose random task left! Agents are in a desire of job even if they rookie!";
 
 }

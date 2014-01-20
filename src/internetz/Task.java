@@ -238,7 +238,7 @@ public class Task {
 		// task with no intersection of skills
 
 		//assert intersection.size() > 0; // assertion for the rest of cases
-		if (intersection.size() > 1)
+		if (intersection.size() < 1)
 			intersection = skills.values(); // experience - genesis action needed!
 
 		switch (strategy) {
@@ -331,6 +331,9 @@ public class Task {
 			assert singleTaskInternal != null;
 
 			{
+//				if (singleTaskInternal.getSkill() == null){
+//					say("smth wrong");
+//				}
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");

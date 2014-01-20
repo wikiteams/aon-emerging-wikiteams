@@ -51,17 +51,20 @@ public class Agent {
 	public void addSkill(String key, AgentInternals agentInternals) {
 		skills.put(key, agentInternals);
 	}
-	
+
 	/**
-	 * Actually used very rarely, as far as I know - 
-	 * only when experience after decayExp operation returns 0
-	 * Assertion that agent possess this skill before removal
-	 * @param key - name of the Skill to remove
+	 * Actually used very rarely, as far as I know - only when experience after
+	 * decayExp operation returns 0 Assertion that agent possess this skill
+	 * before removal
+	 * 
+	 * @param key
+	 *            - name of the Skill to remove
 	 */
 	public void removeSkill(String key, boolean skipAssertion) {
 		assert skipAssertion ? true : skills.containsKey(key);
 		skills.remove(key);
 	}
+
 	public void removeSkill(Skill key, boolean skipAssertion) {
 		removeSkill(key.getName(), skipAssertion);
 	}
@@ -133,28 +136,30 @@ public class Agent {
 		if (SimulationParameters.granularity) {
 			GranulatedChoice granulated = PersistRewiring
 					.getGranulatedChoice(this);
-			
-			if (granulated != null){
+
+			if (granulated != null) {
 				// randomize decision
-				double __d = 
-						RandomHelper.nextDoubleFromTo(0d, 100d);
-				if (__d <= (double)(SimulationParameters.granularityObstinacy)){
+				double __d = RandomHelper.nextDoubleFromTo(0d, 100d);
+				if (__d <= (double) (SimulationParameters.granularityObstinacy)) {
 					say("Step(" + time + ") of Agent " + this.id
 							+ " continuuing granularity");
 					// continue work on the same skill
-					// but check if the is any work left in this particular task !
-					Boolean workDone = 
-							granulated.getTaskChosen().workOnTaskFromContinuum(
-							this, granulated, this.strategy.skillChoice);
-					if (! workDone){
+					// but check if the is any work left in this particular task
+					// !
+					Boolean workDone = granulated.getTaskChosen()
+							.workOnTaskFromContinuum(this, granulated,
+									this.strategy.skillChoice);
+					if (!workDone) {
 						// chose new task for granulated choice !
 						Task taskToWork = TaskPool.chooseTask(this,
 								this.strategy.taskChoice);
 						executeJob(taskToWork);
-						if (taskToWork != null){
-							switch(GranularityType.desc(SimulationParameters.granularityType)){
+						if (taskToWork != null) {
+							switch (GranularityType
+									.desc(SimulationParameters.granularityType)) {
 							case TASKANDSKILL:
-								//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+								// PersistRewiring.setOccupation(this,
+								// taskToWork, PersistJobDone.);
 								break;
 							case TASKONLY:
 								PersistRewiring.setOccupation(this, taskToWork);
@@ -164,7 +169,7 @@ public class Agent {
 							}
 						}
 					}
-					//EnvironmentEquilibrium.setActivity(true);
+					// EnvironmentEquilibrium.setActivity(true);
 				} else {
 					say("Step(" + time + ") of Agent " + this.id
 							+ " choosing new task for granulated choice");
@@ -172,10 +177,12 @@ public class Agent {
 					Task taskToWork = TaskPool.chooseTask(this,
 							this.strategy.taskChoice);
 					executeJob(taskToWork);
-					if (taskToWork != null){
-						switch(GranularityType.desc(SimulationParameters.granularityType)){
+					if (taskToWork != null) {
+						switch (GranularityType
+								.desc(SimulationParameters.granularityType)) {
 						case TASKANDSKILL:
-							//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+							// PersistRewiring.setOccupation(this, taskToWork,
+							// PersistJobDone.);
 							break;
 						case TASKONLY:
 							PersistRewiring.setOccupation(this, taskToWork);
@@ -186,17 +193,22 @@ public class Agent {
 					}
 				}
 			} else {
-				say("Step(" + time + ") of Agent " + this.id
+				say("Step("
+						+ time
+						+ ") of Agent "
+						+ this.id
 						+ " first run, chose new task and assign granulated choice");
 				// first run
 				// chose new task and assign granulated choice !
 				Task taskToWork = TaskPool.chooseTask(this,
 						this.strategy.taskChoice);
 				executeJob(taskToWork);
-				if (taskToWork != null){
-					switch(GranularityType.desc(SimulationParameters.granularityType)){
+				if (taskToWork != null) {
+					switch (GranularityType
+							.desc(SimulationParameters.granularityType)) {
 					case TASKANDSKILL:
-						//PersistRewiring.setOccupation(this, taskToWork, PersistJobDone.);
+						// PersistRewiring.setOccupation(this, taskToWork,
+						// PersistJobDone.);
 						break;
 					case TASKONLY:
 						PersistRewiring.setOccupation(this, taskToWork);
@@ -282,11 +294,19 @@ public class Agent {
 	}
 
 	public double describeExperience(Skill skill) {
-		if (this.getStrategy().taskChoice
-				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)) {
-			AgentInternals result = skills.get(skill.getName()) == null ? (new AgentInternals(
+		// if (this.getStrategy().taskChoice
+		// .equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)) {
+		// AgentInternals result = skills.get(skill.getName()) == null ? (new
+		// AgentInternals(
+		// skillFactory.getSkill(skill.getName()),
+		// new Experience(true))) : skills.get(skill.getName());
+		// skills.put(skill.getName(), result);
+		// }
+		// return skills.get(skill.getName()).getExperience().getDelta();
+		if(skills.get(skill.getName()) == null){
+			AgentInternals result = (new AgentInternals(
 					skillFactory.getSkill(skill.getName()),
-					new Experience(true))) : skills.get(skill.getName());
+					new Experience(true)));
 			skills.put(skill.getName(), result);
 		}
 		return skills.get(skill.getName()).getExperience().getDelta();

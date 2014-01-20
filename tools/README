@@ -1,0 +1,5 @@
+# How to use:
+./aon-emerging-wikiteams/tools/sim.sh PATH && ./aon-emerging-wikiteams/tools/sim.py
+
+for example:
+./aon-emerging-wikiteams/tools/sim.sh simphony_model_1390163340824 && ./aon-emerging-wikiteams/tools/sim.py

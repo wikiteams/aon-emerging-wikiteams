@@ -409,7 +409,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 		int left = 0;
 		for (Task task : taskPool.getObjects(Task.class)){
 			if(task.getClass().getName().equals("internetz.Task")){
-				if (task.getGeneralAdvance() < 1.){
+				if ( (task.getTaskInternals().size() > 0) 
+						&& (task.getGeneralAdvance() < 1.) ){
 					left++;
 				}
 			}

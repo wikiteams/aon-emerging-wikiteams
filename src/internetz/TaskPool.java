@@ -2,7 +2,9 @@ package internetz;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import logger.PjiitOutputter;
@@ -132,16 +134,22 @@ public class TaskPool extends DefaultContext<Task> {
 					+ agent.getStrategy()
 					+ " but didnt found any task to work on.");
 			if (SimulationParameters.allwaysChooseTask) {
-				sanity(Constraints.ROOKIE);
-				ArrayList<Task> choseRandomFromThis = new ArrayList<Task>();
-				for (Task singleTaskFromPool : tasks.values()) {
-					if (singleTaskFromPool.getGeneralAdvance() < 1.) {
-						choseRandomFromThis.add(singleTaskFromPool);
-					}
+				// Task choseRandomFromThis = null;
+				sanity("Choosing any task left because of param allwaysChooseTask");
+				List<Task> internalRandomList;
+				Collection<Task> coll = tasks.values();
+				if (coll instanceof List)
+					internalRandomList = (List) coll;
+				else
+					internalRandomList = new ArrayList(coll);
+				Collections.shuffle(internalRandomList);
+				for (Task singleTaskFromPool : internalRandomList) {
+					if (singleTaskFromPool.getTaskInternals().size() > 0)
+						if (singleTaskFromPool.getGeneralAdvance() < 1.) {
+							chosen = singleTaskFromPool;
+							break;
+						}
 				}
-				if (choseRandomFromThis.size() > 0)
-					chosen = choseRandomFromThis.get(RandomHelper
-							.nextIntFromTo(0, choseRandomFromThis.size() - 1));
 			}
 		}
 		return chosen;

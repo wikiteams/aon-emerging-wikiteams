@@ -107,9 +107,9 @@ public class Experience {
 	public double getDelta(ApproximationMethod method) {
 		switch (method) {
 		case SIGMOID:
-			return sc.getDelta((value / top));
+			return sc.getDelta((value / top) > 1. ? 1. : (value / top));
 		case CHI_SQUARE:
-			return lc.getDelta((value / top));
+			return lc.getDelta((value / top) > 1. ? 1. : (value / top));
 		default:
 			break;
 		}
@@ -162,6 +162,9 @@ public class Experience {
 			double result = 0;
 			if (!SimulationParameters.experienceCutPoint) {
 				double base = 0;
+				if (k == 1.){
+					result = 1;
+				} else
 				if ((k < 0.5) && (k >= 0.)) {
 					base = (-limes) + (k * (2 * limes));
 					result = 1d / (1d + Math.pow(Math.E, -base));

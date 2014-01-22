@@ -275,7 +275,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say("Creating task..");
 			taskPool.addTask(task.getName(), task);
 			say("Initializing task..");
-			task.initialize();
+			task.initialize(howMany);
 			taskPool.add(task);
 			agentPool.add(task);
 		}
@@ -368,6 +368,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		TaskPool.clearTasks();
 		AgentSkillsPool.clear();
 		Agent.totalAgents = 0;
+		TaskSkillsPool.static_frequency_counter = 0;
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.FIRST_PRIORITY)

@@ -12,7 +12,7 @@ import test.ModelConverter;
  * 
  * @author Oskar Jarczyk
  * @since 1.0
- * @version 1.3
+ * @version 1.4
  */
 public class SimulationParameters {
 	
@@ -60,6 +60,7 @@ public class SimulationParameters {
 	public static int maxWorkRequired = 0;
 	
 	public static boolean dataSetAll = false;
+	public static boolean onlyOneBasicDataset = true;
 
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();

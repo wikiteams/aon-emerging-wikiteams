@@ -32,7 +32,7 @@ import cern.jet.random.Poisson;
  * from GitHub portal, possible randomization for bigger variation of results
  * 
  * @since 1.0
- * @version 1.4
+ * @version 1.4.1
  * @author Oskar Jarczyk
  * 
  */
@@ -46,7 +46,7 @@ public abstract class TaskSkillsPool {
 			: "data\\github_clusters.csv";
 
 	private enum DataSet {
-		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, _200_LANGUAGES;
+		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_REPOSITORIES, _200_LANGUAGES;
 	}
 
 	public enum Method {
@@ -62,6 +62,8 @@ public abstract class TaskSkillsPool {
 	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
+	public static int static_frequency_counter = 0;
+
 	public static void instantiate(String method) {
 		if (method.toUpperCase().equals("MOST_OFTEN_STARRED"))
 			instantiate(DataSet.MOST_OFTEN_STARRED);
@@ -75,35 +77,53 @@ public abstract class TaskSkillsPool {
 			instantiate(DataSet.TOPREPOS_AND_TOPUSERS);
 		else if (method.toUpperCase().equals("PUSHES_BY_LANGUAGES"))
 			instantiate(DataSet.PUSHES_BY_LANGUAGES);
-		else if (method.toUpperCase().equals("TOP_USERS"))
-			instantiate(DataSet.TOP_USERS);
+		else if (method.toUpperCase().equals("TOP_REPOSITORIES"))
+			instantiate(DataSet.TOP_REPOSITORIES);
 		else if (method.toUpperCase().equals("200_LANGUAGES"))
 			instantiate(DataSet._200_LANGUAGES);
 	}
 
+	/**
+	 * Reads into simulation universe-creator the Tasks which will be used
+	 * later in the simulation, depends on the number of tasks needed,
+	 * they will be taken later from the top
+	 * @param dataset
+	 */
 	public static void instantiate(DataSet dataset) {
 		if (dataset == DataSet._200_LANGUAGES) {
 			try {
 				parseCsvStatic();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
+				System.err.println(e.getMessage());
 				say("File not found!");
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				say("Input / Output Exception!");
+				System.err.println(e.getMessage());
+				say("Input / Output Exception! Details: " + e.getMessage());
 				e.printStackTrace();
 			}
-		} else if (dataset == DataSet.TOP_USERS) {
+		} else if (dataset == DataSet.TOP_REPOSITORIES) {
 			try {
-				// parseCsvStatic();
-				// parseCsvCluster();
-				parseCsvGoogle();
+				parseCsvCluster();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
+				System.err.println(e.getMessage());
+				say("File not found!");
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
+				System.err.println(e.getMessage());
+				say("Input / Output Exception! Details: " + e.getMessage());
+				e.printStackTrace();
+			}
+		} else if (dataset == DataSet.PUSHES_BY_LANGUAGES) {
+			try {
+				parseCsvGoogle();
+			} catch (FileNotFoundException e) {
+				System.err.println(e.getMessage());
+				say("File not found!");
+				e.printStackTrace();
+			} catch (IOException e) {
+				System.err.println(e.getMessage());
+				say("Input / Output Exception! Details: " + e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -140,7 +160,7 @@ public abstract class TaskSkillsPool {
 			String repo = nextLine[0];
 			if (nextLine[2].trim().equals("null"))
 				continue;
-			Skill s = skillFactory.getSkill(nextLine[2].replaceAll("\\s",""));
+			Skill s = skillFactory.getSkill(nextLine[2].replaceAll("\\s", ""));
 			if (s == null)
 				continue;
 			Double value = Double.parseDouble(nextLine[1]);
@@ -154,7 +174,7 @@ public abstract class TaskSkillsPool {
 		Repository r = new Repository(repo);
 		if (skillSetMatrix.containsKey(r)) {
 			HashMap<Skill, Double> hs = skillSetMatrix.get(r);
-			if (hs.containsKey(skill)){
+			if (hs.containsKey(skill)) {
 				Double v = hs.get(skill);
 				v += value;
 				hs.put(skill, v);
@@ -210,21 +230,35 @@ public abstract class TaskSkillsPool {
 		return (HashMap<Skill, Double>) hMap.values().toArray()[index];
 	}
 
-	public static void fillWithSkills(Task task) {
+	public static void fillWithSkills(Task task, int countAll) {
 		if (SimulationParameters.taskSkillPoolDataset
 				.equals("STATIC_FREQUENCY_TABLE")) {
-			int random = RandomHelper.nextIntFromTo(0, skillSetMatrix.size()-1);
-			HashMap<Skill, Double> skills = getByIndex(skillSetMatrix, random);
-			for(Skill skill : skills.keySet()){
+			
+			// random element exists here
+			
+			int random = 0 + static_frequency_counter++ / countAll;
+			int randomIndexOfSkills = (random * skillSetMatrix.size()) - 1;
+			if (randomIndexOfSkills < 0)
+				randomIndexOfSkills = 0;
+			HashMap<Skill, Double> skills = getByIndex(skillSetMatrix,
+					randomIndexOfSkills);
+			for (Skill skill : skills.keySet()) {
 				Double d = skills.get(skill);
-				WorkUnit w1 = new WorkUnit(RandomHelper.nextDoubleFromTo(0, d));
+				WorkUnit w1 = new WorkUnit(RandomHelper.nextDoubleFromTo(0,
+						d / 10));
 				WorkUnit w2 = new WorkUnit(d);
 				TaskInternals taskInternals = new TaskInternals(skill, w2, w1);
 				task.addSkill(skill.getName(), taskInternals);
-				say("Task " + task + " filled with skills from tasks-skills.csv");
+				say("Task " + task
+						+ " filled with skills from tasks-skills.csv");
 			}
+
 		} else if (SimulationParameters.taskSkillPoolDataset.equals("RANDOM")) {
-			int x = ((int) (new Random().nextDouble() * SimulationParameters.staticFrequencyTableSc)) + 1;
+			
+			// random element exists here
+
+			int x = ((int) (RandomHelper.nextDouble() * 
+					SimulationParameters.staticFrequencyTableSc)) + 1;
 			for (int i = 0; i < x; i++) {
 				Skill skill = choseRandomSkill();
 				// Random generator = new Random();
@@ -235,13 +269,24 @@ public abstract class TaskSkillsPool {
 				task.addSkill(skill.getName(), taskInternals);
 				say("Task " + task + " filled with skills randomly");
 			}
+
 		} else if (SimulationParameters.taskSkillPoolDataset
 				.equals("GITHUB_CLUSTERIZED")) {
+
 			if (SimulationParameters.gitHubClusterizedDistribution
 					.toLowerCase().equals("clusters")) {
+				
+				// created task set will be the same for every execution
+				// because of no randomness elements, use this
+				// when you want to have random only pseudo-random behaviour
+				// of step() method and analyzing asynchronous decisions
+				// made by agents through heuristics
 
 			} else if (SimulationParameters.gitHubClusterizedDistribution
 					.toLowerCase().equals("distribute")) {
+				
+				// random element exists here
+				
 				Poisson poisson = new Poisson(10,
 						Poisson.makeDefaultGenerator());
 				double d = poisson.nextDouble() / 20;

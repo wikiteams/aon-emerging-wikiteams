@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import logger.PjiitOutputter;
+import repast.simphony.random.RandomHelper;
 import strategies.Aggregate;
 import strategies.CentralAssignmentTask;
 import strategies.GreedyAssignmentTask;
@@ -62,9 +63,8 @@ public class Task {
 		return skills.get(key);
 	}
 
-	public synchronized void initialize() {
-		// setId(++COUNT);
-		TaskSkillsPool.fillWithSkills(this);
+	public synchronized void initialize(int countAll) {
+		TaskSkillsPool.fillWithSkills(this, countAll);
 		say("Task object initialized with id: " + this.id);
 	}
 
@@ -352,9 +352,13 @@ public class Task {
 			break;
 		case RANDOM:
 			say(Constraints.INSIDE_RANDOM);
-			Collections.shuffle((ArrayList<TaskInternals>) intersection);
-			TaskInternals randomTaskInternal = ((ArrayList<TaskInternals>) intersection)
-					.get(0);
+			List<TaskInternals> intersectionToShuffle = new ArrayList<TaskInternals>();
+			for(TaskInternals taskInternalsR : intersection){
+				intersectionToShuffle.add(taskInternalsR);
+			}
+			Collections.shuffle(intersectionToShuffle);
+			TaskInternals randomTaskInternal = (intersectionToShuffle).get(
+					RandomHelper.nextIntFromTo(0, intersectionToShuffle.size() - 1));
 			{
 				sanity("Choosing Si:{"
 						+ randomTaskInternal.getSkill().getName()

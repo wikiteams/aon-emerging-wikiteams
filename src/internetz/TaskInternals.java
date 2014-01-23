@@ -9,7 +9,7 @@ public class TaskInternals {
 	private WorkUnit workDone;
 	
 	public TaskInternals(Skill skill, WorkUnit workRequired, WorkUnit workDone){
-		assert workRequired.d > workDone.d;
+		assert workRequired.d >= workDone.d;
 		assert workRequired.d > 0.;
 		this.skill = skill;
 		this.workDone = workDone;

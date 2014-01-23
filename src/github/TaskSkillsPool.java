@@ -15,12 +15,15 @@ import java.io.ObjectOutputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
+import java.util.Map.Entry;
 
 import logger.PjiitOutputter;
 
@@ -52,7 +55,10 @@ public abstract class TaskSkillsPool {
 			: "data\\github_clusters.csv";
 
 	private enum DataSet {
-		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_REPOSITORIES, _200_LANGUAGES;
+		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, 
+		TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, 
+		SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, 
+		ALL_LANGUAGES, TOP_REPOSITORIES, _200_LANGUAGES;
 	}
 
 	public enum Method {
@@ -60,14 +66,21 @@ public abstract class TaskSkillsPool {
 	}
 
 	public TaskSkillFrequency skillTypicalFrequency;
+	public static volatile int iterator = 0;
 
 	public static void clear() {
 		singleSkillSet.clear();
 		skillSetMatrix.clear();
+		skillSetArray.clear();
+		iterator = 0;
 	}
 
-	private static LinkedHashMap<String, Skill> singleSkillSet = new LinkedHashMap<String, Skill>();
-	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, Skill> singleSkillSet = 
+			new LinkedHashMap<String, Skill>();
+	private static LinkedHashMap<Repository, HashMap<Skill, Double>> skillSetMatrix = 
+			new LinkedHashMap<Repository, HashMap<Skill, Double>>();
+	private static ArrayList<HashMap<Skill, Double>> skillSetArray = 
+			new ArrayList<HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static int static_frequency_counter = 0;
@@ -222,13 +235,44 @@ public abstract class TaskSkillsPool {
 			for (int i = 0; i < 10; i++) {
 				Skill skill = skillFactory.getSkill(nextLine[i].replace("sc_",
 						"").trim());
-				hmp.put(skill, Double.parseDouble(nextLine[i]));
+				double howMuch = Double.parseDouble(nextLine[i]);
+				if ( !(howMuch > 0.) )
+					continue;
+				hmp.put(skill, howMuch);
 			}
 			skillSetMatrix.put(repo, hmp);
 		}
 		reader.close();
+		
+		skillSetArray = sortBySkillLength(skillSetMatrix);
 
 		TaskSkillFrequency.tasksCheckSum = checksum(skillSetMatrix);
+		
+		iterator = skillSetArray.size() - 1;
+	}
+	
+	private static ArrayList<HashMap<Skill, Double>> sortBySkillLength(
+			LinkedHashMap<Repository, HashMap<Skill, Double>> map){
+		List<HashMap<Skill, Double>> l = new ArrayList<HashMap<Skill, Double>>(map.values());
+		Collections.sort(l, new Comparator<HashMap<Skill, Double>>(){
+		    public int compare(HashMap<Skill, Double> s1, HashMap<Skill, Double> s2){
+		        return Integer.compare(s2.size(), s1.size());                
+		    }});
+		
+		ArrayList<HashMap<Skill, Double>> sortedSkillSetArray = 
+				new ArrayList<HashMap<Skill, Double>>();
+		
+		for(HashMap<Skill, Double> a : l){
+		    Iterator<Entry<Repository, HashMap<Skill, Double>>> iter = map.entrySet().iterator();
+		    while (iter.hasNext()) {
+		        Entry<Repository, HashMap<Skill, Double>> e = iter.next();
+		        if(e.getValue().equals(a)){
+		        	sortedSkillSetArray.add(e.getValue());
+		        }
+		    }
+		}
+		
+		return sortedSkillSetArray;
 	}
 
 	private static HashMap<Skill, Double> parseCluster(String cluster) {
@@ -343,9 +387,20 @@ public abstract class TaskSkillsPool {
 
 				// created task set will be the same for every execution
 				// because of no randomness elements, use this
-				// when you want to have random only pseudo-random behaviour
+				// when you want to have random only pseudo-random behavior
 				// of step() method and analyzing asynchronous decisions
 				// made by agents through heuristics
+				
+				HashMap<Skill, Double> skillEntity = skillSetArray.get(iterator--);
+				for (Skill skill : skillEntity.keySet()) {
+					assert skillEntity.get(skill) > 0;
+					WorkUnit w1 = new WorkUnit(skillEntity.get(skill));
+					WorkUnit w2 = new WorkUnit(skillEntity.get(skill) / 
+							SimulationParameters.probableWorkDone);
+					TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
+					task.addSkill(skill.getName(), taskInternals);
+					say("Task " + task + " filled with skills");
+				}
 
 			} else if (SimulationParameters.gitHubClusterizedDistribution
 					.toLowerCase().equals("distribute")) {

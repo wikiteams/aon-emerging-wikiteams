@@ -1,10 +1,13 @@
 package internetz;
 
+import java.io.Serializable;
+
 import logger.PjiitOutputter;
 
-public class Category {
+public class Category implements Serializable{
 	
 	private CategoryType type;
+	private int hash;
 	
 	public Category(){
 		say("Category initialized");
@@ -17,6 +20,7 @@ public class Category {
 	
 	public Category(String name){
 		say("Category initialized with name: " + name);
+		hash = name.hashCode();
 		this.type = parseType(name);
 	}
 	
@@ -46,6 +50,11 @@ public class Category {
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
+	}
+	
+	@Override
+	public int hashCode() {
+		return hash * type.ordinal();
 	}
 	
 	@Override

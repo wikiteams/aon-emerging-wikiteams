@@ -1,6 +1,7 @@
 package internetz;
 
 import github.DataSetProvider;
+import github.TaskSkillFrequency;
 import github.TaskSkillsPool;
 
 import java.io.FileWriter;
@@ -275,7 +276,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 			say("Creating task..");
 			taskPool.addTask(task.getName(), task);
 			say("Initializing task..");
-			task.initialize();
+			task.initialize(howMany);
 			taskPool.add(task);
 			agentPool.add(task);
 		}
@@ -368,6 +369,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 		TaskPool.clearTasks();
 		AgentSkillsPool.clear();
 		Agent.totalAgents = 0;
+		TaskSkillsPool.static_frequency_counter = 0;
+		TaskSkillFrequency.clear();
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.FIRST_PRIORITY)
@@ -402,7 +405,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ SimulationParameters.agentSkillPoolDataset + ","
 				+ SimulationParameters.taskSkillPoolDataset + ","
 				+ strategyDistribution.getSkillChoice() + ","
-				+ strategyDistribution.getTaskMinMaxChoice();
+				+ strategyDistribution.getTaskMinMaxChoice() + ","
+				+ TaskSkillFrequency.tasksCheckSum;
 	}
 
 	private int getTaskLeft() {
@@ -427,7 +431,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ "Granularity type" + "," + "Granularity obstinancy" + ","
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
-				+ "Skill choice strategy" + "," + "Task MinMax choice";
+				+ "Skill choice strategy" + "," + "Task MinMax choice" + ","
+				+ "Task dataset checksum";
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)

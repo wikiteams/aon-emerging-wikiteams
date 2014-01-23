@@ -1,6 +1,8 @@
 package github;
 
-public class Repository {
+import java.io.Serializable;
+
+public class Repository implements Serializable{
 	
 	private String name;
 	//private String cluster;

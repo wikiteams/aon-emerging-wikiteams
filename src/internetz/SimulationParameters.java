@@ -61,6 +61,7 @@ public class SimulationParameters {
 	
 	public static boolean dataSetAll = false;
 	public static boolean onlyOneBasicDataset = true;
+	public static double probableWorkDone = 8;
 
 	public static void init() {
 		Parameters param = RunEnvironment.getInstance().getParameters();

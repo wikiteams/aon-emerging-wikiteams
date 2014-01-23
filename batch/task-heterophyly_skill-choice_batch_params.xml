@@ -13,10 +13,10 @@
 <parameter name="agentSkillsPoolRandomize1" type="constant" constant_type="int" value="5" />
 <parameter name="percStartMembership" type="constant" constant_type="int" value="10" />
 <parameter name="fullyLearnedAgentsLeave" type="constant" constant_type="java.lang.Boolean" value="true" />
-<parameter name="gitHubClusterizedDistribution" type="constant" constant_type="java.lang.String" value="distribute" />
+<parameter name="gitHubClusterizedDistribution" type="constant" constant_type="java.lang.String" value="clusters" />
 <parameter name="agentSkillPoolDataset" type="constant" constant_type="java.lang.String" value="STATIC_PULL_REQUESTS" />
 <parameter name="fillAgentSkillsMethod" type="constant" constant_type="java.lang.String" value="TOP_ACTIVE" />
-<parameter name="taskSkillPoolDataset" type="constant" constant_type="java.lang.String" value="STATIC_FREQUENCY_TABLE" />
+<parameter name="taskSkillPoolDataset" type="constant" constant_type="java.lang.String" value="GITHUB_CLUSTERIZED" />
 <parameter name="staticFrequencyTableSc" type="constant" constant_type="int" value="10" />
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />

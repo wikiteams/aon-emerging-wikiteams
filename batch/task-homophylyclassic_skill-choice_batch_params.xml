@@ -1,10 +1,10 @@
-<?xml version="1.0"?><sweep runs="500">
+<?xml version="1.0"?><sweep runs="400">
 <parameter name="randomSeed" type="constant" constant_type="int" value="985924735" />
 <parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="choice" />
 <parameter name="allowMultiMembership" type="constant" constant_type="java.lang.Boolean" value="true" />
 <parameter name="deployedTasksLeave" type="constant" constant_type="java.lang.Boolean" value="true" />
 <parameter name="strategyDistribution" type="constant" constant_type="int" value="0" />
-<parameter name="taskChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="homophyly_classic" />
+<parameter name="taskChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="homophyly" />
 <parameter name="agentCount" type="constant" constant_type="int" value="50" />
 <parameter name="numSteps" type="constant" constant_type="int" value="5000" />
 <parameter name="maxWorkRequired" type="constant" constant_type="int" value="20" />

@@ -7,21 +7,27 @@ import internetz.Task;
 import internetz.TaskInternals;
 import internetz.WorkUnit;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Random;
+import java.util.StringTokenizer;
+
+import logger.PjiitOutputter;
 
 import org.apache.commons.lang3.SystemUtils;
 
 import repast.simphony.random.RandomHelper;
 import utils.CharacterConstants;
-import logger.PjiitOutputter;
 import au.com.bytecode.opencsv.CSVParser;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -52,6 +58,8 @@ public abstract class TaskSkillsPool {
 	public enum Method {
 		STATIC_FREQUENCY_TABLE, GOOGLE_BIGQUERY_MINED, GITHUB_CLUSTERIZED;
 	}
+
+	public TaskSkillFrequency skillTypicalFrequency;
 
 	public static void clear() {
 		singleSkillSet.clear();
@@ -84,14 +92,16 @@ public abstract class TaskSkillsPool {
 	}
 
 	/**
-	 * Reads into simulation universe-creator the Tasks which will be used
-	 * later in the simulation, depends on the number of tasks needed,
-	 * they will be taken later from the top
+	 * Reads into simulation universe-creator the Tasks which will be used later
+	 * in the simulation, depends on the number of tasks needed, they will be
+	 * taken later from the top
+	 * 
 	 * @param dataset
 	 */
 	public static void instantiate(DataSet dataset) {
 		if (dataset == DataSet._200_LANGUAGES) {
 			try {
+				sanity("Inside instantiate(DataSet._200_LANGUAGES)");
 				parseCsvStatic();
 			} catch (FileNotFoundException e) {
 				System.err.println(e.getMessage());
@@ -104,11 +114,18 @@ public abstract class TaskSkillsPool {
 			}
 		} else if (dataset == DataSet.TOP_REPOSITORIES) {
 			try {
+				sanity("Inside instantiate(DataSet.TOP_REPOSITORIES)");
+				sanity("Lunching parseCsvCluster()");
 				parseCsvCluster();
 			} catch (FileNotFoundException e) {
 				System.err.println(e.getMessage());
 				say("File not found!");
 				e.printStackTrace();
+			} catch (NoSuchAlgorithmException nsae) {
+				System.err.println(nsae.getMessage());
+				say("No such algorithm exception. Details: "
+						+ nsae.getMessage());
+				nsae.printStackTrace();
 			} catch (IOException e) {
 				System.err.println(e.getMessage());
 				say("Input / Output Exception! Details: " + e.getMessage());
@@ -160,7 +177,8 @@ public abstract class TaskSkillsPool {
 			String repo = nextLine[0];
 			if (nextLine[2].trim().equals("null"))
 				continue;
-			Skill s = skillFactory.getSkill(nextLine[2].replaceAll("\\s", ""));
+			Skill s = skillFactory.getSkill(nextLine[2].trim());// replaceAll("\\s",
+																// "")
 			if (s == null)
 				continue;
 			Double value = Double.parseDouble(nextLine[1]);
@@ -190,30 +208,78 @@ public abstract class TaskSkillsPool {
 	}
 
 	private static void parseCsvCluster() throws IOException,
-			FileNotFoundException {
+			FileNotFoundException, NoSuchAlgorithmException {
+		say("parseCsvCluster() executes work..");
 		CSVReader reader = new CSVReader(
 				new FileReader(filenameGithubClusters), ',',
-				CSVParser.DEFAULT_QUOTE_CHARACTER);
+				CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
 		String[] nextLine;
 		nextLine = reader.readNext();
 
-		LinkedList<Skill> shs = new LinkedList<Skill>();
-
-		for (int i = 0; i < 10; i++) {
-			shs.add(skillFactory
-					.getSkill(nextLine[i].replace("sc_", "").trim()));
-		}
-
 		while ((nextLine = reader.readNext()) != null) {
 			Repository repo = new Repository(nextLine[11], nextLine[12]);
-			HashMap<Skill, Double> hmp = new HashMap<Skill, Double>();
+			HashMap<Skill, Double> hmp = parseCluster(nextLine[10]);
 			for (int i = 0; i < 10; i++) {
-				hmp.put(shs.get(i), Double.parseDouble(nextLine[i]));
+				Skill skill = skillFactory.getSkill(nextLine[i].replace("sc_",
+						"").trim());
+				hmp.put(skill, Double.parseDouble(nextLine[i]));
 			}
 			skillSetMatrix.put(repo, hmp);
 		}
 		reader.close();
+
+		TaskSkillFrequency.tasksCheckSum = checksum(skillSetMatrix);
 	}
+
+	private static HashMap<Skill, Double> parseCluster(String cluster) {
+		HashMap<Skill, Double> r = new HashMap<Skill, Double>();
+
+		if (cluster.contains("|")) {
+			for (String s : cluster.split("\\|")) {
+				//sanity(s.split(":")[0]);
+				//sanity(s.split(":")[1]);
+				String skillName = s.split(":")[0];
+				String intensive = s.split(":")[1];
+				r.put(skillFactory.getSkill(skillName),
+						TaskSkillFrequency.frequency.get(intensive
+								.toUpperCase()));
+			}
+		} else {
+			String skillName = cluster.split(":")[0];
+			String intensive = cluster.split(":")[1];
+			r.put(skillFactory.getSkill(skillName),
+					TaskSkillFrequency.frequency.get(intensive
+							.toUpperCase()));
+		}
+		return r;
+	}
+
+	// private static void parseCsvCluster() throws IOException,
+	// FileNotFoundException {
+	// say("parseCsvCluster() executes work..");
+	// CSVReader reader = new CSVReader(
+	// new FileReader(filenameGithubClusters), ',',
+	// CSVParser.DEFAULT_QUOTE_CHARACTER);
+	// String[] nextLine;
+	// nextLine = reader.readNext();
+	//
+	// LinkedList<Skill> shs = new LinkedList<Skill>();
+	//
+	// for (int i = 0; i < 10; i++) {
+	// shs.add(skillFactory
+	// .getSkill(nextLine[i].replace("sc_", "").trim()));
+	// }
+	//
+	// while ((nextLine = reader.readNext()) != null) {
+	// Repository repo = new Repository(nextLine[11], nextLine[12]);
+	// HashMap<Skill, Double> hmp = new HashMap<Skill, Double>();
+	// for (int i = 0; i < 10; i++) {
+	// hmp.put(shs.get(i), Double.parseDouble(nextLine[i]));
+	// }
+	// skillSetMatrix.put(repo, hmp);
+	// }
+	// reader.close();
+	// }
 
 	public static Skill choseRandomSkill() {
 		// Random generator = new Random();
@@ -233,9 +299,9 @@ public abstract class TaskSkillsPool {
 	public static void fillWithSkills(Task task, int countAll) {
 		if (SimulationParameters.taskSkillPoolDataset
 				.equals("STATIC_FREQUENCY_TABLE")) {
-			
+
 			// random element exists here
-			
+
 			int random = 0 + static_frequency_counter++ / countAll;
 			int randomIndexOfSkills = (random * skillSetMatrix.size()) - 1;
 			if (randomIndexOfSkills < 0)
@@ -254,11 +320,10 @@ public abstract class TaskSkillsPool {
 			}
 
 		} else if (SimulationParameters.taskSkillPoolDataset.equals("RANDOM")) {
-			
+
 			// random element exists here
 
-			int x = ((int) (RandomHelper.nextDouble() * 
-					SimulationParameters.staticFrequencyTableSc)) + 1;
+			int x = ((int) (RandomHelper.nextDouble() * SimulationParameters.staticFrequencyTableSc)) + 1;
 			for (int i = 0; i < x; i++) {
 				Skill skill = choseRandomSkill();
 				// Random generator = new Random();
@@ -275,7 +340,7 @@ public abstract class TaskSkillsPool {
 
 			if (SimulationParameters.gitHubClusterizedDistribution
 					.toLowerCase().equals("clusters")) {
-				
+
 				// created task set will be the same for every execution
 				// because of no randomness elements, use this
 				// when you want to have random only pseudo-random behaviour
@@ -284,9 +349,9 @@ public abstract class TaskSkillsPool {
 
 			} else if (SimulationParameters.gitHubClusterizedDistribution
 					.toLowerCase().equals("distribute")) {
-				
+
 				// random element exists here
-				
+
 				Poisson poisson = new Poisson(10,
 						Poisson.makeDefaultGenerator());
 				double d = poisson.nextDouble() / 20;
@@ -311,6 +376,24 @@ public abstract class TaskSkillsPool {
 		}
 	}
 
+	private static BigInteger checksum(Object obj) throws IOException,
+			NoSuchAlgorithmException {
+
+		if (obj == null) {
+			return BigInteger.ZERO;
+		}
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(obj);
+		oos.close();
+
+		MessageDigest m = MessageDigest.getInstance("SHA1");
+		m.update(baos.toByteArray());
+
+		return new BigInteger(1, m.digest());
+	}
+
 	public int getSkillSetMatrixCount() {
 		return skillSetMatrix.size();
 	}
@@ -321,6 +404,10 @@ public abstract class TaskSkillsPool {
 
 	private static void say(String s) {
 		PjiitOutputter.say(s);
+	}
+
+	private static void sanity(String s) {
+		PjiitOutputter.sanity(s);
 	}
 
 }

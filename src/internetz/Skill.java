@@ -1,5 +1,7 @@
 package internetz;
 
+import java.io.Serializable;
+
 import logger.PjiitOutputter;
 
 /***
@@ -9,7 +11,7 @@ import logger.PjiitOutputter;
  * @since 1.0
  * @version 1.1
  */
-public class Skill {
+public class Skill implements Serializable{
 
 	private String name;
 	

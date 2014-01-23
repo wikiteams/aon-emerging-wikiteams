@@ -8,7 +8,7 @@ package constants;
  * @author Oskar
  *
  */
-public class Constraints {
+public abstract class Constraints {
 	
 	public static final String EMPTY_STRING = "";
 

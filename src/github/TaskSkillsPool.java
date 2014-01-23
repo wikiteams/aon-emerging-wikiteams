@@ -443,7 +443,7 @@ public abstract class TaskSkillsPool {
 		oos.writeObject(obj);
 		oos.close();
 
-		MessageDigest m = MessageDigest.getInstance("SHA1");
+		MessageDigest m = MessageDigest.getInstance("MD5");
 		m.update(baos.toByteArray());
 
 		return new BigInteger(1, m.digest());

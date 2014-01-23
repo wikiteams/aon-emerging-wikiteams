@@ -53,7 +53,7 @@ import constants.ModelFactory;
 
 /**
  * COIN network emergence simulator, a Repast Simphony 2.1 multi-agent social
- * simulation for modelling task allocation techniques and behaviour of
+ * simulation for modeling task allocation techniques and behavior of
  * collaborators in websites like GitHub and Wikipedia. Works on both Windows
  * and Linux environments.
  * 
@@ -371,6 +371,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 		Agent.totalAgents = 0;
 		TaskSkillsPool.static_frequency_counter = 0;
 		TaskSkillFrequency.clear();
+		AgentSkillsFrequency.clear();
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.FIRST_PRIORITY)
@@ -406,7 +407,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ SimulationParameters.taskSkillPoolDataset + ","
 				+ strategyDistribution.getSkillChoice() + ","
 				+ strategyDistribution.getTaskMinMaxChoice() + ","
-				+ TaskSkillFrequency.tasksCheckSum;
+				+ TaskSkillFrequency.tasksCheckSum + ","
+				+ AgentSkillsFrequency.tasksCheckSum;
 	}
 
 	private int getTaskLeft() {
@@ -432,7 +434,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 				+ "Task choice strategy" + "," + "fillAgentSkillsMethod" + ","
 				+ "agentSkillPoolDataset" + "," + "taskSkillPoolDataset" + ","
 				+ "Skill choice strategy" + "," + "Task MinMax choice" + ","
-				+ "Task dataset checksum";
+				+ "Task dataset checksum" + "," + "Agent dataset checksum";
 	}
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)

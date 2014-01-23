@@ -1,8 +1,13 @@
 package internetz;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -17,8 +22,7 @@ import au.com.bytecode.opencsv.CSVWriter;
 
 public abstract class AgentSkillsPool {
 
-	private static String filenameMostOftenStarred = 
-			SystemUtils.IS_OS_LINUX ? "data/users_top_stars.csv"
+	private static String filenameMostOftenStarred = SystemUtils.IS_OS_LINUX ? "data/users_top_stars.csv"
 			: "data\\users_top_stars.csv";
 
 	/***
@@ -28,18 +32,13 @@ public abstract class AgentSkillsPool {
 	 * 
 	 * i.e. 'fabpot', 'PHP', 'Shell', 'JavaScript'
 	 */
-	private static String filename = SystemUtils.IS_OS_LINUX ? 
-			"data/top-users-final.csv"
+	private static String filename = SystemUtils.IS_OS_LINUX ? "data/top-users-final.csv"
 			: "data\\top-users-final.csv";
-	private static String filename_ext = SystemUtils.IS_OS_LINUX ? 
-			"data/users-and-their-pull-requests.csv"
+	private static String filename_ext = SystemUtils.IS_OS_LINUX ? "data/users-and-their-pull-requests.csv"
 			: "data\\users-and-their-pull-requests.csv";
 
 	private enum DataSet {
-		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, 
-		TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, 
-		SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, 
-		_200_LANGUAGES;
+		AT_LEAST_1_COMMIT, MOST_OFTEN_STARRED, TOPREPOS_AND_THEIRUSERS, TOPUSERS_AND_THEIRREPOS, TOPREPOS_AND_TOPUSERS, PUSHES_BY_LANGUAGES, SEVERANCE_FROM_MIDDLE, MOST_COMMON_TECHNOLOGY, ALL_LANGUAGES, TOP_USERS, _200_LANGUAGES;
 	}
 
 	private enum Method {
@@ -49,8 +48,7 @@ public abstract class AgentSkillsPool {
 	/***
 	 * <String:user, {<skill, intensivity>}>
 	 */
-	private static LinkedHashMap<String, HashMap<Skill, Double>> skillSet = 
-			new LinkedHashMap<String, HashMap<Skill, Double>>();
+	private static LinkedHashMap<String, HashMap<Skill, Double>> skillSet = new LinkedHashMap<String, HashMap<Skill, Double>>();
 	private static SkillFactory skillFactory = new SkillFactory();
 
 	public static void instantiate(String method) {
@@ -89,7 +87,6 @@ public abstract class AgentSkillsPool {
 			}
 		} else if (method == DataSet.TOP_USERS) {
 			try {
-				//parseCsvTopUsers(false);
 				parseCsvTopUsers(true);
 				parseCsvUsersByPushes();
 			} catch (FileNotFoundException e) {
@@ -103,10 +100,14 @@ public abstract class AgentSkillsPool {
 			try {
 				parseCsvTopUsers(true);
 				parseCsvUsersByPushes();
+				AgentSkillsFrequency.tasksCheckSum = checksum(skillSet);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -120,23 +121,23 @@ public abstract class AgentSkillsPool {
 				filenameMostOftenStarred), ',', '\'');
 		String[] nextLine;
 		while ((nextLine = reader.readNext()) != null) {
-//			if (nickOnly) {
-//				skillSet.put(nextLine[0], new HashMap<Skill, Double>());
-//			} else {
-//				HashMap<Skill, Double> l = new HashMap<Skill, Double>();
-//				for (int i = 1; i < nextLine.length; i++) {
-//					l.put(skillFactory.getSkill(nextLine[i]), null);
-//					say("Parsed from CSV: " + nextLine[i]);
-//				}
-//				skillSet.put(nextLine[0], l);
-//			}
+			// if (nickOnly) {
+			// skillSet.put(nextLine[0], new HashMap<Skill, Double>());
+			// } else {
+			// HashMap<Skill, Double> l = new HashMap<Skill, Double>();
+			// for (int i = 1; i < nextLine.length; i++) {
+			// l.put(skillFactory.getSkill(nextLine[i]), null);
+			// say("Parsed from CSV: " + nextLine[i]);
+			// }
+			// skillSet.put(nextLine[0], l);
+			// }
 		}
 		reader.close();
 	}
 
 	/*
 	 * Here is parsing real data - top active 960 GitHub users and their 3 most
-	 * often used skills
+	 * often used skills. No random character of this method.
 	 * 
 	 * @since 1.1
 	 */
@@ -224,8 +225,13 @@ public abstract class AgentSkillsPool {
 
 	public static void fillWithSkills(Agent agent, Method method) {
 		if (method == Method.RANDOM) {
-
+			throw new UnsupportedOperationException();
 		} else if (method == Method.TOP_ACTIVE) {
+
+			// here we fill agent skills with experience
+			// analyzed by their pushed, no random character here
+			// all taken from users-and-their-pull-requests.csv
+
 			HashMap<Skill, Double> iterationSkills = getByIndex(skillSet,
 					agent.getId());
 			for (Skill iterationSkill : iterationSkills.keySet()) {
@@ -271,6 +277,24 @@ public abstract class AgentSkillsPool {
 		// experience);
 		// agent.addSkill(key, agentInternals);
 		// say("Agent " + agent + " filled with skills");
+	}
+
+	private static BigInteger checksum(Object obj) throws IOException,
+			NoSuchAlgorithmException {
+
+		if (obj == null) {
+			return BigInteger.ZERO;
+		}
+
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(baos);
+		oos.writeObject(obj);
+		oos.close();
+
+		MessageDigest m = MessageDigest.getInstance("MD5");
+		m.update(baos.toByteArray());
+
+		return new BigInteger(1, m.digest());
 	}
 
 	private static void say(String s) {

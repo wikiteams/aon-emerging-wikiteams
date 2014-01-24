@@ -89,10 +89,14 @@ public abstract class AgentSkillsPool {
 			try {
 				parseCsvTopUsers(true);
 				parseCsvUsersByPushes();
+				AgentSkillsFrequency.tasksCheckSum = checksum(skillSet);
 			} catch (FileNotFoundException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

@@ -101,6 +101,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 		try {
 			initializeLoggers();
+			RandomHelper.setSeed(SimulationParameters.randomSeed);
 			RandomHelper.init();
 			clearStaticHeap();
 

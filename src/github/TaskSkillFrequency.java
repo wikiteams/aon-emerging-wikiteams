@@ -12,8 +12,8 @@ public abstract class TaskSkillFrequency {
     	frequency = new HashMap<String, Double>();
     	frequency.put("SMALL", 40d);
     	frequency.put("MEDIUM", 250d);
-    	frequency.put("SMALL", 1000d);
-    	frequency.put("MEDIUM", 8500d);
+    	frequency.put("HIGH", 1000d);
+    	frequency.put("ENORMOUS", 8500d);
     }
     
     public static BigInteger tasksCheckSum;

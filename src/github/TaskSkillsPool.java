@@ -225,20 +225,25 @@ public abstract class TaskSkillsPool {
 		say("parseCsvCluster() executes work..");
 		CSVReader reader = new CSVReader(
 				new FileReader(filenameGithubClusters), ',',
-				CSVParser.DEFAULT_QUOTE_CHARACTER, 1);
+				CSVParser.DEFAULT_QUOTE_CHARACTER);
 		String[] nextLine;
 		nextLine = reader.readNext();
+		
+		List<Skill> headerSkills = new ArrayList<Skill>();
+		for(int i = 0 ; i < 10 ; i++){
+			Skill skill = skillFactory.getSkill(nextLine[i].replace("sc_",
+					"").trim());
+			headerSkills.add(skill);
+		}
 
 		while ((nextLine = reader.readNext()) != null) {
 			Repository repo = new Repository(nextLine[11], nextLine[12]);
 			HashMap<Skill, Double> hmp = parseCluster(nextLine[10]);
 			for (int i = 0; i < 10; i++) {
-				Skill skill = skillFactory.getSkill(nextLine[i].replace("sc_",
-						"").trim());
 				double howMuch = Double.parseDouble(nextLine[i]);
 				if ( !(howMuch > 0.) )
 					continue;
-				hmp.put(skill, howMuch);
+				hmp.put(headerSkills.get(i), howMuch);
 			}
 			skillSetMatrix.put(repo, hmp);
 		}
@@ -248,7 +253,8 @@ public abstract class TaskSkillsPool {
 
 		TaskSkillFrequency.tasksCheckSum = checksum(skillSetMatrix);
 		
-		iterator = skillSetArray.size() - 1;
+		//iterator = skillSetArray.size() - 1;
+		iterator = 0;
 	}
 	
 	private static ArrayList<HashMap<Skill, Double>> sortBySkillLength(
@@ -391,13 +397,13 @@ public abstract class TaskSkillsPool {
 				// of step() method and analyzing asynchronous decisions
 				// made by agents through heuristics
 				
-				HashMap<Skill, Double> skillEntity = skillSetArray.get(iterator--);
+				HashMap<Skill, Double> skillEntity = skillSetArray.get(iterator++);
 				for (Skill skill : skillEntity.keySet()) {
 					assert skillEntity.get(skill) > 0;
-					WorkUnit w1 = new WorkUnit(skillEntity.get(skill));
-					WorkUnit w2 = new WorkUnit(skillEntity.get(skill) / 
-							SimulationParameters.probableWorkDone);
-					TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
+					WorkUnit workRequired = new WorkUnit(skillEntity.get(skill));
+					WorkUnit workDone = new WorkUnit(skillEntity.get(skill) / 
+							(iterator + 1) );
+					TaskInternals taskInternals = new TaskInternals(skill, workRequired, workDone);
 					task.addSkill(skill.getName(), taskInternals);
 					say("Task " + task + " filled with skills");
 				}

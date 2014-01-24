@@ -243,6 +243,8 @@ public abstract class TaskSkillsPool {
 				double howMuch = Double.parseDouble(nextLine[i]);
 				if ( !(howMuch > 0.) )
 					continue;
+				if ( howMuch > TaskSkillFrequency.MAX)
+					continue;
 				hmp.put(headerSkills.get(i), howMuch);
 			}
 			skillSetMatrix.put(repo, hmp);

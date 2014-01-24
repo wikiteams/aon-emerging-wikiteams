@@ -12,10 +12,10 @@ public class PjiitOutputter {
 	 * 
 	 * __DONT__FORCE__SKIP__ = true; will enable diagnostic messages
 	 */
-	private static boolean __DONT__FORCE__SKIP = false;
+	private static boolean __DONT__FORCE__SKIP__ = false;
 
 	public static void say(String s) {
-		if (__DONT__FORCE__SKIP) {
+		if (__DONT__FORCE__SKIP__) {
 			String dateStringRepresentation = getDateLogs();
 			System.out.println(dateStringRepresentation + ": " + s);
 			PjiitLogger.info(dateStringRepresentation + ": " + s);
@@ -23,7 +23,7 @@ public class PjiitOutputter {
 	}
 
 	public static void sanity(String s) {
-		if (__DONT__FORCE__SKIP) {
+		if (__DONT__FORCE__SKIP__) {
 			String dateStringRepresentation = getDateLogs();
 			System.out.println(dateStringRepresentation + ": " + s);
 			SanityLogger.sanity(dateStringRepresentation + ": " + s);

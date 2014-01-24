@@ -12,7 +12,7 @@ import test.ModelConverter;
  * 
  * @author Oskar Jarczyk
  * @since 1.0
- * @version 1.4
+ * @version 1.4.1
  */
 public class SimulationParameters {
 	

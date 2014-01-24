@@ -26,7 +26,7 @@ for key in strategies.keys():
 	f.write("taskChoiceStrategy,skillChoiceStrategy,agentsCount,tasksCount,experienceDecay,fullyLearnedAgentsLeave,granularity,tickCount,taskDataSetChecksum,agentDataSetChecksum\n")
 
 	for row in strategies[key]:
-		f.write("%s,%s,%s,%s,%s,%s,%s,%s\n" % (taskChoiceStrategy, skillChoiceStrategy, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity, row, taskDataSetChecksum, agentDataSetChecksum))
+		f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (taskChoiceStrategy, skillChoiceStrategy, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity, row, taskDataSetChecksum, agentDataSetChecksum))
 	
 	f.write("ufnosc: %s" % result)
 

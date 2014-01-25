@@ -23,7 +23,7 @@ for key in strategies.keys():
 
 	fileName = '%s_%s_agents_%s_tasks_%s_experience_%s_fully_%s_granularity_%s_minmax_%s.csv' % key
 	f = open(fileName, 'a+')
-	f.write("taskChoiceStrategy,skillChoiceStrategy,agentsCount,tasksCount,experienceDecay,fullyLearnedAgentsLeave,granularity,tickCount,taskDataSetChecksum,agentDataSetChecksum\n")
+	f.write("taskChoiceStrategy,skillChoiceStrategy,agentsCount,tasksCount,experienceDecay,fullyLearnedAgentsLeave,granularity,taskMinMaxChoice,tickCount,taskDataSetChecksum,agentDataSetChecksum\n")
 
 	for row in strategies[key]:
 		f.write("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s\n" % (taskChoiceStrategy, skillChoiceStrategy, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity, taskMinMaxChoice, row, taskDataSetChecksum, agentDataSetChecksum))

@@ -9,19 +9,19 @@ with open('all_simulations.csv', 'rb') as csv_file:
 		(batchNumber, runNumber, tickCount, agentsCount, tasksCount, tasksLeft, experienceDecay, fullyLearnedAgentsLeave, expCutPoint, granularity, granularityType, granularityObstinancy, taskChoiceStrategy, fillAgentSillsMethod, agentSkillPoolDataset, taskSkillPoolDataset, skillChoiceStrategy, taskMinMaxChoice, taskDataSetChecksum, agentDataSetChecksum) = row
 		print tickCount, agentsCount, tasksCount, tasksLeft, experienceDecay, fullyLearnedAgentsLeave, granularity, taskChoiceStrategy, skillChoiceStrategy, taskDataSetChecksum, agentDataSetChecksum
 
-		key = (taskChoiceStrategy, skillChoiceStrategy, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity, taskMinMaxChoice)
+		key = (taskChoiceStrategy, skillChoiceStrategy, taskMinMaxChoice, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity)
 		if key not in strategies.keys():
 			strategies[key] = []
 
 		strategies[key].append(float(tickCount)) 
 
 for key in strategies.keys():
-	(taskChoiceStrategy, skillChoiceStrategy, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity, taskMinMaxChoice) = key
+	(taskChoiceStrategy, skillChoiceStrategy, taskMinMaxChoice, agentsCount, tasksCount, experienceDecay, fullyLearnedAgentsLeave, granularity) = key
 	stddevp = numpy.std(strategies[key])
 	average = numpy.average(strategies[key])
 	result = 2 * stddevp / average
 
-	fileName = '%s_%s_agents_%s_tasks_%s_experience_%s_fully_%s_granularity_%s_minmax_%s.csv' % key
+	fileName = '%s_%s_%s_agents_%s_tasks_%s_experience_%s_fully_%s_granularity_%s.csv' % key
 	f = open(fileName, 'a+')
 	f.write("taskChoiceStrategy,skillChoiceStrategy,agentsCount,tasksCount,experienceDecay,fullyLearnedAgentsLeave,granularity,taskMinMaxChoice,tickCount,taskDataSetChecksum,agentDataSetChecksum\n")
 

@@ -9,9 +9,22 @@ import java.util.List;
 
 import strategies.Strategy.TaskChoice;
 
+/**
+ * Central-assignment strategy additional methods
+ * 
+ * @author Oskar Jarczyk
+ * @version 1.4
+ */
 public class CentralAssignment {
 
-	public static List<Agent> choseAgents(Collection<Agent> agents, Collection<Agent> bussy) {
+	/**
+	 * Returns list of agents which don't have any orders assigned
+	 * @param agents Input list of agents
+	 * @param bussy Input list of bussi agents
+	 * @return list of agents which are available for work
+	 */
+	public static List<Agent> choseAgents(Collection<Agent> agents, 
+			Collection<Agent> bussy) {
 		List<Agent> list = new ArrayList<Agent>();
 		for (Agent agent : agents) {
 			if (agent.getStrategy().taskChoice

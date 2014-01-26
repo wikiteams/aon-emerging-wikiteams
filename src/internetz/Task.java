@@ -62,6 +62,11 @@ public class Task {
 	public TaskInternals getTaskInternals(String key) {
 		return skills.get(key);
 	}
+	
+	public TaskInternals getRandomTaskInternals(){
+		return (TaskInternals) skills.values().
+				toArray()[RandomHelper.nextIntFromTo(0,  skills.size() - 1)];
+	}
 
 	public synchronized void initialize(int countAll) {
 		TaskSkillsPool.fillWithSkills(this, countAll);
@@ -187,12 +192,18 @@ public class Task {
 		CentralAssignmentOrders cao = agent.getCentralAssignmentOrders();
 		CentralAssignmentTask centralAssignmentTask = new CentralAssignmentTask();
 		TaskInternals taskInternal = this
-				.getTaskInternals(cao.getChosenSkill());
+				.getTaskInternals(cao.getChosenSkillName());
+		
+//		if (taskInternal == null){
+//			taskInternal = this.getRandomTaskInternals();
+//			cao.setChosenSkill(taskInternal.getSkill().getName());
+//		} // actually central planer should never assign empty task..
+		
 		sanity("Choosing Si:{" + taskInternal.getSkill().getName()
 				+ "} inside Ti:{" + this.toString() + "}");
 
 		Experience experience = agent.getAgentInternalsOrCreate(
-				cao.getChosenSkill()).getExperience();
+				cao.getChosenSkillName()).getExperience();
 		double delta = experience.getDelta();
 		centralAssignmentTask.increment(this, taskInternal, 1, delta);
 		experience.increment(1);

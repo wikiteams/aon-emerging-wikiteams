@@ -365,7 +365,7 @@ public abstract class TaskSkillsPool {
 				WorkUnit w1 = new WorkUnit(RandomHelper.nextDoubleFromTo(0,
 						d / 10));
 				WorkUnit w2 = new WorkUnit(d);
-				TaskInternals taskInternals = new TaskInternals(skill, w2, w1);
+				TaskInternals taskInternals = new TaskInternals(skill, w2, w1, task);
 				task.addSkill(skill.getName(), taskInternals);
 				say("Task " + task
 						+ " filled with skills from tasks-skills.csv");
@@ -382,7 +382,7 @@ public abstract class TaskSkillsPool {
 				WorkUnit w1 = new WorkUnit(RandomHelper.nextIntFromTo(1,
 						SimulationParameters.maxWorkRequired - 1));
 				WorkUnit w2 = new WorkUnit(0);
-				TaskInternals taskInternals = new TaskInternals(skill, w1, w2);
+				TaskInternals taskInternals = new TaskInternals(skill, w1, w2, task);
 				task.addSkill(skill.getName(), taskInternals);
 				say("Task " + task + " filled with skills randomly");
 			}
@@ -405,7 +405,7 @@ public abstract class TaskSkillsPool {
 					WorkUnit workRequired = new WorkUnit(skillEntity.get(skill));
 					WorkUnit workDone = new WorkUnit(skillEntity.get(skill) / 
 							(iterator + 1) );
-					TaskInternals taskInternals = new TaskInternals(skill, workRequired, workDone);
+					TaskInternals taskInternals = new TaskInternals(skill, workRequired, workDone, task);
 					task.addSkill(skill.getName(), taskInternals);
 					say("Task " + task + " filled with skills");
 				}
@@ -430,7 +430,7 @@ public abstract class TaskSkillsPool {
 						WorkUnit w1 = new WorkUnit(value);
 						WorkUnit w2 = new WorkUnit(0);
 						TaskInternals taskInternals = new TaskInternals(key,
-								w1, w2);
+								w1, w2, task);
 						task.addSkill(key.getName(), taskInternals);
 					}
 					// it.remove(); // avoids a ConcurrentModificationException

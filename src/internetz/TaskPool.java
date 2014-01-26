@@ -206,7 +206,7 @@ public class TaskPool extends DefaultContext<Task> {
 			}
 		}
 		if (!notfinished) {
-			tasks.remove(task.getName());
+			assert tasks.remove(task.getName()) != null;
 			sanity("Task id:" + task.getId() + " name:" + task.getName()
 					+ " is depleted and leaving the environment");
 		}

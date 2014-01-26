@@ -7,17 +7,23 @@ public class TaskInternals {
 	private Skill skill;
 	private WorkUnit workRequired;
 	private WorkUnit workDone;
+	private Task owner;
 	
-	public TaskInternals(Skill skill, WorkUnit workRequired, WorkUnit workDone){
+	public TaskInternals(Skill skill, WorkUnit workRequired, WorkUnit workDone, Task owner){
 		assert workRequired.d >= workDone.d;
 		assert workRequired.d > 0.;
 		this.skill = skill;
 		this.workDone = workDone;
 		this.workRequired = workRequired;
+		this.owner = owner;
 	}
 	
 	public Skill getSkill() {
 		return skill;
+	}
+	
+	public String getSkillName() {
+		return skill.getName();
 	}
 	
 	public void setSkill(Skill skill) {
@@ -56,6 +62,20 @@ public class TaskInternals {
 	
 	public double getWorkLeft(){
 		return Math.abs(this.workRequired.d - this.workDone.d);
+	}
+	
+	@Override
+	public int hashCode() {
+		return owner.hashCode() * skill.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if ((this.owner.equals(((TaskInternals) obj).owner))
+				&& (this.skill == ((TaskInternals) obj).skill))
+			return true;
+		else
+			return false;
 	}
 	
 	@Override

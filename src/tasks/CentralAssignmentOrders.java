@@ -1,22 +1,27 @@
 package tasks;
 
 import internetz.Task;
+import internetz.TaskInternals;
 
 public class CentralAssignmentOrders {
 	
 	private Task chosenTask;
-	private String chosenSkill;
+	private TaskInternals chosenSkill;
 	
-	public CentralAssignmentOrders(Task chosenTask, String chosenSkill){
+	public CentralAssignmentOrders(Task chosenTask, TaskInternals chosenSkill){
 		this.chosenTask = chosenTask;
 		this.chosenSkill = chosenSkill;
 	}
 
-	public String getChosenSkill() {
+	public TaskInternals getChosenSkill() {
 		return this.chosenSkill;
 	}
+	
+	public String getChosenSkillName() {
+		return this.chosenSkill.getSkill().getName();
+	}
 
-	public void setChosenSkill(String chosenSkill) {
+	public void setChosenSkill(TaskInternals chosenSkill) {
 		this.chosenSkill = chosenSkill;
 	}
 	
@@ -31,6 +36,11 @@ public class CentralAssignmentOrders {
 
 	public void setChosenTask(Task chosenTask) {
 		this.chosenTask = chosenTask;
+	}
+	
+	@Override
+	public int hashCode() {
+		return this.chosenSkill.hashCode() * this.chosenTask.hashCode();
 	}
 	
 	@Override

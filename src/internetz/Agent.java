@@ -233,7 +233,8 @@ public class Agent {
 		if (taskToWork != null) {
 			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
-			if (this.getCentralAssignmentOrders() != null) {
+			if ((this.getCentralAssignmentOrders() != null) 
+					&& (this.getCentralAssignmentOrders().getChosenTask() != null)) {
 				taskToWork.workOnTaskCentrallyControlled(this);
 			} else
 				taskToWork.workOnTask(this, this.strategy.skillChoice);

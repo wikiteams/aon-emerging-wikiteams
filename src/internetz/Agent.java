@@ -240,9 +240,22 @@ public class Agent {
 				taskToWork.workOnTask(this, this.strategy.skillChoice);
 			EnvironmentEquilibrium.setActivity(true);
 		} else {
-			say("Agent " + this.id + " didn't work on anything");
-			sanity("Agent " + this.id
-					+ " don't have a task to work on in step " + time);
+			if (SimulationParameters.allwaysChooseTask && TaskPool.stillNonEmptyTasks()){
+				Task randomTaskToWork = TaskPool.chooseTask(this,
+						Strategy.TaskChoice.RANDOM);
+				assert randomTaskToWork.getTaskInternals().size() > 0;
+				say("Agent " + this.id + " will work on task " + randomTaskToWork.getId());
+				if ((this.getCentralAssignmentOrders() != null) 
+						&& (this.getCentralAssignmentOrders().getChosenTask() != null)) {
+					randomTaskToWork.workOnTaskCentrallyControlled(this);
+				} else
+					randomTaskToWork.workOnTask(this, this.strategy.skillChoice);
+				EnvironmentEquilibrium.setActivity(true);
+			}else {
+				say("Agent " + this.id + " didn't work on anything");
+				sanity("Agent " + this.id
+						+ " don't have a task to work on in step " + time);
+			}
 		}
 
 		// Chose and algorithm for inside-task skill choose.

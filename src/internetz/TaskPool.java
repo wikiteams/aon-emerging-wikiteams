@@ -44,6 +44,17 @@ public class TaskPool extends DefaultContext<Task> {
 	public Collection<Task> getTasks() {
 		return tasks.values();
 	}
+	
+	public static boolean stillNonEmptyTasks(){
+		boolean result = false;
+		if (tasks.size() < 1)
+			return result;
+		for(Task task : tasks.values()){
+			if (!task.isClosed())
+				result = true;
+		}
+		return result;
+	}
 
 	/**
 	 * Count tasks in the pool
@@ -90,21 +101,31 @@ public class TaskPool extends DefaultContext<Task> {
 				say(Constraints.DIDNT_FOUND_TASK_TO_WORK_ON);
 			break;
 		case RANDOM:
-			ArrayList<Task> tasksWithMatchingSkills = new ArrayList<Task>();
-			Collection<Skill> allAgentSkills = agent.getSkills();
-			for (Task singleTaskFromPool : tasks.values()) {
-				for (Skill singleSkill : allAgentSkills) {
-					if (singleTaskFromPool.getTaskInternals().containsKey(
-							singleSkill.toString())) {
-						tasksWithMatchingSkills.add(singleTaskFromPool);
+			if (!SimulationParameters.allwaysChooseTask) {
+				ArrayList<Task> tasksWithMatchingSkills = new ArrayList<Task>();
+				Collection<Skill> allAgentSkills = agent.getSkills();
+				for (Task singleTaskFromPool : tasks.values()) {
+					for (Skill singleSkill : allAgentSkills) {
+						if (singleTaskFromPool.getTaskInternals().containsKey(
+								singleSkill.toString())) {
+							tasksWithMatchingSkills.add(singleTaskFromPool);
+						}
 					}
 				}
-			}
-			if (tasksWithMatchingSkills.size() > 0) {
-				chosen = tasksWithMatchingSkills.get(RandomHelper
-						.nextIntFromTo(0, tasksWithMatchingSkills.size() - 1));
+				if (tasksWithMatchingSkills.size() > 0) {
+					chosen = tasksWithMatchingSkills.get(RandomHelper
+							.nextIntFromTo(0,
+									tasksWithMatchingSkills.size() - 1));
+				}
+				else {
+					say("Didn't found task with such skills which agent have!");
+				}
 			} else {
-				say("Didn't found task with such skills which agent have!");
+				chosen = tasks.get(RandomHelper
+						.nextIntFromTo(0,
+								tasks.size() - 1));
+				assert chosen.getTaskInternals().size() > 0;
+				assert !chosen.isClosed();
 			}
 			break;
 		case COMPARISION:

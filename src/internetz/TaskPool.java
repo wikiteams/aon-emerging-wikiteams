@@ -97,8 +97,6 @@ public class TaskPool extends DefaultContext<Task> {
 		case PREFERENTIAL:
 			Preferential preferential = new Preferential(tasks);
 			chosen = preferential.concludeMath(agent);
-			if (chosen == null)
-				say(Constraints.DIDNT_FOUND_TASK_TO_WORK_ON);
 			break;
 		case RANDOM:
 			if (!SimulationParameters.allwaysChooseTask) {
@@ -121,11 +119,25 @@ public class TaskPool extends DefaultContext<Task> {
 					say("Didn't found task with such skills which agent have!");
 				}
 			} else {
-				chosen = tasks.get(RandomHelper
-						.nextIntFromTo(0,
-								tasks.size() - 1));
-				assert chosen.getTaskInternals().size() > 0;
-				assert !chosen.isClosed();
+//				chosen = tasks.get(RandomHelper
+//						.nextIntFromTo(0,
+//								tasks.size() - 1));
+//				assert chosen.getTaskInternals().size() > 0;
+//				assert !chosen.isClosed();
+				List<Task> internalRandomList;
+				Collection<Task> coll = tasks.values();
+				if (coll instanceof List)
+					internalRandomList = (List) coll;
+				else
+					internalRandomList = new ArrayList(coll);
+				Collections.shuffle(internalRandomList);
+				for (Task singleTaskFromPool : internalRandomList) {
+					if (singleTaskFromPool.getTaskInternals().size() > 0)
+						if (singleTaskFromPool.getGeneralAdvance() < 1.) {
+							chosen = singleTaskFromPool;
+							break;
+						}
+				}
 			}
 			break;
 		case COMPARISION:
@@ -149,11 +161,11 @@ public class TaskPool extends DefaultContext<Task> {
 		if (chosen != null) {
 			sanity("Agent " + agent.toString() + " uses strategy "
 					+ agent.getStrategy() + " and chooses task "
-					+ chosen.getId() + " to work on.");
+					+ chosen.getId() + " by " + strategy + " to work on.");
 		} else {
 			sanity("Agent " + agent.toString() + " uses strategy "
 					+ agent.getStrategy()
-					+ " but didnt found any task to work on.");
+					+ " by " + strategy + " but didnt found any task to work on.");
 			if (SimulationParameters.allwaysChooseTask) {
 				// Task choseRandomFromThis = null;
 				sanity("Choosing any task left because of param allwaysChooseTask");
@@ -173,6 +185,7 @@ public class TaskPool extends DefaultContext<Task> {
 				}
 			}
 		}
+		//assert chosen != null;
 		return chosen;
 	}
 

@@ -1,4 +1,4 @@
-<?xml version="1.0"?><sweep runs="250">
+<?xml version="1.0"?><sweep runs="300">
 <parameter name="randomSeed" type="constant" constant_type="int" value="985924735" />
 <parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="greedy" />
 <parameter name="allowMultiMembership" type="constant" constant_type="java.lang.Boolean" value="true" />
@@ -13,14 +13,14 @@
 <parameter name="agentSkillsPoolRandomize1" type="constant" constant_type="int" value="5" />
 <parameter name="percStartMembership" type="constant" constant_type="int" value="10" />
 <parameter name="fullyLearnedAgentsLeave" type="constant" constant_type="java.lang.Boolean" value="false" />
-<parameter name="gitHubClusterizedDistribution" type="constant" constant_type="java.lang.String" value="distribute" />
+<parameter name="gitHubClusterizedDistribution" type="constant" constant_type="java.lang.String" value="clusters" />
 <parameter name="agentSkillPoolDataset" type="constant" constant_type="java.lang.String" value="STATIC_PULL_REQUESTS" />
 <parameter name="fillAgentSkillsMethod" type="constant" constant_type="java.lang.String" value="TOP_ACTIVE" />
-<parameter name="taskSkillPoolDataset" type="constant" constant_type="java.lang.String" value="STATIC_FREQUENCY_TABLE" />
+<parameter name="taskSkillPoolDataset" type="constant" constant_type="java.lang.String" value="GITHUB_CLUSTERIZED" />
 <parameter name="staticFrequencyTableSc" type="constant" constant_type="int" value="10" />
 <parameter name="forceStop" type="constant" constant_type="java.lang.Boolean" value="false" />
-<parameter name="allowRookieForSkills" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="skillFactoryRandomMethod" type="constant" constant_type="java.lang.String" value="normal_distribution" />
+<parameter name="allowRookieForSkills" type="constant" constant_type="java.lang.Boolean" value="false" />
 <parameter name="taskMinMaxChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="none" />
 <parameter name="modelType" type="constant" constant_type="java.lang.String" value="Normal" />
 <parameter name="location" type="constant" constant_type="java.lang.String" value="Metric" />

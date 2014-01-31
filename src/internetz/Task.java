@@ -225,19 +225,7 @@ public class Task {
 		Collection<TaskInternals> intersection;
 		List<Skill> skillsImprovedList = new ArrayList<Skill>();
 
-		// this below was the old way of doing!
-//		if (agent.getStrategy().taskChoice
-//				.equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)
-//				|| agent.getStrategy().taskChoice
-//						.equals(Strategy.TaskChoice.PREFERENTIAL)) {
-//			// heterophyly is an experience-genesis strategy
-//			intersection = skills.values();
-//		} else {
-			// the intersection is always non-empty because we call
-			// "workOnTask" after picking a task with witch we have
-			// in common at least one skill...
-			intersection = computeIntersection(agent, skills.values());
-		//}
+		intersection = computeIntersection(agent, skills.values());
 
 		GreedyAssignmentTask greedyAssignmentTask = new GreedyAssignmentTask();
 		TaskInternals singleTaskInternal = null;

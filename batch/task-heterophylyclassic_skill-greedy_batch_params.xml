@@ -1,4 +1,4 @@
-<?xml version="1.0"?><sweep runs="400">
+<?xml version="1.0"?><sweep runs="300">
 <parameter name="randomSeed" type="constant" constant_type="int" value="985924735" />
 <parameter name="skillChoiceAlgorithm" type="constant" constant_type="java.lang.String" value="greedy" />
 <parameter name="allowMultiMembership" type="constant" constant_type="java.lang.Boolean" value="true" />

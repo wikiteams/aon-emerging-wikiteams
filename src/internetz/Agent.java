@@ -12,6 +12,7 @@ import repast.simphony.engine.environment.RunEnvironment;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
 import strategies.Strategy;
+import strategies.Strategy.SkillChoice;
 import tasks.CentralAssignmentOrders;
 import argonauts.GranularityType;
 import argonauts.GranulatedChoice;
@@ -131,8 +132,14 @@ public class Agent {
 		say("Step(" + time + ") of Agent " + this.id
 				+ " scheduled method launched.");
 
+		/**************************************************
+		 * Gets current tick, for logging purpose only
+		 **************************************************/
 		time = RunEnvironment.getInstance().getCurrentSchedule().getTickCount();
 
+		/********************************************************************
+		 * Granularity starts here
+		 ********************************************************************/
 		if (SimulationParameters.granularity) {
 			GranulatedChoice granulated = PersistRewiring
 					.getGranulatedChoice(this);
@@ -218,6 +225,9 @@ public class Agent {
 					}
 				}
 			}
+		/******************************************************************
+		 * Granularity ends here
+		 ******************************************************************/
 		} else { // block without granularity
 			// Agent Aj uses Aj {strategy for choosing tasks}
 			// and chooses a task to work on
@@ -249,7 +259,7 @@ public class Agent {
 						&& (this.getCentralAssignmentOrders().getChosenTask() != null)) {
 					randomTaskToWork.workOnTaskCentrallyControlled(this);
 				} else
-					randomTaskToWork.workOnTask(this, this.strategy.skillChoice);
+					randomTaskToWork.workOnTask(this, SkillChoice.RANDOM);
 				EnvironmentEquilibrium.setActivity(true);
 			}else {
 				say("Agent " + this.id + " didn't work on anything");

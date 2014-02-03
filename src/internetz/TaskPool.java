@@ -92,10 +92,9 @@ public class TaskPool extends DefaultContext<Task> {
 			break;
 		case SOCIAL_VECTOR:
 			// TODO: check if you added "category" attribute to Skills
-			;
 			break;
 		case PREFERENTIAL:
-			Preferential preferential = new Preferential(tasks);
+			Preferential preferential = new Preferential();
 			chosen = preferential.concludeMath(agent);
 			break;
 		case RANDOM:

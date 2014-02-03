@@ -1,5 +1,6 @@
 package argonauts;
 
+import internetz.Agent;
 import internetz.Skill;
 import internetz.Task;
 
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import repast.simphony.engine.environment.RunEnvironment;
+import strategies.Strategy.TaskChoice;
 
 /**
  * Persist history of job done by agents, for multiple purpose later.
@@ -34,15 +36,17 @@ public class PersistJobDone {
 	}
 	
 	/**
-	 * Tutaj dodaje fakt, ze agent pracowal na taskiem taki i takim
-	 * w danym ticku symulacji
+	 * Persisting information about a bit of work done on any task
+	 * to be used later by exp-based calculations and preferential
 	 * @param agentNick
 	 * Nick of agent (result of aget.getNick()) used to literally identity
 	 * agent by his nick
 	 * @param task
 	 * Task object on which agent was working
 	 */
-	public static void addContribution(String agentNick, Task task, List<Skill> skill){
+	public static void addContribution(Agent agent, Task task, List<Skill> skill){
+		String agentNick = agent.getNick();
+		
 		int iteration = (int) RunEnvironment.getInstance().
 				getCurrentSchedule().getTickCount();
 		
@@ -61,6 +65,10 @@ public class PersistJobDone {
 		}
 		valueS.put(iteration, skill);
 		skillImproved.put(agentNick, valueS);
+		
+		if (agent.getStrategy().taskChoice.equals(TaskChoice.PREFERENTIAL)){
+			PersistAdvancement.reportTask(task);
+		}
 	}
 	
 	public static Map<Integer, Task> getContributions(String agentNick) {

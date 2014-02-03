@@ -45,6 +45,7 @@ import utils.DescribeUniverseBulkLoad;
 import utils.LaunchStatistics;
 import utils.NamesGenerator;
 import EDU.oswego.cs.dl.util.concurrent.CopyOnWriteArrayList;
+import argonauts.PersistAdvancement;
 import argonauts.PersistJobDone;
 import argonauts.PersistRewiring;
 import au.com.bytecode.opencsv.CSVWriter;
@@ -191,6 +192,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 		buildAgentsWithdrawns();
 		decideAboutGranularity();
 		decideAboutCutPoint();
+		
+		PersistAdvancement.calculateAll(taskPool);
+		// TODO: later add req that if at least 1 agent uses Preferential...
 
 		List<ISchedulableAction> actions = schedule.schedule(this);
 		say(actions.toString());
@@ -363,6 +367,7 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void clearStaticHeap() {
 		say("Clearing static data from previous simulation");
 		PersistJobDone.clear();
+		PersistAdvancement.clear();
 		PersistRewiring.clear();
 		TaskSkillsPool.clear();
 		SkillFactory.skills.clear();

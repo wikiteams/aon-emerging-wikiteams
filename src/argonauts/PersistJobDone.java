@@ -67,7 +67,11 @@ public class PersistJobDone {
 		skillImproved.put(agentNick, valueS);
 		
 		if (agent.getStrategy().taskChoice.equals(TaskChoice.PREFERENTIAL)){
-			PersistAdvancement.reportTask(task);
+			if (((int)RunEnvironment.getInstance().getCurrentSchedule()
+					.getTickCount()) % 50 == 0)
+				// necessary trick to speedup simulation 50 times
+				// otherwise we would never get results during our lifes;)
+				PersistAdvancement.reportTask(task);
 		}
 	}
 	

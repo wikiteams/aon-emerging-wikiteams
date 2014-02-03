@@ -445,6 +445,10 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
 	public void checkForActivity() {
+		if (((int)RunEnvironment.getInstance().getCurrentSchedule()
+				.getTickCount()) % 100 == 0)
+			// recalculating advance factor for preferential
+			PersistAdvancement.calculateAll(taskPool);
 		say("checkForActivity() check launched");
 		if (EnvironmentEquilibrium.getActivity() == false) {
 			say("EnvironmentEquilibrium.getActivity() returns false!");

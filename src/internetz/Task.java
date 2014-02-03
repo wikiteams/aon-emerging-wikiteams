@@ -194,11 +194,6 @@ public class Task {
 		TaskInternals taskInternal = this
 				.getTaskInternals(cao.getChosenSkillName());
 		
-//		if (taskInternal == null){
-//			taskInternal = this.getRandomTaskInternals();
-//			cao.setChosenSkill(taskInternal.getSkill().getName());
-//		} // actually central planer should never assign empty task..
-		
 		sanity("Choosing Si:{" + taskInternal.getSkill().getName()
 				+ "} inside Ti:{" + this.toString() + "}");
 
@@ -212,8 +207,7 @@ public class Task {
 			TaskPool.considerEnding(this);
 		skillsImprovedList.add(taskInternal.getSkill());
 
-		PersistJobDone.addContribution(agent.getNick(), this,
-				skillsImprovedList);
+		PersistJobDone.addContribution(agent, this, skillsImprovedList);
 	}
 
 	public Boolean workOnTaskFromContinuum(Agent agent,
@@ -333,9 +327,6 @@ public class Task {
 			assert singleTaskInternal != null;
 
 			{
-//				if (singleTaskInternal.getSkill() == null){
-//					say("smth wrong");
-//				}
 				sanity("Choosing Si:{"
 						+ singleTaskInternal.getSkill().getName()
 						+ "} inside Ti:{" + singleTaskInternal.toString() + "}");
@@ -381,8 +372,7 @@ public class Task {
 			TaskPool.considerEnding(this);
 
 		if (skillsImprovedList.size() > 0) {
-			PersistJobDone.addContribution(agent.getNick(), this,
-					skillsImprovedList);
+			PersistJobDone.addContribution(agent, this, skillsImprovedList);
 			return true;
 		} else {
 			return false;

@@ -47,7 +47,7 @@ public class PersistAdvancement {
 		}
 	}
 	
-	public static void reportTask(Task task) {
+	public static void reportTask__(Task task) {
 		for (TaskInternals ti : task.getTaskInternals().values()) {
 			if (advance.containsKey(ti.getSkill())) {
 				SortedMap<Double, Task> sm = advance.get(ti.getSkill());
@@ -72,10 +72,14 @@ public class PersistAdvancement {
 		}
 	}
 	
+	/**
+	 * Usually launched once before start of a run
+	 * @param taskPool
+	 */
 	public static void calculateAll(TaskPool taskPool){
 		Collection<Task> t = taskPool.getTasks();
 		for(Task task : t){
-			reportTask(task);
+			reportTask__(task);
 		}
 	}
 	

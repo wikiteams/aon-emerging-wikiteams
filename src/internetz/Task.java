@@ -45,7 +45,7 @@ public class Task {
 
 	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
 	
-	private double persistTaskAdvance = 0;
+	//private double persistTaskAdvance = 0;
 	private Map<Skill, Double> persistAdvance = new HashMap<Skill, Double>();
 
 	public Task() {
@@ -143,11 +143,20 @@ public class Task {
 	}
 	
 	public double getSimplifiedAdvance(Skill skill){
-		double before = persistAdvance.get(skill);
+		double persistTaskAdvance = 0;
 		TaskInternals ti = this.getTaskInternals(skill.getName());
-		double progress = ti == null ? 1 : ti.getProgress();
-		persistTaskAdvance += (progress-before) / this.getTaskInternals().size();
-		return persistTaskAdvance;
+		if (ti == null){
+			persistAdvance.put(skill, 1.);
+			//persistTaskAdvance += 1 / this.getTaskInternals().size();
+		} else {
+			double progress = ti.getProgress();
+			persistAdvance.put(skill, progress);
+			//persistTaskAdvance += (progress-before) / this.getTaskInternals().size();
+		}
+		for (Double d : persistAdvance.values()){
+			persistTaskAdvance += d;
+		}
+		return (persistTaskAdvance / ( (double)persistAdvance.values().size() ));
 	}
 
 	/**
@@ -164,7 +173,7 @@ public class Task {
 			say("skill " + skill.getSkill().getName() + " progress " + progress);
 			result += progress > 1. ? 1. : progress;
 			say("result " + result);
-			persistAdvance.put(skill.getSkill(), result);
+			persistAdvance.put(skill.getSkill(), progress);
 			count ++;
 		}
 		say("skills count " + count);
@@ -176,7 +185,7 @@ public class Task {
 		result = (result / count);
 		assert result >= 0.;
 		assert result <= 1.;
-		persistTaskAdvance = result;
+		//persistTaskAdvance = result;
 		return result;
 	}
 
@@ -444,12 +453,12 @@ public class Task {
 		PjiitOutputter.sanity(s);
 	}
 
-	public double getPersistTaskAdvance() {
-		return persistTaskAdvance;
-	}
-
-	public void setPersistTaskAdvance(double persistTaskAdvance) {
-		this.persistTaskAdvance = persistTaskAdvance;
-	}
+//	public double getPersistTaskAdvance() {
+//		return persistTaskAdvance;
+//	}
+//
+//	public void setPersistTaskAdvance(double persistTaskAdvance) {
+//		this.persistTaskAdvance = persistTaskAdvance;
+//	}
 
 }

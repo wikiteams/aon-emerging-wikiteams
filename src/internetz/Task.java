@@ -44,6 +44,9 @@ public class Task {
 	private int id;
 
 	private Map<String, TaskInternals> skills = new HashMap<String, TaskInternals>();
+	
+	private double persistTaskAdvance = 0;
+	private Map<Skill, Double> persistAdvance = new HashMap<Skill, Double>();
 
 	public Task() {
 		this.id = ++idIncrementalCounter;
@@ -138,6 +141,13 @@ public class Task {
 		}
 		return argmin;
 	}
+	
+	public double getSimplifiedAdvance(Skill skill){
+		double before = persistAdvance.get(skill);
+		double progress = this.getTaskInternals(skill.getName()).getProgress();
+		persistTaskAdvance += (progress-before) / this.getTaskInternals().size();
+		return persistTaskAdvance;
+	}
 
 	/**
 	 * Gets the general completion of the Task. Calculates work done inside the
@@ -153,6 +163,7 @@ public class Task {
 			say("skill " + skill.getSkill().getName() + " progress " + progress);
 			result += progress > 1. ? 1. : progress;
 			say("result " + result);
+			persistAdvance.put(skill.getSkill(), result);
 			count ++;
 		}
 		say("skills count " + count);
@@ -164,6 +175,7 @@ public class Task {
 		result = (result / count);
 		assert result >= 0.;
 		assert result <= 1.;
+		persistTaskAdvance = result;
 		return result;
 	}
 
@@ -429,6 +441,14 @@ public class Task {
 
 	private void sanity(String s) {
 		PjiitOutputter.sanity(s);
+	}
+
+	public double getPersistTaskAdvance() {
+		return persistTaskAdvance;
+	}
+
+	public void setPersistTaskAdvance(double persistTaskAdvance) {
+		this.persistTaskAdvance = persistTaskAdvance;
 	}
 
 }

@@ -44,7 +44,7 @@ public class PersistJobDone {
 	 * @param task
 	 * Task object on which agent was working
 	 */
-	public static void addContribution(Agent agent, Task task, List<Skill> skill){
+	public static void addContribution(Agent agent, Task task, List<Skill> skills){
 		String agentNick = agent.getNick();
 		
 		int iteration = (int) RunEnvironment.getInstance().
@@ -63,15 +63,11 @@ public class PersistJobDone {
 			skillImproved.put(agentNick, new HashMap<Integer, List<Skill>>());
 			valueS = skillImproved.get(agentNick);
 		}
-		valueS.put(iteration, skill);
+		valueS.put(iteration, skills);
 		skillImproved.put(agentNick, valueS);
 		
 		if (agent.getStrategy().taskChoice.equals(TaskChoice.PREFERENTIAL)){
-			if (((int)RunEnvironment.getInstance().getCurrentSchedule()
-					.getTickCount()) % 50 == 0)
-				// necessary trick to speedup simulation 50 times
-				// otherwise we would never get results during our lifes;)
-				PersistAdvancement.reportTask(task);
+			PersistAdvancement.reportTaskInternal(task, skills);
 		}
 	}
 	

@@ -144,7 +144,8 @@ public class Task {
 	
 	public double getSimplifiedAdvance(Skill skill){
 		double before = persistAdvance.get(skill);
-		double progress = this.getTaskInternals(skill.getName()).getProgress();
+		TaskInternals ti = this.getTaskInternals(skill.getName());
+		double progress = ti == null ? 1 : ti.getProgress();
 		persistTaskAdvance += (progress-before) / this.getTaskInternals().size();
 		return persistTaskAdvance;
 	}

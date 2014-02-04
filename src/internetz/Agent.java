@@ -240,7 +240,7 @@ public class Agent {
 
 	private void executeJob(Task taskToWork) {
 		// Agent Aj works on Ti
-		if (taskToWork != null) {
+		if ( (taskToWork != null) && (taskToWork.getTaskInternals().size() > 0)) {
 			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
 			if ((this.getCentralAssignmentOrders() != null) 

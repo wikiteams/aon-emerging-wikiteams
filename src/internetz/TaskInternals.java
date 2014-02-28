@@ -30,6 +30,14 @@ public class TaskInternals {
 		this.skill = skill;
 	}
 	
+	public Task getOwner() {
+		return owner;
+	}
+
+	public void setOwner(Task owner) {
+		this.owner = owner;
+	}
+
 	public WorkUnit getWorkRequired() {
 		return workRequired;
 	}

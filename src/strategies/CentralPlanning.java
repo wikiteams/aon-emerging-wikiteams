@@ -6,7 +6,6 @@ import internetz.TaskInternals;
 import internetz.TaskPool;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -32,7 +31,6 @@ public class CentralPlanning {
 
 	private List<Agent> bussy;
 	private static final double zero = 0;
-	private static final double minus_one = -1;
 
 	private void say(String s) {
 		PjiitOutputter.say(s);

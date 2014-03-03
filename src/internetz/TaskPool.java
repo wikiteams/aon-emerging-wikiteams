@@ -18,7 +18,6 @@ import tasks.HeterophylyExpBased;
 import tasks.Homophyly;
 import tasks.HomophylyExpBased;
 import tasks.Preferential;
-import constants.Constraints;
 
 public class TaskPool extends DefaultContext<Task> {
 

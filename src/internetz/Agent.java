@@ -241,7 +241,7 @@ public class Agent {
 	private void executeJob(Task taskToWork) {
 		// Agent Aj works on Ti
 		if ((taskToWork != null) && (taskToWork.getTaskInternals().size() > 0)) {
-			
+
 			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
 			if ((this.getCentralAssignmentOrders() != null)
@@ -254,9 +254,9 @@ public class Agent {
 			} else
 				taskToWork.workOnTask(this, this.strategy.skillChoice);
 			EnvironmentEquilibrium.setActivity(true);
-			
+
 		} else {
-			
+
 			if (SimulationParameters.allwaysChooseTask
 					&& TaskPool.stillNonEmptyTasks()) {
 				Task randomTaskToWork = TaskPool.chooseTask(this,
@@ -265,7 +265,11 @@ public class Agent {
 				say("Agent " + this.id + " will work on task "
 						+ randomTaskToWork.getId());
 				if ((this.getCentralAssignmentOrders() != null)
-						&& (this.getCentralAssignmentOrders().getChosenTask() != null)) {
+						&& (this.getCentralAssignmentOrders()
+								.getChosenTask()
+								.getTaskInternals(
+										this.getCentralAssignmentOrders()
+												.getChosenSkillName()) != null)) {
 					randomTaskToWork.workOnTaskCentrallyControlled(this);
 				} else
 					randomTaskToWork.workOnTask(this, SkillChoice.RANDOM);

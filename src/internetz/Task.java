@@ -216,6 +216,8 @@ public class Task {
 		TaskInternals taskInternal = this
 				.getTaskInternals(cao.getChosenSkillName());
 		
+		assert taskInternal != null;
+		
 		sanity("Choosing Si:{" + taskInternal.getSkill().getName()
 				+ "} inside Ti:{" + this.toString() + "}");
 

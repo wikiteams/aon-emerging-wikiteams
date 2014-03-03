@@ -126,7 +126,7 @@ public class Agent {
 		this.lastName = lastName;
 	}
 
-	@ScheduledMethod(start = 1, interval = 1)
+	@ScheduledMethod(start = 1, interval = 1, priority = 100)
 	public void step() {
 
 		say("Step(" + time + ") of Agent " + this.id
@@ -225,9 +225,9 @@ public class Agent {
 					}
 				}
 			}
-		/******************************************************************
-		 * Granularity ends here
-		 ******************************************************************/
+			/******************************************************************
+			 * Granularity ends here
+			 ******************************************************************/
 		} else { // block without granularity
 			// Agent Aj uses Aj {strategy for choosing tasks}
 			// and chooses a task to work on
@@ -240,35 +240,43 @@ public class Agent {
 
 	private void executeJob(Task taskToWork) {
 		// Agent Aj works on Ti
-		if ( (taskToWork != null) && (taskToWork.getTaskInternals().size() > 0)) {
+		if ((taskToWork != null) && (taskToWork.getTaskInternals().size() > 0)) {
+			
 			assert taskToWork.getTaskInternals().size() > 0;
 			say("Agent " + this.id + " will work on task " + taskToWork.getId());
-			if ((this.getCentralAssignmentOrders() != null) 
-					&& (this.getCentralAssignmentOrders().getChosenTask() != null)) {
+			if ((this.getCentralAssignmentOrders() != null)
+					&& (this.getCentralAssignmentOrders()
+							.getChosenTask()
+							.getTaskInternals(
+									this.getCentralAssignmentOrders()
+											.getChosenSkillName()) != null)) {
 				taskToWork.workOnTaskCentrallyControlled(this);
 			} else
 				taskToWork.workOnTask(this, this.strategy.skillChoice);
 			EnvironmentEquilibrium.setActivity(true);
+			
 		} else {
-			if (SimulationParameters.allwaysChooseTask && TaskPool.stillNonEmptyTasks()){
+			
+			if (SimulationParameters.allwaysChooseTask
+					&& TaskPool.stillNonEmptyTasks()) {
 				Task randomTaskToWork = TaskPool.chooseTask(this,
 						Strategy.TaskChoice.RANDOM);
 				assert randomTaskToWork.getTaskInternals().size() > 0;
-				say("Agent " + this.id + " will work on task " + randomTaskToWork.getId());
-				if ((this.getCentralAssignmentOrders() != null) 
+				say("Agent " + this.id + " will work on task "
+						+ randomTaskToWork.getId());
+				if ((this.getCentralAssignmentOrders() != null)
 						&& (this.getCentralAssignmentOrders().getChosenTask() != null)) {
 					randomTaskToWork.workOnTaskCentrallyControlled(this);
 				} else
 					randomTaskToWork.workOnTask(this, SkillChoice.RANDOM);
 				EnvironmentEquilibrium.setActivity(true);
-			}else {
+			} else {
 				say("Agent " + this.id + " didn't work on anything");
 				sanity("Agent " + this.id
 						+ " don't have a task to work on in step " + time);
 			}
 		}
 
-		// Chose and algorithm for inside-task skill choose.
 	}
 
 	public String getNick() {
@@ -294,20 +302,14 @@ public class Agent {
 
 	public void setCentralAssignmentOrders(
 			CentralAssignmentOrders centralAssignmentOrders) {
-		if (centralAssignmentOrders != null)
+		if (centralAssignmentOrders != null) {
 			say("Agent " + this.nick + " got an order to work on "
 					+ centralAssignmentOrders);
+		}
 		this.centralAssignmentOrders = centralAssignmentOrders;
 	}
 
 	public String describeExperience() {
-		// Collection<AgentInternals> internals = this.getAgentInternals();
-		// Map<String, Double> deltaE = new HashMap<String, Double>();
-		// for (AgentInternals ai : internals) {
-		// deltaE.put(ai.getSkill().getName() , ai.getExperience().getDelta());
-		// }
-		// return deltaE.entrySet().toString();
-
 		Collection<AgentInternals> internals = this.getAgentInternals();
 		Map<String, String> deltaE = new HashMap<String, String>();
 		for (AgentInternals ai : internals) {
@@ -318,16 +320,7 @@ public class Agent {
 	}
 
 	public double describeExperience(Skill skill) {
-		// if (this.getStrategy().taskChoice
-		// .equals(Strategy.TaskChoice.HETEROPHYLY_EXP_BASED)) {
-		// AgentInternals result = skills.get(skill.getName()) == null ? (new
-		// AgentInternals(
-		// skillFactory.getSkill(skill.getName()),
-		// new Experience(true))) : skills.get(skill.getName());
-		// skills.put(skill.getName(), result);
-		// }
-		// return skills.get(skill.getName()).getExperience().getDelta();
-		if(skills.get(skill.getName()) == null){
+		if (skills.get(skill.getName()) == null) {
 			AgentInternals result = (new AgentInternals(
 					skillFactory.getSkill(skill.getName()),
 					new Experience(true)));

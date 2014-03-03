@@ -63,7 +63,20 @@ public class TaskPool extends DefaultContext<Task> {
 	 *         simulation universe (positive int)
 	 */
 	public int getCount() {
-		return tasks.size();
+		return getCount(false);
+	}
+	
+	public int getCount(boolean notFinished) {
+		if (!notFinished)
+			return tasks.size();
+		else {
+			int counter = 0;
+			for(Task task : tasks.values()){
+				if (!task.isClosed())
+					counter++;
+			}
+			return counter;
+		}
 	}
 
 	public static synchronized Task chooseTask(Agent agent,
@@ -166,7 +179,6 @@ public class TaskPool extends DefaultContext<Task> {
 					+ agent.getStrategy()
 					+ " by " + strategy + " but didnt found any task to work on.");
 			if (SimulationParameters.allwaysChooseTask) {
-				// Task choseRandomFromThis = null;
 				sanity("Choosing any task left because of param allwaysChooseTask");
 				List<Task> internalRandomList;
 				Collection<Task> coll = tasks.values();

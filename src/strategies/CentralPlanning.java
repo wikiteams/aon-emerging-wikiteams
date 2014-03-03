@@ -20,9 +20,9 @@ import tasks.CentralAssignmentOrders;
 import utils.LaunchStatistics;
 
 /**
- * Algorithm of central work planning, heuristic is based on en entity
- * called a Central Planner which sorts tasks descending by those least
- * finished, and finds an agent most experienced in those tasks.
+ * Algorithm of central work planning, heuristic is based on en entity called a
+ * Central Planner which sorts tasks descending by those least finished, and
+ * finds an agent most experienced in those tasks.
  * 
  * @author Oskar Jarczyk
  * @since 1.3
@@ -31,14 +31,14 @@ import utils.LaunchStatistics;
 public class CentralPlanning {
 
 	private List<Agent> bussy;
-	//private List<Object[]> taken;
+	private static final double zero = 0;
 	private static final double minus_one = -1;
 
 	private void say(String s) {
 		PjiitOutputter.say(s);
 	}
 
-	private void zeroAgentsOrders(List<Agent> listAgent) {
+	public void zeroAgentsOrders(List<Agent> listAgent) {
 		say("Zeroing central plan !");
 
 		for (Agent agent : listAgent) {
@@ -46,10 +46,10 @@ public class CentralPlanning {
 		}
 
 		bussy = bussy == null ? new ArrayList<Agent>() : bussy;
-		//taken = taken == null ? new ArrayList<Object[]>() : taken;
+		// taken = taken == null ? new ArrayList<Object[]>() : taken;
 
 		bussy.clear();
-		//taken.clear();
+		// taken.clear();
 		// TODO: check if this is faster for the GC than creating new object
 		// ArrayList
 	}
@@ -57,17 +57,10 @@ public class CentralPlanning {
 	public void centralPlanningCalc(List<Agent> listAgent, TaskPool taskPool) {
 		say("Central planning working !");
 
-		// Zeroing agents orders
-		zeroAgentsOrders(listAgent);
 		Collections.shuffle(listAgent);
 
-		//List<TaskInternals> takenTaskInternals = new ArrayList<TaskInternals>();
-
-		// Iterate mainIterationCount times
-		// if there are less tasks than agent, iterate taskCount times
-		int mainIterationCount = LaunchStatistics.singleton.
-				taskCount < LaunchStatistics.singleton.agentCount ? taskPool
-				.size() : listAgent.size();
+		// List<TaskInternals> takenTaskInternals = new
+		// ArrayList<TaskInternals>();
 
 		List<Task> shuffledTasksFirstInit = new ArrayList<Task>(
 				taskPool.getTasks());
@@ -76,8 +69,6 @@ public class CentralPlanning {
 		SortedMap<Double, TaskInternals> sortedMap = new TreeMap<Double, TaskInternals>(
 				new Comparator<Double>() {
 					public int compare(Double o1, Double o2) {
-						// say(o1 + " compared to " + o2 + " returns " +
-						// (-o1.compareTo(o2)));
 						return -o1.compareTo(o2);
 					}
 				});
@@ -85,6 +76,8 @@ public class CentralPlanning {
 		int iterator___ = 0;
 		// Find Task {i} and Skill {j}, with highest work left
 		for (Task singleTaskFromPool : shuffledTasksFirstInit) {
+			TaskInternals singleChosen = null;
+			double wl = 0;
 			for (TaskInternals singleSkill : singleTaskFromPool
 					.getTaskInternals().values()) {
 				// if (checkIfApplicable(singleTaskFromPool, singleSkill)) {
@@ -93,17 +86,32 @@ public class CentralPlanning {
 				if (!singleSkill.isWorkDone()) {
 					// chosen = singleTaskFromPool;
 					// skill = singleSkill;
-					sortedMap.put(singleSkill.getWorkLeft()
-							- ((++iterator___) / (10 * 6)), singleSkill);
+					double gMinusW = singleSkill.getWorkLeft();
+					if (gMinusW > wl) {
+						wl = gMinusW;
+						singleChosen = singleSkill;
+					}
 				}
+
 			}
+			if (singleChosen != null)
+				sortedMap.put(singleChosen.getWorkLeft()
+						- ((++iterator___) / (10 * 6)), singleChosen);
 		}
 
+		// Iterate mainIterationCount times
+		// if there are less tasks than agent, iterate taskCount times
+		int mainIterationCount = sortedMap.size() < 
+				LaunchStatistics.singleton.agentCount ? sortedMap
+				.size() : listAgent.size();
+
+		Object[] sortedArray = sortedMap.values().toArray();
+		
 		for (int i = 0; i < mainIterationCount; i++) {
-			
-			TaskInternals skill = (TaskInternals) sortedMap.values().toArray()[i]; 
+
+			TaskInternals skill = (TaskInternals) sortedArray [i];
 			Task chosen = skill.getOwner();
-			
+
 			assert chosen != null;
 			assert skill != null;
 
@@ -112,11 +120,12 @@ public class CentralPlanning {
 			// Choose Agent m, which have highest delta() in Skill j
 			List<Agent> listOfAgentsNotBussy = CentralAssignment.choseAgents(
 					listAgent, bussy);
+			
 			assert listOfAgentsNotBussy != null;
 			assert listOfAgentsNotBussy.size() > 0;
 			// stad te asserty bo w koncu planner iteruje po ilosci agentow,
 			// wiec pracujemy nad choc jednym wolnym!
-			double max_delta = minus_one ;
+			double max_delta = zero;
 			for (Agent agent : listOfAgentsNotBussy) {
 				double local_delta = agent.getAgentInternals(skill
 						.getSkillName()) != null ? agent
@@ -145,8 +154,6 @@ public class CentralPlanning {
 					chosen, skill));
 
 			bussy.add(chosenAgent);
-			//taken.add(new Object[] { chosen, skill });
-			//takenTaskInternals.add(skill);
 		}
 	}
 
@@ -160,15 +167,15 @@ public class CentralPlanning {
 	// return result;
 	// }
 
-//	private Boolean checkIfApplicable(Task task, TaskInternals skill) {
-//		boolean applicable = true;
-//		for (Object[] object : taken) {
-//			if (((Task) object[0]).equals(task)
-//					&& ((TaskInternals) object[1]).equals(skill)) {
-//				applicable = false;
-//			}
-//		}
-//		return applicable;
-//	}
+	// private Boolean checkIfApplicable(Task task, TaskInternals skill) {
+	// boolean applicable = true;
+	// for (Object[] object : taken) {
+	// if (((Task) object[0]).equals(task)
+	// && ((TaskInternals) object[1]).equals(skill)) {
+	// applicable = false;
+	// }
+	// }
+	// return applicable;
+	// }
 
 }

@@ -5,7 +5,6 @@ import internetz.Task;
 import internetz.TaskInternals;
 import internetz.TaskPool;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;

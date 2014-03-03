@@ -16,7 +16,6 @@ import java.util.Random;
 import logger.PjiitOutputter;
 import argonauts.PersistJobDone;
 import constants.Constraints;
-import repast.simphony.random.RandomHelper;
 
 public class HomophylyExpBased {
 	
@@ -88,7 +87,8 @@ public class HomophylyExpBased {
 		HashMap<Task, Integer> intersectionHomophyly = null;
 
 		if (tasksPerSkillsHmphly != null)
-			intersectionHomophyly = tools.searchForIntersection(tasksPerSkillsHmphly);
+			intersectionHomophyly = TaskPoolHandy.
+				searchForIntersection(tasksPerSkillsHmphly);
 		// search for intersections of n-size
 
 		if (intersectionHomophyly == null

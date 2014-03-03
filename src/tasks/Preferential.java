@@ -4,7 +4,6 @@ import internetz.Agent;
 import internetz.Skill;
 import internetz.Task;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 

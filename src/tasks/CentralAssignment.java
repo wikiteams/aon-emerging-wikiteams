@@ -20,7 +20,7 @@ public class CentralAssignment {
 	/**
 	 * Returns list of agents which don't have any orders assigned
 	 * @param agents Input list of agents
-	 * @param bussy Input list of bussi agents
+	 * @param bussy Input list of busy agents
 	 * @return list of agents which are available for work
 	 */
 	public static List<Agent> choseAgents(Collection<Agent> agents, 
@@ -40,6 +40,11 @@ public class CentralAssignment {
 		return list;
 	}
 
+	/**
+	 * Return orders from a central planer, or a null when no orders exists
+	 * @param agent
+	 * @return Central assignment planer chosen task
+	 */
 	public Task concludeMath(Agent agent) {
 		Task chosen = null;
 		

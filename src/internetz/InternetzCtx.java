@@ -6,11 +6,8 @@ import github.TaskSkillsPool;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -32,8 +29,6 @@ import repast.simphony.engine.schedule.Schedule;
 import repast.simphony.engine.schedule.ScheduleParameters;
 import repast.simphony.engine.schedule.ScheduledMethod;
 import repast.simphony.random.RandomHelper;
-import repast.simphony.space.graph.Network;
-import repast.simphony.space.projection.Projection;
 import repast.simphony.util.collections.IndexedIterable;
 import strategies.CentralPlanning;
 import strategies.Strategy;
@@ -348,22 +343,6 @@ public class InternetzCtx extends DefaultContext<Object> {
 				- launchStatistics.taskCount;
 	}
 
-	private void outputAgentNetworkData() {
-		Network<?> agents = (Network<?>) this.getProjection("agents");
-		Projection<?> agentsProjected = this.getProjection("agents");
-
-		Iterator<?> allNodes = agents.getEdges().iterator();
-		for (Object obj : agents.getNodes()) {
-			say("Agent network data output --- " + ((Agent) obj).toString());
-		}
-	}
-
-	@ScheduledMethod(start = 2000, priority = 0)
-	public void outputSNSData() throws IOException {
-		say("outputSNSData() check launched");
-		// outputAgentNetworkData();
-	}
-
 	public void clearStaticHeap() {
 		say("Clearing static data from previous simulation");
 		PersistJobDone.clear();
@@ -445,10 +424,6 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 	@ScheduledMethod(start = 1, interval = 1, priority = ScheduleParameters.LAST_PRIORITY)
 	public void checkForActivity() {
-//		if (((int)RunEnvironment.getInstance().getCurrentSchedule()
-//				.getTickCount()) % 100 == 0)
-//			// recalculating advance factor for preferential
-//			PersistAdvancement.calculateAll(taskPool);
 		say("checkForActivity() check launched");
 		if (EnvironmentEquilibrium.getActivity() == false) {
 			say("EnvironmentEquilibrium.getActivity() returns false!");
@@ -496,6 +471,8 @@ public class InternetzCtx extends DefaultContext<Object> {
 	public void centralPlanning() {
 		say("CentralPlanning scheduled method launched, listAgent.size(): "
 				+ listAgent.size() + " taskPool.size(): " + taskPool.size());
+		// Zeroing agents orders
+		centralPlanningHq.zeroAgentsOrders(listAgent);
 		centralPlanningHq.centralPlanningCalc(listAgent, taskPool);
 	}
 

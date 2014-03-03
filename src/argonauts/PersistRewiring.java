@@ -7,8 +7,6 @@ import internetz.TaskInternals;
 import java.util.HashMap;
 import java.util.Map;
 
-import repast.simphony.engine.environment.RunEnvironment;
-
 public class PersistRewiring {
 	
 	private static Map<Agent, GranulatedChoice> currentTask = 

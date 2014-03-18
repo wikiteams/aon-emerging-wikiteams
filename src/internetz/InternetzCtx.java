@@ -591,9 +591,9 @@ public class InternetzCtx extends DefaultContext<Object> {
 			IndexedIterable<Object> agentObjects = agentPool
 					.getObjects(Agent.class);
 			CopyOnWriteArrayList acconcurrent = new CopyOnWriteArrayList();
-			for (Object object : agentObjects)
+			for (Object object : agentObjects) {
 				acconcurrent.add(object);
-
+			}
 			for (Object agent : acconcurrent) {
 				if (agent.getClass().getName().equals("internetz.Agent")) {
 					say("Checking if I may have to force "

@@ -44,21 +44,13 @@ public class CentralPlanning {
 		}
 
 		bussy = bussy == null ? new ArrayList<Agent>() : bussy;
-		// taken = taken == null ? new ArrayList<Object[]>() : taken;
-
 		bussy.clear();
-		// taken.clear();
-		// TODO: check if this is faster for the GC than creating new object
-		// ArrayList
 	}
 
 	public void centralPlanningCalc(List<Agent> listAgent, TaskPool taskPool) {
 		say("Central planning working !");
 
 		Collections.shuffle(listAgent);
-
-		// List<TaskInternals> takenTaskInternals = new
-		// ArrayList<TaskInternals>();
 
 		List<Task> shuffledTasksFirstInit = new ArrayList<Task>(
 				taskPool.getTasks());
@@ -71,7 +63,7 @@ public class CentralPlanning {
 					}
 				});
 
-		int iterator___ = 0;
+		int ensureDuplicatesFactor = 0;
 		// Find Task {i} and Skill {j}, with highest work left
 		for (Task singleTaskFromPool : shuffledTasksFirstInit) {
 			TaskInternals singleChosen = null;
@@ -94,7 +86,7 @@ public class CentralPlanning {
 			}
 			if (singleChosen != null)
 				sortedMap.put(singleChosen.getWorkLeft()
-						- ((++iterator___) / (10 * 6)), singleChosen);
+					- ((++ensureDuplicatesFactor) / (10 * 6)), singleChosen);
 		}
 
 		// Iterate mainIterationCount times
@@ -104,10 +96,10 @@ public class CentralPlanning {
 				.size() : listAgent.size();
 
 		Object[] sortedArray = sortedMap.values().toArray();
-		
+
 		for (int i = 0; i < mainIterationCount; i++) {
 
-			TaskInternals skill = (TaskInternals) sortedArray [i];
+			TaskInternals skill = (TaskInternals) sortedArray[i];
 			Task chosen = skill.getOwner();
 
 			assert chosen != null;
@@ -118,7 +110,7 @@ public class CentralPlanning {
 			// Choose Agent m, which have highest delta() in Skill j
 			List<Agent> listOfAgentsNotBussy = CentralAssignment.choseAgents(
 					listAgent, bussy);
-			
+
 			assert listOfAgentsNotBussy != null;
 			assert listOfAgentsNotBussy.size() > 0;
 			// stad te asserty bo w koncu planner iteruje po ilosci agentow,
@@ -129,8 +121,7 @@ public class CentralPlanning {
 						.getSkillName()) != null ? agent
 						.getAgentInternals(skill.getSkillName())
 						.getExperience().getDelta() : 0;
-				// zero w przypadku gdy agent nie ma w ogole doswiadczenia w tym
-				// tasku!
+				// zero w przypadku gdy agent nie ma w ogole doswiadczenia w tym tasku!
 				if (local_delta > max_delta) {
 					max_delta = local_delta;
 					chosenAgent = agent;
@@ -154,26 +145,5 @@ public class CentralPlanning {
 			bussy.add(chosenAgent);
 		}
 	}
-
-	// private Collection<Task> getNotTakenTasks(TaskPool taskPool){
-	// Collection<Task> t = taskPool.getTasks();
-	// List<Task> result = new ArrayList<Task>();
-	// for(Task task : t){
-	// if (! taken.contains(task))
-	// result.add(task);
-	// }
-	// return result;
-	// }
-
-	// private Boolean checkIfApplicable(Task task, TaskInternals skill) {
-	// boolean applicable = true;
-	// for (Object[] object : taken) {
-	// if (((Task) object[0]).equals(task)
-	// && ((TaskInternals) object[1]).equals(skill)) {
-	// applicable = false;
-	// }
-	// }
-	// return applicable;
-	// }
 
 }

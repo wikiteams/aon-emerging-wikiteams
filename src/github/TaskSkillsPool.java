@@ -255,7 +255,6 @@ public abstract class TaskSkillsPool {
 
 		TaskSkillFrequency.tasksCheckSum = checksum(skillSetMatrix);
 		
-		//iterator = skillSetArray.size() - 1;
 		iterator = 0;
 	}
 	

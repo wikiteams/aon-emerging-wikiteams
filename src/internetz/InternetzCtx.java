@@ -603,16 +603,16 @@ public class InternetzCtx extends DefaultContext<Object> {
 
 					CopyOnWriteArrayList aicconcurrent = new CopyOnWriteArrayList(
 							aic);
+					boolean removal = true;
 					for (Object ai : aicconcurrent) {
-						if (((AgentInternals) ai).getExperience().getDelta() >= 1.) {
+						if (((AgentInternals) ai).getExperience().getDelta() < 1.) {
 							say("Agent " + (((Agent) agent).getNick())
-									+ " reached maximum in skill "
+									+ " didn't reach maximum in skill "
 									+ ((AgentInternals) ai).getSkill());
-							((Agent) agent).removeSkill(
-									((AgentInternals) ai).getSkill(), false);
+							removal = false;
 						}
 					}
-					if (((Agent) agent).getAgentInternals().size() < 1) {
+					if (removal) {
 						say("Agent " + (((Agent) agent).getNick())
 								+ " don't have any more skills. Removing agent");
 						agentPool.remove(agent);

@@ -2,7 +2,15 @@
 
 This is a [REPAST Symphony 2.0 model](http://repast.sourceforge.net/repast_simphony.html)
 
-<p align="center"><img src="http://liveexpert.pl/coin.jpg" /></p>
+<p align="center"><img src="http://wikiteams.pl/inne/coin.jpg" /></p>
+
+**Important Update**
+
+After first results where published, this simulation has been abondon and integrated to a new version here:
+(https://github.com/wikiteams/emergent-task-allocation)
+from now on work will be done there
+
+**1. Introduction**
 
 We try to simulate task collaboration on real-life programming tasks. 
 In the simulation universe exists set of tasks, agents and skills. 
@@ -11,7 +19,7 @@ they are independent and easily characterizable, and they consists of one or mor
 
 Simulation tests different strategies of working on tasks (ought to be similar to FLOSS-projects objectives)
 
-**0. Model description**
+**2. Model description**
 
 The task collaboration emergence model “T-CEM”
 
@@ -31,12 +39,12 @@ Agent is characterized by: a collection of a two-element set which consists of s
 
 To remark “number of work units”, notice a G constant in Ti, while a work unit in Aj named E is a variable.
 
-![p4](http://liveexpert.pl/p4.png "p4")
+![p4](http://wikiteams.pl/inne/p4.png "p4")
 
 Picture 1: Sigmoid learning curve
 Delta δ function is a sigmoid function (S-curve) reflecting human learning progress calculated by an equation δ (Sk) = 1 / (1 + e^-E) . 
 
-![p5](http://liveexpert.pl/p5.png "p5")
+![p5](http://wikiteams.pl/inne/p5.png "p5")
 
 Picture 2: Frequency of skills in tasks
 Set of skills and it’s characteristics in TASKS is different from a set of skills existing in AGENTS.
@@ -73,7 +81,7 @@ Steps of the T-CEM simulation per one step in a time (for every Aj do following)
 
 
 
-**1. Task choice strategies**
+**3. Task choice strategies**
 
 * heterophyly/homophyly
 * random
@@ -81,18 +89,18 @@ Steps of the T-CEM simulation per one step in a time (for every Aj do following)
 * machine-learned strategy (SVM or decision tree)
 
 
-**2. Skill choise strategy**
+**4. Skill choise strategy**
 
 * Proportional time division
 * Greedy assignment by task
 * Choice of agent
 
 
-**3. How to lunch simulation?**
+**5. How to lunch simulation?**
 
 In Eclipse, (launchers -> internetz Model.launch), then press Start in Repast window
 
-**4. Simulation parameters**
+**6. Simulation parameters**
 
 * randomSeed
 * numTasks

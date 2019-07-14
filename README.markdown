@@ -6,7 +6,7 @@ This is a [REPAST Symphony 2.0 model](http://repast.sourceforge.net/repast_simph
 
 **Important Update**
 
-After first results where published, this simulation has been abondon and integrated to a new version here:
+After first results where published, this simulation has been abandon and integrated to a new version here:
 (https://github.com/wikiteams/emergent-task-allocation)
 from now on work will be done there
 
